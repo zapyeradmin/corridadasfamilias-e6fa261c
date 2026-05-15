@@ -1,86 +1,84 @@
-# Plano — Site Oficial II Corrida das Famílias
+# Plano de Continuação — II Corrida das Famílias
 
-## Observações importantes antes de começar
+## Estado atual
+- Clients Supabase (`client.ts`, `client.server.ts`, `auth-middleware.ts`, `auth-attacher.ts`) já existem.
+- Apenas `src/routes/__root.tsx` e `src/routes/index.tsx` (placeholder).
+- Nenhuma tabela criada no banco. Nenhum token de Design System aplicado.
 
-1. **Stack do template**: este projeto Lovable usa **TanStack Start (SSR) + Vite + React 19 + Tailwind v4**, e não "Vite SPA puro" como descrito nos documentos. Funcionalmente cobre tudo o que o PRD pede (rotas, SEO, formulários, dashboard). Vou adaptar:
-   - "Edge Functions" → **TanStack Server Functions** (`createServerFn`) para `create-registration`, `create-checkout`, e **TanStack server route** em `/api/public/payment-webhook` para o webhook do Infinity Pay (precisa URL pública estável).
-   - Supabase PostgreSQL + Auth + RLS são usados normalmente (Lovable Cloud).
-   - shadcn/ui, Radix, Lucide, Framer Motion, TanStack Query, React Hook Form, Zod: todos compatíveis.
-2. **Dependências externas que preciso de você**:
-   - **Infinity Pay**: chave de API (sandbox e produção), `WEBHOOK_SECRET` para verificar assinatura, e confirmação do formato do payload do webhook (link da doc).
-   - **Conteúdo real**: textos finais de regulamento, FAQ, percurso, premiação, lotes/preços, kit, lista de patrocinadores e logos, fotos da edição anterior para a galeria. Posso começar com placeholders do Design System e você substitui.
-   - **WhatsApp oficial** do evento (número) para o botão fixo.
-   - **E-mail do(s) admin(s)** para criar conta inicial no Supabase Auth.
-   - **Domínio final** (para `redirect_uri` do checkout e CORS do webhook).
-3. **LGPD**: vou implementar política de privacidade, aceite explícito de termos, e logs de acesso administrativo conforme PRD Parte 2. Texto jurídico final deve ser revisado por você.
+## Pendências de você (bloqueantes para alguns sprints)
+- **Infinity Pay**: chaves (sandbox/produção) e `WEBHOOK_SECRET` — necessárias para Sprints 6 e 7. Posso implementar a estrutura com modo "mock" e plugar quando você fornecer.
+- **WhatsApp do evento** (número) — para o botão fixo. Vou usar placeholder se não tiver.
+- **Email do admin inicial** — para criar o primeiro usuário com role `admin` após Sprint 2.
 
-## Sprints
+Vou seguir adiante. Onde faltar dado, uso placeholders claramente marcados.
 
-### Sprint 1 — Preparação técnica e Design System
-- Tokens CSS (cores, tipografia, radius, sombras, gradientes) em `src/styles.css` conforme Design System.
-- Configurar fontes oficiais e Tailwind v4.
-- Layout root: header, footer, botão fixo de WhatsApp, providers (QueryClient, Toaster).
-- Estrutura de rotas em `src/routes/` (home, regulamento, percurso, kit, premiação, faq, patrocinadores, galeria, inscricao, sucesso, politica-privacidade, login, dashboard/*).
+## Sequência de execução
 
-### Sprint 2 — Banco de dados e segurança (Supabase)
-Migrations criando o schema do Documento de Arquitetura:
-- `events`, `lots` (lotes com preço e datas), `registrations`, `payments`, `sponsors`, `gallery_items`, `settings`, `admin_profiles`, `user_roles` (enum `app_role`), `access_logs`.
+### Agora — Sprint 1 (Design System + Shell)
+- Tokens CSS oficiais (paleta, tipografia, radius, sombras, gradientes) em `src/styles.css`.
+- Importar fontes do Design System.
+- Layout em `__root.tsx`: `QueryClientProvider`, `Toaster` (sonner), Header com nav, Footer, `WhatsAppFAB` fixo, listener `onAuthStateChange` invalidando router/queries.
+- Stubs de rotas vazias para evitar erros de tipos do Link: `regulamento`, `percurso`, `kit`, `premiacao`, `faq`, `patrocinadores`, `galeria`, `inscricao`, `inscricao.sucesso`, `politica-privacidade`, `login`, `_authenticated.tsx`, `_authenticated/_admin.tsx`, `_authenticated/_admin/dashboard.tsx`.
+
+### Sprint 2 — Banco e segurança
+Migration única criando:
+- Enum `app_role` (`admin`, `staff`).
+- Enum `registration_status` (`pending`, `processing`, `paid`, `failed`, `canceled`, `refunded`).
+- Tabelas: `events`, `lots`, `registrations` (com `cpf_normalized`), `payments`, `sponsors`, `gallery_items`, `settings`, `user_roles`, `access_logs`.
 - Função `has_role(uuid, app_role)` SECURITY DEFINER.
-- RLS em todas as tabelas: público lê apenas `events`, `lots` ativos, `sponsors` publicados, `gallery_items` publicados, `settings` públicos. Escrita só via server functions/admin.
-- Triggers `updated_at`, normalização de CPF, índice único parcial em (`event_id`, `cpf_normalized`) para status ativos.
+- Função `normalize_cpf(text)` + trigger preenchendo `cpf_normalized` em `registrations`.
+- Trigger `updated_at`.
+- Índice único parcial `(event_id, cpf_normalized) WHERE status IN ('pending','processing','paid')`.
+- RLS habilitado em todas; policies públicas só de leitura nas tabelas públicas (`events`, `lots` ativos, `sponsors` publicados, `gallery_items` publicados, settings públicos). Escrita só via server functions admin/role.
+- Bucket Storage `gallery` (público) e `sponsors` (público).
+- Seed do evento "II Corrida das Famílias" e lote inicial.
 
 ### Sprint 3 — Site público
-Páginas com SSR e SEO (title, description, og:image por rota):
-- **Home**: hero com slogan, CTA inscrição, contagem regressiva, pilares (Fé, Esporte, Saúde, Solidariedade), highlights, lote atual, patrocinadores, prévia da galeria, FAQ resumido.
-- **Regulamento**, **Percurso** (com mapa), **Kit do Atleta**, **Premiação**, **FAQ**, **Patrocinadores**, **Galeria**, **Política de Privacidade**.
-- Animações Framer Motion sóbrias, mobile first, skeletons em listas dinâmicas.
+Cada rota com `head()` próprio (title/description/og). Componentes em `src/components/site/`:
+- **Home** (`/`): Hero com slogan, contagem regressiva até 09/08/2026, CTA inscrição, Pilares (Fé/Esporte/Saúde/Solidariedade), bloco lote atual, faixa de patrocinadores, prévia da galeria, FAQ resumido.
+- **Regulamento, Percurso, Kit, Premiação, FAQ, Patrocinadores, Galeria, Política de Privacidade**.
+- Animações Framer Motion sóbrias; skeletons; mobile first.
 
 ### Sprint 4 — Formulário de inscrição
-- React Hook Form + Zod com validações: nome, CPF (máscara + dígito verificador), nascimento (faixa etária → categoria automática), email, WhatsApp, gênero, tamanho da camisa, contato de emergência, aceite de termos e LGPD.
-- Multi-step com revisão antes de enviar.
-- Bloqueio client-side por CPF já inscrito (consulta server function).
+- React Hook Form + Zod multi-step (Dados Pessoais → Corrida → Revisão).
+- Validações: CPF (máscara + DV), data de nascimento → cálculo automático de categoria, WhatsApp, e-mail, gênero, camisa, contato emergência, aceite termos + LGPD.
+- Verificação de CPF duplicado via server function antes de submeter.
 
-### Sprint 5 — Server function `createRegistration`
-- Validação Zod server-side.
-- Verifica duplicidade por CPF normalizado + status ativo (`pending`, `paid`, `processing`).
-- Calcula valor pelo lote vigente.
-- Insere `registrations` (status `pending`) + `payments` inicial.
-- Retorna ID da inscrição.
+### Sprint 5 — `createRegistration`
+Server function autenticada-livre (público), Zod server-side, recalcula valor pelo lote vigente, garante unicidade por CPF (índice + verificação), grava `registrations` (status `pending`) e `payments` inicial. Retorna `registrationId`.
 
-### Sprint 6 — Checkout Infinity Pay
-- Server function `createCheckout`: cria sessão de checkout no Infinity Pay com valor, dados mínimos do pagador, `external_reference = registration.id`, `redirect_url = /inscricao/sucesso?id=...`.
-- Frontend redireciona para a URL retornada.
-- Página de sucesso consulta status atual da inscrição e exibe instruções (PIX/cartão).
+### Sprint 6 — `createCheckout` (Infinity Pay)
+Server function admin-elevada que cria sessão de checkout com `external_reference = registrationId`, `redirect_url = /inscricao/sucesso?id=...`. Modo mock se a chave não estiver configurada (retorna URL fake e marca `payments.provider = 'mock'`).
 
-### Sprint 7 — Webhook de pagamento
-- Server route `POST /api/public/payment-webhook`:
-  - Verifica assinatura HMAC com `WEBHOOK_SECRET`.
-  - Idempotente (dedup por `event_id` do provedor em `payments`).
-  - Atualiza `payments` e `registrations.status` (`paid` / `failed` / `refunded` / `canceled`).
-  - Loga em `access_logs`.
+### Sprint 7 — Webhook
+Server route `POST /api/public/payment-webhook`:
+- Verifica HMAC com `INFINITY_PAY_WEBHOOK_SECRET` (timing-safe).
+- Idempotente por `provider_event_id`.
+- Atualiza `payments` e `registrations.status` conforme evento.
+- Loga em `access_logs`.
 
 ### Sprint 8 — Dashboard administrativo
-- `/login` com Supabase Auth (email/senha).
-- Layout `_authenticated/_admin` protegido por `has_role(auth.uid(), 'admin')`.
-- Páginas: visão geral (KPIs: inscritos, pagos, receita, por categoria/sexo/camisa), lista de inscrições com filtros e busca, detalhe da inscrição (com histórico de pagamentos e ações: marcar pago manual, cancelar, reembolsar — registradas em `access_logs`), patrocinadores (CRUD), galeria (upload via Supabase Storage), lotes/configurações, logs de acesso.
+- `/login` (Supabase Auth email/senha).
+- `_authenticated.tsx` → redireciona se não logado.
+- `_authenticated/_admin.tsx` → exige `has_role(auth.uid(), 'admin')` (server fn `getMyRole` em `beforeLoad`).
+- Páginas em `_authenticated/_admin/`:
+  - `dashboard` — KPIs (inscritos, pagos, receita, distribuição por categoria/sexo/camisa) com Recharts.
+  - `inscricoes` — tabela com filtros (status, lote, busca por nome/CPF), paginação.
+  - `inscricoes.$id` — detalhe + ações (marcar pago manual, cancelar, reembolsar, reenviar checkout) — todas logadas.
+  - `patrocinadores` — CRUD + upload de logo.
+  - `galeria` — upload e ordenação.
+  - `lotes` — preço e janelas.
+  - `logs` — `access_logs`.
 
 ### Sprint 9 — Exportação e observabilidade
-- Server function `exportRegistrationsCSV` (admin): CSV com filtros aplicados.
-- `access_logs` para todas as ações sensíveis.
-- Tratamento de erros e toasts padronizados.
+- Server function `exportRegistrationsCSV` (admin) com filtros, retorno como Blob para download.
+- Toasts padronizados; tratamento de erros com `errorComponent` por rota.
 
-### Sprint 10 — QA e deploy
-- Checklist de critérios de aceite do PRD (CPF duplicado, LGPD, estados, RLS).
-- Teste manual ponta a ponta em sandbox do Infinity Pay.
-- SEO: sitemap, robots, meta tags, JSON-LD do evento.
-- Acessibilidade (foco, contraste, labels).
-- Publicação e configuração do webhook na Infinity Pay com a URL `project--{id}.lovable.app/api/public/payment-webhook`.
+### Sprint 10 — QA, SEO e deploy
+- Sitemap, robots, JSON-LD `SportsEvent`.
+- Acessibilidade (focus rings, contraste, labels).
+- Checklist completo dos critérios de aceite do PRD.
+- Instruções para configurar webhook no painel da Infinity Pay com URL `project--{id}.lovable.app/api/public/payment-webhook`.
 
-## O que preciso de você para começar
-1. Confirmar que posso seguir com **TanStack Start** no lugar de "Vite SPA puro" (mesmas libs, mesma UX).
-2. Posso **habilitar Lovable Cloud** (Supabase) agora?
-3. **Infinity Pay**: você já tem conta e chaves? Quer que eu comece em **modo sandbox** com placeholders e plugamos as chaves depois via secrets?
-4. **WhatsApp oficial** do evento e **e-mail do admin** inicial.
-5. Para Sprints 3 (site público), posso usar **textos e imagens placeholder** seguindo o Design System enquanto você fornece o conteúdo final?
-
-Assim que confirmar, começo pelo Sprint 1.
+## Próximo passo imediato
+Aprovado o plano, começo agora pelo **Sprint 1** (Design System + shell de layout + stubs de rotas). Sprints 2 em diante seguem em sequência sem novas perguntas, exceto se você quiser fornecer agora os secrets da Infinity Pay e o número do WhatsApp.

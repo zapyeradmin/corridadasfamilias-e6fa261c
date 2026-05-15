@@ -9,38 +9,289 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as RegulamentoRouteImport } from './routes/regulamento'
+import { Route as PremiacaoRouteImport } from './routes/premiacao'
+import { Route as PoliticaPrivacidadeRouteImport } from './routes/politica-privacidade'
+import { Route as PercursoRouteImport } from './routes/percurso'
+import { Route as PatrocinadoresRouteImport } from './routes/patrocinadores'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as KitRouteImport } from './routes/kit'
+import { Route as InscricaoRouteImport } from './routes/inscricao'
+import { Route as GaleriaRouteImport } from './routes/galeria'
+import { Route as FaqRouteImport } from './routes/faq'
+import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as InscricaoSucessoRouteImport } from './routes/inscricao.sucesso'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/_admin'
+import { Route as AuthenticatedAdminDashboardRouteImport } from './routes/_authenticated/_admin/dashboard'
 
+const RegulamentoRoute = RegulamentoRouteImport.update({
+  id: '/regulamento',
+  path: '/regulamento',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PremiacaoRoute = PremiacaoRouteImport.update({
+  id: '/premiacao',
+  path: '/premiacao',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PoliticaPrivacidadeRoute = PoliticaPrivacidadeRouteImport.update({
+  id: '/politica-privacidade',
+  path: '/politica-privacidade',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PercursoRoute = PercursoRouteImport.update({
+  id: '/percurso',
+  path: '/percurso',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PatrocinadoresRoute = PatrocinadoresRouteImport.update({
+  id: '/patrocinadores',
+  path: '/patrocinadores',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KitRoute = KitRouteImport.update({
+  id: '/kit',
+  path: '/kit',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InscricaoRoute = InscricaoRouteImport.update({
+  id: '/inscricao',
+  path: '/inscricao',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GaleriaRoute = GaleriaRouteImport.update({
+  id: '/galeria',
+  path: '/galeria',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FaqRoute = FaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRoute = AuthenticatedRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const InscricaoSucessoRoute = InscricaoSucessoRouteImport.update({
+  id: '/sucesso',
+  path: '/sucesso',
+  getParentRoute: () => InscricaoRoute,
+} as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/_admin',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedAdminDashboardRoute =
+  AuthenticatedAdminDashboardRouteImport.update({
+    id: '/dashboard',
+    path: '/dashboard',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/faq': typeof FaqRoute
+  '/galeria': typeof GaleriaRoute
+  '/inscricao': typeof InscricaoRouteWithChildren
+  '/kit': typeof KitRoute
+  '/login': typeof LoginRoute
+  '/patrocinadores': typeof PatrocinadoresRoute
+  '/percurso': typeof PercursoRoute
+  '/politica-privacidade': typeof PoliticaPrivacidadeRoute
+  '/premiacao': typeof PremiacaoRoute
+  '/regulamento': typeof RegulamentoRoute
+  '/inscricao/sucesso': typeof InscricaoSucessoRoute
+  '/dashboard': typeof AuthenticatedAdminDashboardRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/faq': typeof FaqRoute
+  '/galeria': typeof GaleriaRoute
+  '/inscricao': typeof InscricaoRouteWithChildren
+  '/kit': typeof KitRoute
+  '/login': typeof LoginRoute
+  '/patrocinadores': typeof PatrocinadoresRoute
+  '/percurso': typeof PercursoRoute
+  '/politica-privacidade': typeof PoliticaPrivacidadeRoute
+  '/premiacao': typeof PremiacaoRoute
+  '/regulamento': typeof RegulamentoRoute
+  '/inscricao/sucesso': typeof InscricaoSucessoRoute
+  '/dashboard': typeof AuthenticatedAdminDashboardRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/faq': typeof FaqRoute
+  '/galeria': typeof GaleriaRoute
+  '/inscricao': typeof InscricaoRouteWithChildren
+  '/kit': typeof KitRoute
+  '/login': typeof LoginRoute
+  '/patrocinadores': typeof PatrocinadoresRoute
+  '/percurso': typeof PercursoRoute
+  '/politica-privacidade': typeof PoliticaPrivacidadeRoute
+  '/premiacao': typeof PremiacaoRoute
+  '/regulamento': typeof RegulamentoRoute
+  '/_authenticated/_admin': typeof AuthenticatedAdminRouteWithChildren
+  '/inscricao/sucesso': typeof InscricaoSucessoRoute
+  '/_authenticated/_admin/dashboard': typeof AuthenticatedAdminDashboardRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/faq'
+    | '/galeria'
+    | '/inscricao'
+    | '/kit'
+    | '/login'
+    | '/patrocinadores'
+    | '/percurso'
+    | '/politica-privacidade'
+    | '/premiacao'
+    | '/regulamento'
+    | '/inscricao/sucesso'
+    | '/dashboard'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/faq'
+    | '/galeria'
+    | '/inscricao'
+    | '/kit'
+    | '/login'
+    | '/patrocinadores'
+    | '/percurso'
+    | '/politica-privacidade'
+    | '/premiacao'
+    | '/regulamento'
+    | '/inscricao/sucesso'
+    | '/dashboard'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/faq'
+    | '/galeria'
+    | '/inscricao'
+    | '/kit'
+    | '/login'
+    | '/patrocinadores'
+    | '/percurso'
+    | '/politica-privacidade'
+    | '/premiacao'
+    | '/regulamento'
+    | '/_authenticated/_admin'
+    | '/inscricao/sucesso'
+    | '/_authenticated/_admin/dashboard'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  FaqRoute: typeof FaqRoute
+  GaleriaRoute: typeof GaleriaRoute
+  InscricaoRoute: typeof InscricaoRouteWithChildren
+  KitRoute: typeof KitRoute
+  LoginRoute: typeof LoginRoute
+  PatrocinadoresRoute: typeof PatrocinadoresRoute
+  PercursoRoute: typeof PercursoRoute
+  PoliticaPrivacidadeRoute: typeof PoliticaPrivacidadeRoute
+  PremiacaoRoute: typeof PremiacaoRoute
+  RegulamentoRoute: typeof RegulamentoRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/regulamento': {
+      id: '/regulamento'
+      path: '/regulamento'
+      fullPath: '/regulamento'
+      preLoaderRoute: typeof RegulamentoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/premiacao': {
+      id: '/premiacao'
+      path: '/premiacao'
+      fullPath: '/premiacao'
+      preLoaderRoute: typeof PremiacaoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/politica-privacidade': {
+      id: '/politica-privacidade'
+      path: '/politica-privacidade'
+      fullPath: '/politica-privacidade'
+      preLoaderRoute: typeof PoliticaPrivacidadeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/percurso': {
+      id: '/percurso'
+      path: '/percurso'
+      fullPath: '/percurso'
+      preLoaderRoute: typeof PercursoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/patrocinadores': {
+      id: '/patrocinadores'
+      path: '/patrocinadores'
+      fullPath: '/patrocinadores'
+      preLoaderRoute: typeof PatrocinadoresRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/kit': {
+      id: '/kit'
+      path: '/kit'
+      fullPath: '/kit'
+      preLoaderRoute: typeof KitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/inscricao': {
+      id: '/inscricao'
+      path: '/inscricao'
+      fullPath: '/inscricao'
+      preLoaderRoute: typeof InscricaoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/galeria': {
+      id: '/galeria'
+      path: '/galeria'
+      fullPath: '/galeria'
+      preLoaderRoute: typeof GaleriaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/faq': {
+      id: '/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof FaqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +299,78 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/inscricao/sucesso': {
+      id: '/inscricao/sucesso'
+      path: '/sucesso'
+      fullPath: '/inscricao/sucesso'
+      preLoaderRoute: typeof InscricaoSucessoRouteImport
+      parentRoute: typeof InscricaoRoute
+    }
+    '/_authenticated/_admin': {
+      id: '/_authenticated/_admin'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/_admin/dashboard': {
+      id: '/_authenticated/_admin/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedAdminDashboardRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
   }
 }
 
+interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminDashboardRoute: typeof AuthenticatedAdminDashboardRoute
+}
+
+const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminDashboardRoute: AuthenticatedAdminDashboardRoute,
+}
+
+const AuthenticatedAdminRouteWithChildren =
+  AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
+
+interface AuthenticatedRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
+}
+
+const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
+}
+
+const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
+  AuthenticatedRouteChildren,
+)
+
+interface InscricaoRouteChildren {
+  InscricaoSucessoRoute: typeof InscricaoSucessoRoute
+}
+
+const InscricaoRouteChildren: InscricaoRouteChildren = {
+  InscricaoSucessoRoute: InscricaoSucessoRoute,
+}
+
+const InscricaoRouteWithChildren = InscricaoRoute._addFileChildren(
+  InscricaoRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  FaqRoute: FaqRoute,
+  GaleriaRoute: GaleriaRoute,
+  InscricaoRoute: InscricaoRouteWithChildren,
+  KitRoute: KitRoute,
+  LoginRoute: LoginRoute,
+  PatrocinadoresRoute: PatrocinadoresRoute,
+  PercursoRoute: PercursoRoute,
+  PoliticaPrivacidadeRoute: PoliticaPrivacidadeRoute,
+  PremiacaoRoute: PremiacaoRoute,
+  RegulamentoRoute: RegulamentoRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
