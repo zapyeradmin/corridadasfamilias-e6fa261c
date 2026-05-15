@@ -69,6 +69,14 @@ export function SiteHeader() {
           >
             Inscreva-se
           </Link>
+          {isAdmin && (
+            <Link
+              to="/admin/dashboard"
+              className="ml-1 inline-flex items-center gap-1.5 rounded-full border border-white/20 px-3 py-2 text-xs font-bold uppercase tracking-wide text-white/85 hover:bg-white/10"
+            >
+              <Shield className="h-3.5 w-3.5" /> Admin
+            </Link>
+          )}
         </nav>
 
         <button
