@@ -1,62 +1,106 @@
-# Plano — Sprints 3 a 5
+# Sprint 8 — Login + Dashboard Admin
 
-Com as respostas confirmadas:
-- Admin inicial: `corridadasfamiliaseccdorosario@gmail.com`
-- WhatsApp oficial: `5587981149806`
-- Infinity Pay: integração real fica para o final (Sprint 6/7); por enquanto modo mock.
+Usuário admin já existe no Supabase Auth:
+- E-mail: `corridadasfamiliaseccdorosario@gmail.com`
+- UID: `c82fbe1f-f164-4518-80e8-4d94fc80aa05`
 
-## Etapa A — Configurações iniciais (rápido)
+## Etapa 1 — Provisionar role admin (migration)
 
-1. **Migration de dados** (via insert tool, não schema):
-   - `UPDATE settings SET value = '"5587981149806"' WHERE key = 'whatsapp_number'`
-   - Atualizar `site-config.ts` para puxar do banco quando possível, mas manter fallback hardcoded `5587981149806` / `(87) 98114-9806`.
-2. **Provisionar admin**: após o usuário criar a conta `corridadasfamiliaseccdorosario@gmail.com` em `/login` (Supabase Auth — email/senha), rodar insert:
-   `INSERT INTO user_roles (user_id, role) SELECT id, 'admin' FROM auth.users WHERE email = '...';`
-   - Documentar isso no plano e executar quando o usuário avisar que criou a conta.
+Inserir o vínculo `user_roles` para o UID acima:
 
-## Etapa B — Sprint 3: Conteúdo do site público
+```sql
+INSERT INTO public.user_roles (user_id, role)
+VALUES ('c82fbe1f-f164-4518-80e8-4d94fc80aa05', 'admin')
+ON CONFLICT (user_id, role) DO NOTHING;
+```
 
-Substituir os placeholders nas rotas já criadas por conteúdo real, mobile-first, com `head()` SEO por rota (title, description, og:image quando houver hero):
+## Etapa 2 — `/login` funcional (Supabase Auth, e-mail+senha)
 
-- **`/` (Home)** — hero com slogan "Juntos no Rosário, Famílias unidas na Fé", countdown para 09/08/2026, CTA Inscreva-se, blocos: sobre o evento, lote vigente (consulta a `lots` via serverFn público), destaques (5km, kit, premiação), galeria preview, patrocinadores em faixa, footer.
-- **`/regulamento`** — texto longo estruturado (categorias, idade mínima, regras de percurso, cancelamento, LGPD).
-- **`/percurso`** — descrição do trajeto, mapa estático (placeholder de imagem por enquanto), pontos de hidratação, largada/chegada na Igreja Matriz.
-- **`/kit`** — composição (camiseta, número, chip, sacochila), tabela de tamanhos PP–GG, datas/local de retirada.
-- **`/premiacao`** — pódios geral M/F + faixas etárias + categoria família, medalha finisher para todos.
-- **`/galeria`** — grid responsivo lendo `gallery_items` publicados via serverFn público.
-- **`/patrocinadores`** — grid por tier (`diamond`, `gold`, `silver`, `standard`) lendo `sponsors` publicados.
-- **`/faq`** — accordion com 8–12 perguntas (inscrição, kit, retirada, reembolso, menores, cães, estacionamento, contato).
-- **`/politica-privacidade`** — texto LGPD padrão, citando dados coletados, finalidade, retenção, contato DPO.
+Reescrever `src/routes/login.tsx`:
+- Formulário e-mail+senha (sem signup público — admin é criado manualmente).
+- `supabase.auth.signInWithPassword`.
+- Em caso de sucesso, `navigate({ to: search.redirect ?? '/admin/dashboard' })`.
+- Mostrar erros amigáveis (credenciais inválidas, e-mail não confirmado).
+- `validateSearch` para aceitar `?redirect=...` (já vem do `_authenticated`).
+- `beforeLoad`: se já logado, redireciona para `/admin/dashboard`.
+- Layout dentro do `PageShell` existente (consistência visual).
+- Link "Esqueci minha senha" → chamará `supabase.auth.resetPasswordForEmail` com `redirectTo: ${origin}/reset-password`.
 
-ServerFns públicos novos (em `src/lib/public.functions.ts`, usando `supabaseAdmin` com WHERE explícitos por `is_active`/`is_published`):
-- `getActiveEvent()` → evento + lotes ativos ordenados.
-- `getCurrentLot()` → primeiro lote ativo cuja janela `starts_at..ends_at` cobre `now()`.
-- `getPublishedSponsors()` / `getPublishedGallery()` / `getPublicSettings()`.
+Criar `src/routes/reset-password.tsx`:
+- Detecta `type=recovery` no hash.
+- Form de nova senha → `supabase.auth.updateUser({ password })`.
+- Sucesso → redireciona `/admin/dashboard`.
 
-## Etapa C — Sprint 4–5: Formulário de inscrição
+## Etapa 3 — Guard de admin no layout `_admin`
 
-- **`/inscricao`**: React Hook Form + Zod multi-step (3 passos):
-  1. Dados pessoais: nome, CPF (máscara + validação dígito), e-mail, WhatsApp, data nasc., gênero, categoria.
-  2. Kit & saúde: tamanho da camiseta, contato de emergência (nome+fone), notas médicas.
-  3. Revisão + termos (`accepted_terms`, `accepted_lgpd`) + resumo do valor (lote vigente).
-- **ServerFn `createRegistration`** (`src/lib/registrations.functions.ts`, `supabaseAdmin`, sem auth):
-  - Recalcula `amount_cents` a partir do `lot_id` no banco (nunca confia no cliente).
-  - Verifica unicidade pelo índice parcial `cpf_normalized` + status ativo; se duplicado, retorna erro amigável.
-  - Insere `registrations` (status `pending`) + `payments` (status `pending`, provider `infinitypay`, `checkout_url` mock apontando para `/inscricao/sucesso?protocol=...`).
-  - Retorna `{ protocol, checkout_url }`.
-- **`/inscricao/sucesso`**: lê `?protocol=` via search params, mostra protocolo, próximos passos e CTA WhatsApp.
-- Modo mock do pagamento: ao chegar em `/inscricao/sucesso`, chamar serverFn `simulatePaymentApproval(protocol)` apenas em DEV (botão "Simular pagamento aprovado") — em prod, esse botão fica oculto até integrarmos Infinity Pay.
+Atualizar `src/routes/_authenticated/_admin.tsx` para verificar role no `beforeLoad`:
+- Server function `getCurrentUserRoles()` (`createServerFn` + `requireSupabaseAuth`) que lê `user_roles` do usuário autenticado.
+- Se não tiver role `admin`, redirect para `/` com toast "Acesso restrito".
+- Componente: shell admin com sidebar (Dashboard, Inscrições, Pagamentos, Eventos/Lotes, Patrocinadores, Galeria, Configurações, Logs) + topbar com nome do usuário + botão Sair.
 
-## Etapa D — Validação
+Sidebar usa `<Link>` do TanStack; rota ativa marcada via `activeProps`.
 
-- `bun run build` automático (lovable harness) após cada bloco.
-- Smoke manual no preview: navegar todas as rotas, abrir formulário, submeter um cadastro de teste.
-- Confirmar que dados públicos carregam sem 401 (loaders públicos chamam serverFns admin-elevadas com filtros).
+## Etapa 4 — Server functions admin (`src/lib/admin.functions.ts`)
 
-## Fora deste plano (próximos sprints)
+Todas com `.middleware([requireSupabaseAuth])` + verificação de role admin via helper `assertAdmin(userId)` que consulta `user_roles`. Cada handler também grava `access_logs` (action, entity_type, entity_id, actor_id, actor_email).
 
-- Sprint 6/7: Infinity Pay real + webhook `/api/public/payment-webhook`.
-- Sprint 8: dashboard admin (KPIs, CRUD, logs).
-- Sprint 9/10: export CSV, sitemap/robots/JSON-LD, QA final, deploy.
+KPIs e listagens (Sprint 8):
+- `getDashboardKPIs()` → total inscrições por status, receita confirmada (sum `payments.amount_cents` paid), inscrições por lote, últimas 10 inscrições.
+- `listRegistrations({ status?, search?, page, pageSize })` → join com `payments` (status mais recente).
+- `listPayments({ status?, page, pageSize })`.
+- `listEvents()`, `listLots(eventId)`.
+- `listSponsors()`, `listGalleryItems()`, `listSettings()`.
 
-Posso começar pela **Etapa A** (atualizar WhatsApp no banco + preparar instrução do admin) e seguir direto para o conteúdo do Sprint 3?
+CRUD que entra agora:
+- `updateRegistrationStatus({ id, status })` — admin pode mudar para `confirmed`/`cancelled` (útil enquanto Infinity Pay está mock).
+- Reaproveita `simulatePaymentApproval(protocol)` já planejado (mover para esse arquivo).
+
+CRUD pleno (eventos, lotes, sponsors, gallery, settings) fica para Sprint 8.5/9 — esta sprint entrega leitura + ação mínima (status de inscrição + simulate payment) para destravar testes.
+
+## Etapa 5 — Páginas do dashboard
+
+Estrutura de rotas (cria os arquivos, todas sob `/_authenticated/_admin/`):
+
+```
+src/routes/_authenticated/_admin/
+├── dashboard.tsx          (KPIs + últimas inscrições)
+├── inscricoes.tsx         (lista paginada + filtros + ação mudar status)
+├── inscricoes.$id.tsx     (detalhe da inscrição + payments)
+├── pagamentos.tsx         (lista de payments + simulate approval em DEV)
+├── eventos.tsx            (lista read-only + lotes)
+├── patrocinadores.tsx     (lista read-only)
+├── galeria.tsx            (lista read-only)
+├── configuracoes.tsx      (lista read-only de settings)
+└── logs.tsx               (últimos access_logs)
+```
+
+Cada página:
+- `loader` chama a server function correspondente (gate `_authenticated` já hidrata sessão).
+- `errorComponent` + `notFoundComponent` simples.
+- `head()` com `title` específico ("Admin · Inscrições — II Corrida das Famílias").
+- Tabelas usando `@/components/ui/table`, paginação e filtros em `useSearch`.
+
+## Etapa 6 — Header do site público
+
+Adicionar atalho "Admin" no header **apenas** se sessão ativa + role admin (consulta server fn `getCurrentUserRoles` cacheada em React Query). Caso contrário, esconde.
+
+Botão "Sair" no shell admin → `supabase.auth.signOut()` + `router.invalidate()` + redirect `/`.
+
+## Etapa 7 — Cache invalidation no auth state
+
+Confirmar/adicionar em `__root.tsx` o `onAuthStateChange` global que dispara `router.invalidate()` + `queryClient.invalidateQueries()` (necessário para o admin badge sumir/aparecer ao logar/deslogar).
+
+## Etapa 8 — Validação
+
+- `bun run build` automático (harness).
+- Smoke manual: login com a conta admin, navegar todas as páginas admin, mudar status de uma inscrição teste, conferir KPIs.
+
+## Detalhes técnicos
+
+- **Sem signup público** nesta sprint. Provisionamento de novos admins continua via SQL (Sprint 9.5 pode adicionar UI).
+- **`assertAdmin` reutilizável**: helper interno em `admin.functions.ts` que recebe `supabase` (do middleware) + `userId` e usa `has_role(userId, 'admin')` via `.rpc('has_role', ...)` ou direct select em `user_roles`. Lança `Response('Forbidden', { status: 403 })`.
+- **`access_logs`**: insert via `supabaseAdmin` (RLS bloqueia insert direto pelo usuário). Helper `logAdminAction({ actorId, actorEmail, action, entityType, entityId, details })`.
+- **Datas/moeda**: helpers em `src/lib/format.ts` (`formatCents`, `formatDateBR`).
+- **Fora de escopo**: CRUD completo de eventos/lotes/sponsors/gallery/settings (Sprint 9), Infinity Pay real (Sprint 6/7 reordenado), export CSV (Sprint 10), sitemap/robots (Sprint 10).
+
+Posso começar pela **Etapa 1** (migration do role admin) e seguir na sequência?
