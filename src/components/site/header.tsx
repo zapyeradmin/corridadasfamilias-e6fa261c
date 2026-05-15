@@ -1,0 +1,86 @@
+import { Link } from "@tanstack/react-router";
+import { Menu, X } from "lucide-react";
+import { useState } from "react";
+import { NAV_LINKS, SITE } from "@/lib/site-config";
+import { cn } from "@/lib/utils";
+
+export function SiteHeader() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <header className="sticky top-0 z-40 border-b border-white/5 bg-[color:var(--color-brand-dark)]/85 backdrop-blur-xl">
+      <div className="mx-auto flex max-w-[1360px] items-center justify-between px-5 py-4 md:px-8">
+        <Link to="/" className="flex items-center gap-3">
+          <span className="grid h-10 w-10 place-items-center rounded-full bg-gradient-orange text-white font-black shadow-orange">
+            II
+          </span>
+          <span className="hidden flex-col leading-tight sm:flex">
+            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-white/60">
+              Corrida das Famílias
+            </span>
+            <span className="text-sm font-extrabold uppercase tracking-tight text-white">
+              {SITE.eventDateLabel} · {SITE.city}
+            </span>
+          </span>
+        </Link>
+
+        <nav className="hidden items-center gap-1 lg:flex">
+          {NAV_LINKS.map((l) => (
+            <Link
+              key={l.to}
+              to={l.to}
+              className="rounded-full px-3 py-2 text-sm font-semibold text-white/80 transition hover:bg-white/10 hover:text-white"
+              activeOptions={{ exact: l.to === "/" }}
+              activeProps={{ className: "text-white bg-white/10" }}
+            >
+              {l.label}
+            </Link>
+          ))}
+          <Link
+            to="/inscricao"
+            className="ml-2 rounded-full bg-gradient-orange px-5 py-2.5 text-sm font-extrabold uppercase tracking-wide text-white shadow-orange transition hover:scale-[1.02]"
+          >
+            Inscreva-se
+          </Link>
+        </nav>
+
+        <button
+          aria-label="Abrir menu"
+          className="grid h-10 w-10 place-items-center rounded-full bg-white/10 text-white lg:hidden"
+          onClick={() => setOpen((v) => !v)}
+        >
+          {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        </button>
+      </div>
+
+      <div
+        className={cn(
+          "lg:hidden overflow-hidden border-t border-white/5 bg-[color:var(--color-brand-dark)] transition-[max-height] duration-300",
+          open ? "max-h-[80vh]" : "max-h-0",
+        )}
+      >
+        <nav className="flex flex-col gap-1 px-5 py-4">
+          {NAV_LINKS.map((l) => (
+            <Link
+              key={l.to}
+              to={l.to}
+              onClick={() => setOpen(false)}
+              className="rounded-xl px-4 py-3 text-base font-semibold text-white/85 hover:bg-white/10"
+              activeOptions={{ exact: l.to === "/" }}
+              activeProps={{ className: "bg-white/10 text-white" }}
+            >
+              {l.label}
+            </Link>
+          ))}
+          <Link
+            to="/inscricao"
+            onClick={() => setOpen(false)}
+            className="mt-2 rounded-full bg-gradient-orange px-5 py-3 text-center text-sm font-extrabold uppercase tracking-wide text-white shadow-orange"
+          >
+            Inscreva-se
+          </Link>
+        </nav>
+      </div>
+    </header>
+  );
+}
