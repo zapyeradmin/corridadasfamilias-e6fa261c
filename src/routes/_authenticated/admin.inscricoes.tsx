@@ -20,13 +20,13 @@ export const Route = createFileRoute("/_authenticated/admin/inscricoes")({
   component: Page,
 });
 
-const STATUSES = ["all", "pending", "processing", "paid", "cancelled", "refunded"] as const;
+const STATUSES = ["all", "pending", "processing", "paid", "canceled", "refunded"] as const;
 const STATUS_LABEL: Record<string, string> = {
   all: "Todos",
   pending: "Pendente",
   processing: "Processando",
   paid: "Pago",
-  cancelled: "Cancelado",
+  canceled: "Cancelado",
   refunded: "Reembolsado",
 };
 
@@ -46,7 +46,7 @@ function Page() {
   });
 
   const mutation = useMutation({
-    mutationFn: (vars: { id: string; status: "pending" | "processing" | "paid" | "cancelled" | "refunded" }) =>
+    mutationFn: (vars: { id: string; status: "pending" | "processing" | "paid" | "canceled" | "refunded" }) =>
       updateStatus({ data: vars }),
     onSuccess: () => {
       toast.success("Status atualizado.");
@@ -125,7 +125,7 @@ function Page() {
                     onValueChange={(v) =>
                       mutation.mutate({
                         id: r.id,
-                        status: v as "pending" | "processing" | "paid" | "cancelled" | "refunded",
+                        status: v as "pending" | "processing" | "paid" | "canceled" | "refunded",
                       })
                     }
                   >

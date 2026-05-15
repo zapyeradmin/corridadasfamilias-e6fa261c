@@ -3,7 +3,7 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
-type RegistrationStatus = "pending" | "processing" | "paid" | "cancelled" | "refunded";
+type RegistrationStatus = "pending" | "processing" | "paid" | "canceled" | "refunded";
 
 async function assertAdmin(userId: string, claims: { email?: string }) {
   const { data, error } = await supabaseAdmin
@@ -152,7 +152,7 @@ export const updateRegistrationStatus = createServerFn({ method: "POST" })
     z
       .object({
         id: z.string().uuid(),
-        status: z.enum(["pending", "processing", "paid", "cancelled", "refunded"]),
+        status: z.enum(["pending", "processing", "paid", "canceled", "refunded"]),
       })
       .parse(input),
   )

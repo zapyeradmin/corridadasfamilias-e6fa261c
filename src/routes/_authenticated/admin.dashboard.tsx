@@ -13,7 +13,7 @@ const STATUS_LABEL: Record<string, string> = {
   pending: "Pendente",
   processing: "Processando",
   paid: "Pago",
-  cancelled: "Cancelado",
+  canceled: "Cancelado",
   refunded: "Reembolsado",
 };
 
