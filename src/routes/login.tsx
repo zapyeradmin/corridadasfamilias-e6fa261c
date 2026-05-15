@@ -17,7 +17,7 @@ export const Route = createFileRoute("/login")({
   beforeLoad: async ({ search }) => {
     const { data } = await supabase.auth.getUser();
     if (data.user) {
-      throw redirect({ to: search.redirect || "/admin/dashboard" });
+      throw redirect({ to: (search.redirect || "/admin/dashboard") as never });
     }
   },
   component: Page,
@@ -46,7 +46,7 @@ function Page() {
       return;
     }
     toast.success("Bem-vindo!");
-    navigate({ to: search.redirect || "/admin/dashboard" });
+    navigate({ to: (search.redirect || "/admin/dashboard") as never });
   }
 
   async function onForgot() {
