@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RegulamentoRouteImport } from './routes/regulamento'
 import { Route as PremiacaoRouteImport } from './routes/premiacao'
 import { Route as PoliticaPrivacidadeRouteImport } from './routes/politica-privacidade'
@@ -22,9 +23,22 @@ import { Route as FaqRouteImport } from './routes/faq'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as InscricaoSucessoRouteImport } from './routes/inscricao.sucesso'
-import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/_admin'
-import { Route as AuthenticatedAdminDashboardRouteImport } from './routes/_authenticated/_admin/dashboard'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedAdminPatrocinadoresRouteImport } from './routes/_authenticated/admin.patrocinadores'
+import { Route as AuthenticatedAdminPagamentosRouteImport } from './routes/_authenticated/admin.pagamentos'
+import { Route as AuthenticatedAdminLogsRouteImport } from './routes/_authenticated/admin.logs'
+import { Route as AuthenticatedAdminInscricoesRouteImport } from './routes/_authenticated/admin.inscricoes'
+import { Route as AuthenticatedAdminGaleriaRouteImport } from './routes/_authenticated/admin.galeria'
+import { Route as AuthenticatedAdminEventosRouteImport } from './routes/_authenticated/admin.eventos'
+import { Route as AuthenticatedAdminDashboardRouteImport } from './routes/_authenticated/admin.dashboard'
+import { Route as AuthenticatedAdminConfiguracoesRouteImport } from './routes/_authenticated/admin.configuracoes'
+import { Route as AuthenticatedAdminInscricoesIdRouteImport } from './routes/_authenticated/admin.inscricoes.$id'
 
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RegulamentoRoute = RegulamentoRouteImport.update({
   id: '/regulamento',
   path: '/regulamento',
@@ -90,14 +104,62 @@ const InscricaoSucessoRoute = InscricaoSucessoRouteImport.update({
   getParentRoute: () => InscricaoRoute,
 } as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
-  id: '/_admin',
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedAdminPatrocinadoresRoute =
+  AuthenticatedAdminPatrocinadoresRouteImport.update({
+    id: '/patrocinadores',
+    path: '/patrocinadores',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminPagamentosRoute =
+  AuthenticatedAdminPagamentosRouteImport.update({
+    id: '/pagamentos',
+    path: '/pagamentos',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminLogsRoute = AuthenticatedAdminLogsRouteImport.update({
+  id: '/logs',
+  path: '/logs',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
+const AuthenticatedAdminInscricoesRoute =
+  AuthenticatedAdminInscricoesRouteImport.update({
+    id: '/inscricoes',
+    path: '/inscricoes',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminGaleriaRoute =
+  AuthenticatedAdminGaleriaRouteImport.update({
+    id: '/galeria',
+    path: '/galeria',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminEventosRoute =
+  AuthenticatedAdminEventosRouteImport.update({
+    id: '/eventos',
+    path: '/eventos',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminDashboardRoute =
   AuthenticatedAdminDashboardRouteImport.update({
     id: '/dashboard',
     path: '/dashboard',
     getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminConfiguracoesRoute =
+  AuthenticatedAdminConfiguracoesRouteImport.update({
+    id: '/configuracoes',
+    path: '/configuracoes',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminInscricoesIdRoute =
+  AuthenticatedAdminInscricoesIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedAdminInscricoesRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -112,8 +174,18 @@ export interface FileRoutesByFullPath {
   '/politica-privacidade': typeof PoliticaPrivacidadeRoute
   '/premiacao': typeof PremiacaoRoute
   '/regulamento': typeof RegulamentoRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/inscricao/sucesso': typeof InscricaoSucessoRoute
-  '/dashboard': typeof AuthenticatedAdminDashboardRoute
+  '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
+  '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
+  '/admin/eventos': typeof AuthenticatedAdminEventosRoute
+  '/admin/galeria': typeof AuthenticatedAdminGaleriaRoute
+  '/admin/inscricoes': typeof AuthenticatedAdminInscricoesRouteWithChildren
+  '/admin/logs': typeof AuthenticatedAdminLogsRoute
+  '/admin/pagamentos': typeof AuthenticatedAdminPagamentosRoute
+  '/admin/patrocinadores': typeof AuthenticatedAdminPatrocinadoresRoute
+  '/admin/inscricoes/$id': typeof AuthenticatedAdminInscricoesIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -127,8 +199,18 @@ export interface FileRoutesByTo {
   '/politica-privacidade': typeof PoliticaPrivacidadeRoute
   '/premiacao': typeof PremiacaoRoute
   '/regulamento': typeof RegulamentoRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/inscricao/sucesso': typeof InscricaoSucessoRoute
-  '/dashboard': typeof AuthenticatedAdminDashboardRoute
+  '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
+  '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
+  '/admin/eventos': typeof AuthenticatedAdminEventosRoute
+  '/admin/galeria': typeof AuthenticatedAdminGaleriaRoute
+  '/admin/inscricoes': typeof AuthenticatedAdminInscricoesRouteWithChildren
+  '/admin/logs': typeof AuthenticatedAdminLogsRoute
+  '/admin/pagamentos': typeof AuthenticatedAdminPagamentosRoute
+  '/admin/patrocinadores': typeof AuthenticatedAdminPatrocinadoresRoute
+  '/admin/inscricoes/$id': typeof AuthenticatedAdminInscricoesIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -144,9 +226,18 @@ export interface FileRoutesById {
   '/politica-privacidade': typeof PoliticaPrivacidadeRoute
   '/premiacao': typeof PremiacaoRoute
   '/regulamento': typeof RegulamentoRoute
-  '/_authenticated/_admin': typeof AuthenticatedAdminRouteWithChildren
+  '/reset-password': typeof ResetPasswordRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/inscricao/sucesso': typeof InscricaoSucessoRoute
-  '/_authenticated/_admin/dashboard': typeof AuthenticatedAdminDashboardRoute
+  '/_authenticated/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
+  '/_authenticated/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
+  '/_authenticated/admin/eventos': typeof AuthenticatedAdminEventosRoute
+  '/_authenticated/admin/galeria': typeof AuthenticatedAdminGaleriaRoute
+  '/_authenticated/admin/inscricoes': typeof AuthenticatedAdminInscricoesRouteWithChildren
+  '/_authenticated/admin/logs': typeof AuthenticatedAdminLogsRoute
+  '/_authenticated/admin/pagamentos': typeof AuthenticatedAdminPagamentosRoute
+  '/_authenticated/admin/patrocinadores': typeof AuthenticatedAdminPatrocinadoresRoute
+  '/_authenticated/admin/inscricoes/$id': typeof AuthenticatedAdminInscricoesIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -162,8 +253,18 @@ export interface FileRouteTypes {
     | '/politica-privacidade'
     | '/premiacao'
     | '/regulamento'
+    | '/reset-password'
+    | '/admin'
     | '/inscricao/sucesso'
-    | '/dashboard'
+    | '/admin/configuracoes'
+    | '/admin/dashboard'
+    | '/admin/eventos'
+    | '/admin/galeria'
+    | '/admin/inscricoes'
+    | '/admin/logs'
+    | '/admin/pagamentos'
+    | '/admin/patrocinadores'
+    | '/admin/inscricoes/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -177,8 +278,18 @@ export interface FileRouteTypes {
     | '/politica-privacidade'
     | '/premiacao'
     | '/regulamento'
+    | '/reset-password'
+    | '/admin'
     | '/inscricao/sucesso'
-    | '/dashboard'
+    | '/admin/configuracoes'
+    | '/admin/dashboard'
+    | '/admin/eventos'
+    | '/admin/galeria'
+    | '/admin/inscricoes'
+    | '/admin/logs'
+    | '/admin/pagamentos'
+    | '/admin/patrocinadores'
+    | '/admin/inscricoes/$id'
   id:
     | '__root__'
     | '/'
@@ -193,9 +304,18 @@ export interface FileRouteTypes {
     | '/politica-privacidade'
     | '/premiacao'
     | '/regulamento'
-    | '/_authenticated/_admin'
+    | '/reset-password'
+    | '/_authenticated/admin'
     | '/inscricao/sucesso'
-    | '/_authenticated/_admin/dashboard'
+    | '/_authenticated/admin/configuracoes'
+    | '/_authenticated/admin/dashboard'
+    | '/_authenticated/admin/eventos'
+    | '/_authenticated/admin/galeria'
+    | '/_authenticated/admin/inscricoes'
+    | '/_authenticated/admin/logs'
+    | '/_authenticated/admin/pagamentos'
+    | '/_authenticated/admin/patrocinadores'
+    | '/_authenticated/admin/inscricoes/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -211,10 +331,18 @@ export interface RootRouteChildren {
   PoliticaPrivacidadeRoute: typeof PoliticaPrivacidadeRoute
   PremiacaoRoute: typeof PremiacaoRoute
   RegulamentoRoute: typeof RegulamentoRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/regulamento': {
       id: '/regulamento'
       path: '/regulamento'
@@ -306,29 +434,114 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InscricaoSucessoRouteImport
       parentRoute: typeof InscricaoRoute
     }
-    '/_authenticated/_admin': {
-      id: '/_authenticated/_admin'
-      path: ''
-      fullPath: '/'
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/_admin/dashboard': {
-      id: '/_authenticated/_admin/dashboard'
+    '/_authenticated/admin/patrocinadores': {
+      id: '/_authenticated/admin/patrocinadores'
+      path: '/patrocinadores'
+      fullPath: '/admin/patrocinadores'
+      preLoaderRoute: typeof AuthenticatedAdminPatrocinadoresRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/pagamentos': {
+      id: '/_authenticated/admin/pagamentos'
+      path: '/pagamentos'
+      fullPath: '/admin/pagamentos'
+      preLoaderRoute: typeof AuthenticatedAdminPagamentosRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/logs': {
+      id: '/_authenticated/admin/logs'
+      path: '/logs'
+      fullPath: '/admin/logs'
+      preLoaderRoute: typeof AuthenticatedAdminLogsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/inscricoes': {
+      id: '/_authenticated/admin/inscricoes'
+      path: '/inscricoes'
+      fullPath: '/admin/inscricoes'
+      preLoaderRoute: typeof AuthenticatedAdminInscricoesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/galeria': {
+      id: '/_authenticated/admin/galeria'
+      path: '/galeria'
+      fullPath: '/admin/galeria'
+      preLoaderRoute: typeof AuthenticatedAdminGaleriaRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/eventos': {
+      id: '/_authenticated/admin/eventos'
+      path: '/eventos'
+      fullPath: '/admin/eventos'
+      preLoaderRoute: typeof AuthenticatedAdminEventosRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/dashboard': {
+      id: '/_authenticated/admin/dashboard'
       path: '/dashboard'
-      fullPath: '/dashboard'
+      fullPath: '/admin/dashboard'
       preLoaderRoute: typeof AuthenticatedAdminDashboardRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/configuracoes': {
+      id: '/_authenticated/admin/configuracoes'
+      path: '/configuracoes'
+      fullPath: '/admin/configuracoes'
+      preLoaderRoute: typeof AuthenticatedAdminConfiguracoesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/inscricoes/$id': {
+      id: '/_authenticated/admin/inscricoes/$id'
+      path: '/$id'
+      fullPath: '/admin/inscricoes/$id'
+      preLoaderRoute: typeof AuthenticatedAdminInscricoesIdRouteImport
+      parentRoute: typeof AuthenticatedAdminInscricoesRoute
     }
   }
 }
 
+interface AuthenticatedAdminInscricoesRouteChildren {
+  AuthenticatedAdminInscricoesIdRoute: typeof AuthenticatedAdminInscricoesIdRoute
+}
+
+const AuthenticatedAdminInscricoesRouteChildren: AuthenticatedAdminInscricoesRouteChildren =
+  {
+    AuthenticatedAdminInscricoesIdRoute: AuthenticatedAdminInscricoesIdRoute,
+  }
+
+const AuthenticatedAdminInscricoesRouteWithChildren =
+  AuthenticatedAdminInscricoesRoute._addFileChildren(
+    AuthenticatedAdminInscricoesRouteChildren,
+  )
+
 interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminConfiguracoesRoute: typeof AuthenticatedAdminConfiguracoesRoute
   AuthenticatedAdminDashboardRoute: typeof AuthenticatedAdminDashboardRoute
+  AuthenticatedAdminEventosRoute: typeof AuthenticatedAdminEventosRoute
+  AuthenticatedAdminGaleriaRoute: typeof AuthenticatedAdminGaleriaRoute
+  AuthenticatedAdminInscricoesRoute: typeof AuthenticatedAdminInscricoesRouteWithChildren
+  AuthenticatedAdminLogsRoute: typeof AuthenticatedAdminLogsRoute
+  AuthenticatedAdminPagamentosRoute: typeof AuthenticatedAdminPagamentosRoute
+  AuthenticatedAdminPatrocinadoresRoute: typeof AuthenticatedAdminPatrocinadoresRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminConfiguracoesRoute: AuthenticatedAdminConfiguracoesRoute,
   AuthenticatedAdminDashboardRoute: AuthenticatedAdminDashboardRoute,
+  AuthenticatedAdminEventosRoute: AuthenticatedAdminEventosRoute,
+  AuthenticatedAdminGaleriaRoute: AuthenticatedAdminGaleriaRoute,
+  AuthenticatedAdminInscricoesRoute:
+    AuthenticatedAdminInscricoesRouteWithChildren,
+  AuthenticatedAdminLogsRoute: AuthenticatedAdminLogsRoute,
+  AuthenticatedAdminPagamentosRoute: AuthenticatedAdminPagamentosRoute,
+  AuthenticatedAdminPatrocinadoresRoute: AuthenticatedAdminPatrocinadoresRoute,
 }
 
 const AuthenticatedAdminRouteWithChildren =
@@ -371,7 +584,18 @@ const rootRouteChildren: RootRouteChildren = {
   PoliticaPrivacidadeRoute: PoliticaPrivacidadeRoute,
   PremiacaoRoute: PremiacaoRoute,
   RegulamentoRoute: RegulamentoRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
