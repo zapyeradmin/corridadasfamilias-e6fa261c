@@ -13,9 +13,10 @@ function diff(target: number) {
 
 export function Countdown({ className = "" }: { className?: string }) {
   const target = new Date(SITE.eventDate).getTime();
-  const [t, setT] = useState(() => diff(target));
+  const [t, setT] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
   useEffect(() => {
+    setT(diff(target));
     const i = setInterval(() => setT(diff(target)), 1000);
     return () => clearInterval(i);
   }, [target]);
