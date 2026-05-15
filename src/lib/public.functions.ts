@@ -58,7 +58,7 @@ export const getPublicSettings = createServerFn({ method: "GET" }).handler(async
     .from("settings")
     .select("key, value")
     .eq("is_public", true);
-  const map: Record<string, unknown> = {};
-  for (const row of data ?? []) map[row.key] = row.value;
+  const map: Record<string, string> = {};
+  for (const row of data ?? []) map[row.key] = JSON.stringify(row.value);
   return map;
 });

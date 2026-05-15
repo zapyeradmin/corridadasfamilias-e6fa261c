@@ -3,6 +3,9 @@ import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { isValidCpf, normalizeCpf } from "@/lib/cpf";
 
+const GENDER_DB = { male: "M", female: "F", other: "O" } as const;
+const SHIRT_DB = { pp: "PP", p: "P", m: "M", g: "G", gg: "GG", xgg: "XGG" } as const;
+
 const registrationSchema = z.object({
   full_name: z.string().min(3).max(120),
   cpf: z.string().refine(isValidCpf, "CPF inválido"),
@@ -75,8 +78,8 @@ export const createRegistration = createServerFn({ method: "POST" })
         email: data.email.trim().toLowerCase(),
         whatsapp: data.whatsapp,
         birth_date: data.birth_date,
-        gender: data.gender,
-        shirt_size: data.shirt_size,
+        gender: GENDER_DB[data.gender],
+        shirt_size: SHIRT_DB[data.shirt_size],
         category: data.category,
         emergency_contact_name: data.emergency_contact_name.trim(),
         emergency_contact_phone: data.emergency_contact_phone,
