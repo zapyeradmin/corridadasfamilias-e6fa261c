@@ -17,38 +17,44 @@ export function SiteHeader() {
 
   useEffect(() => {
     let active = true;
-    async function check() {
-      const { data } = await supabase.auth.getUser();
-      if (!active) return;
-      if (!data.user) {
-        setIsAdmin(false);
-        setIsAuthenticated(false);
-        return;
-      }
-      setIsAuthenticated(true);
+    async function loadRole(userId: string) {
       const { data: role } = await supabase
         .from("user_roles")
         .select("role")
-        .eq("user_id", data.user.id)
+        .eq("user_id", userId)
         .eq("role", "admin")
         .maybeSingle();
       if (active) setIsAdmin(!!role);
     }
-    check();
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => check());
+    supabase.auth.getSession().then(({ data }) => {
+      if (!active) return;
+      const user = data.session?.user;
+      setIsAuthenticated(!!user);
+      if (user) loadRole(user.id);
+      else setIsAdmin(false);
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
+      const user = session?.user;
+      setIsAuthenticated(!!user);
+      if (user) loadRole(user.id);
+      else setIsAdmin(false);
+    });
     return () => {
       active = false;
       subscription.unsubscribe();
     };
   }, []);
 
-  async function handleLogout() {
-    await supabase.auth.signOut();
-    qc.clear();
-    await router.invalidate();
+  function handleLogout() {
     setOpen(false);
-    toast.success("Você saiu da conta.");
+    setIsAuthenticated(false);
+    setIsAdmin(false);
     navigate({ to: "/", replace: true });
+    toast.success("Você saiu da conta.");
+    supabase.auth.signOut().then(() => {
+      qc.clear();
+      router.invalidate();
+    });
   }
 
   return (
