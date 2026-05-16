@@ -69,7 +69,7 @@ function HomePage() {
               transition={{ delay: 0.1 }}
               className="heading-display mt-6 text-5xl text-white sm:text-7xl md:text-[5.5rem]"
             >
-              II Corrida <br />
+              II Corrida{" "}
               <span className="bg-gradient-orange bg-clip-text text-transparent">
                 das Famílias
               </span>
