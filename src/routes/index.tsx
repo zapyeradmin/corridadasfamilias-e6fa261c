@@ -370,7 +370,7 @@ function HomePage() {
       {/* CRONOGRAMA OFICIAL */}
       <section className="bg-[color:var(--color-brand-soft)]">
         <div className="mx-auto max-w-[1200px] px-5 py-20 md:px-8 md:py-24">
-          <div className="text-center">
+          <div>
             <p className="text-xs font-bold uppercase tracking-[0.35em] text-[color:var(--color-brand-orange)]">
               Cronograma Oficial
             </p>
