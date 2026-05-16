@@ -462,8 +462,8 @@ function HomePage() {
 
       {/* CTA FINAL */}
       <section className="bg-gradient-orange text-white">
-        <div className="mx-auto flex max-w-[1200px] flex-col items-center gap-8 px-5 py-16 text-center md:px-8 md:py-20">
-          <div>
+        <div className="mx-auto flex max-w-[1200px] flex-col items-center gap-8 px-5 py-16 md:px-8 md:py-20">
+          <div className="w-full text-left">
             <p className="text-xs font-bold uppercase tracking-[0.35em] text-white/80">
               Inscrições abertas
             </p>
