@@ -148,22 +148,36 @@ function HomePage() {
           </div>
 
           <motion.div
-            initial={{ opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2 }}
-            className="rounded-3xl border border-white/15 bg-white/5 p-6 backdrop-blur-xl shadow-premium"
+            initial={{ opacity: 0, y: 24, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ delay: 0.25, duration: 0.6 }}
+            className="relative w-full max-w-md justify-self-center md:justify-self-end"
           >
-            <p className="text-xs font-bold uppercase tracking-[0.3em] text-[color:var(--color-brand-orange)]">
-              Contagem regressiva
-            </p>
-            <h2 className="heading-section mt-2 text-2xl text-white">Faltam para a largada</h2>
-            <Countdown className="mt-6" />
-            <Link
-              to="/inscricao"
-              className="mt-8 block rounded-full bg-white px-5 py-3 text-center text-sm font-extrabold uppercase tracking-wide text-[color:var(--color-brand-purple-text)]"
-            >
-              Inscreva-se agora
-            </Link>
+            <div
+              aria-hidden
+              className="absolute -inset-1 rounded-[2rem] bg-gradient-to-br from-[color:var(--color-brand-orange)]/40 via-white/5 to-[color:var(--color-brand-purple)]/40 blur-xl"
+            />
+            <div className="relative overflow-hidden rounded-[1.75rem] border border-white/15 bg-white/[0.07] p-7 backdrop-blur-2xl shadow-premium">
+              <div className="flex items-center justify-between">
+                <p className="text-[10px] font-bold uppercase tracking-[0.35em] text-[color:var(--color-brand-orange)]">
+                  Contagem regressiva
+                </p>
+                <span className="grid h-9 w-9 place-items-center rounded-full bg-white/10 text-[color:var(--color-brand-orange)]">
+                  <Calendar className="h-4 w-4" />
+                </span>
+              </div>
+              <h2 className="heading-section mt-3 text-2xl text-white">
+                Faltam para a largada
+              </h2>
+              <Countdown className="mt-6" />
+              <Link
+                to="/inscricao"
+                className="group mt-8 flex items-center justify-center gap-2 rounded-full bg-white px-5 py-3.5 text-sm font-extrabold uppercase tracking-wide text-[color:var(--color-brand-purple-text)] transition hover:bg-white/95"
+              >
+                Inscreva-se agora
+                <ChevronRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+              </Link>
+            </div>
           </motion.div>
         </div>
       </section>
