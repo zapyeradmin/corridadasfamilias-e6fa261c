@@ -51,7 +51,7 @@ function HomePage() {
     <>
       {/* HERO */}
       <section className="relative overflow-hidden bg-gradient-premium text-white">
-        <div className="pointer-events-none absolute inset-0 opacity-40 [background:radial-gradient(circle_at_70%_20%,rgba(255,83,0,0.5),transparent_45%)]" />
+        
         <div className="relative mx-auto grid max-w-[1360px] gap-12 px-5 py-20 md:grid-cols-[1.2fr_1fr] md:px-8 md:py-32">
           <div>
             <motion.p
