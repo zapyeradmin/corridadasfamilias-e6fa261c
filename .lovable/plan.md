@@ -1,37 +1,18 @@
-## Reformular seção "Inscrições abertas"
+## Corrigir sobreposição no menu mobile/tablet
 
-Atualizar o bloco final em `src/routes/index.tsx` (seção com `bg-gradient-orange`) para incluir um player de vídeo do YouTube com capa personalizada e reposicionar o botão de inscrição.
+### Problema
+No `SiteHeader` (`src/components/site/header.tsx`), os 3 elementos decorativos absolutos (gradiente principal + dois "glow" radiais) estão posicionados em `absolute inset-0` no `<header>`. Como o painel do menu mobile é renderizado dentro do mesmo `<header>` (que cresce em altura quando aberto), esses overlays cobrem também a área do menu, deixando os links com cor lavada e baixa legibilidade.
 
-### Mudanças
+### Solução
+Mover os 3 `<div aria-hidden>` decorativos para dentro do container da barra superior (`<div className="relative mx-auto flex ...">`), de modo que fiquem confinados à altura da topbar e não se estendam pelo painel do menu quando aberto.
 
-1. **Salvar a capa do vídeo**
-   - Copiar `user-uploads://capa-video-lancamento.jpg` para `src/assets/capa-video-lancamento.jpg`.
-   - Importar no topo de `src/routes/index.tsx`.
+Manter o painel do menu mobile com `bg-[color:var(--color-brand-dark)]` sólido (já é) e adicionar `relative z-10` para garantir que não receba nenhuma sobreposição residual.
 
-2. **Reestruturar a seção CTA FINAL**
-   - Mudar de layout horizontal (título à esquerda + botão à direita) para layout vertical centralizado.
-   - Ordem dos elementos:
-     1. Eyebrow "Inscrições abertas"
-     2. Título "Garanta sua vaga e celebre com a sua família" (mantido)
-     3. Player de vídeo do YouTube (novo)
-     4. Botão "Quero me inscrever" (reposicionado abaixo do player)
-
-3. **Player de vídeo com capa "click-to-play"**
-   - Componente client-side: exibe a imagem `capa-video-lancamento.jpg` com botão de play sobreposto.
-   - Ao clicar, substitui por `<iframe>` do YouTube com `autoplay=1`.
-   - URL do embed: `https://www.youtube.com/embed/TE_hIXiN544?autoplay=1&rel=0`.
-   - Container responsivo com `aspect-video` (16:9), bordas arredondadas, sombra premium.
-   - Largura máxima ~900px, centralizado.
-   - Vantagem: economiza requisições do YouTube até o usuário clicar, e mostra a capa personalizada (a thumbnail nativa do YouTube não seria usada).
-
-4. **Estilo**
-   - Manter `bg-gradient-orange` e tipografia atual.
-   - Botão de play central: círculo branco translúcido com ícone `Play` do lucide-react, animação de hover (scale).
-   - Botão "Quero me inscrever" mantém o estilo branco com texto roxo, agora centralizado abaixo do vídeo com `mt-8`.
+### Arquivos
+- `src/components/site/header.tsx`: reorganizar estrutura JSX dos overlays decorativos.
 
 ### Detalhes técnicos
-
-- Adicionar `useState` para controlar `isPlaying`.
-- Adicionar `Play` aos imports de `lucide-react`.
-- O player só entra no DOM como iframe após o clique (lazy mount), evitando carregamento desnecessário do iframe do YouTube no carregamento inicial da página.
-- Imagem importada via `@/assets/capa-video-lancamento.jpg` para bundling otimizado.
+1. Remover os 3 `<div aria-hidden>` decorativos que ficam soltos como filhos diretos do `<header>`.
+2. Reinseri-los dentro do `<div className="relative mx-auto flex ...">` (a topbar), antes do `<Link>` do logo, mantendo `pointer-events-none absolute inset-0` (agora relativo à topbar, não ao header inteiro).
+3. Adicionar `relative z-10` ao painel do menu mobile para reforçar a ordem de empilhamento.
+4. Não alterar comportamento, animação ou conteúdo do menu.
