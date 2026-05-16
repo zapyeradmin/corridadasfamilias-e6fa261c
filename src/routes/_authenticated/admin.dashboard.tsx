@@ -19,7 +19,7 @@ const STATUS_LABEL: Record<string, string> = {
 
 function Page() {
   const fetchKpis = useServerFn(getDashboardKPIs);
-  const { data, isLoading } = useQuery({ queryKey: ["admin", "kpis"], queryFn: () => fetchKpis() });
+  const { data, error, isError, isLoading } = useQuery({ queryKey: ["admin", "kpis"], queryFn: () => fetchKpis() });
 
   return (
     <div className="space-y-8">
@@ -28,8 +28,14 @@ function Page() {
         <p className="mt-1 text-sm text-muted-foreground">Visão geral das inscrições e pagamentos.</p>
       </header>
 
-      {isLoading || !data ? (
+      {isLoading ? (
         <p className="text-sm text-muted-foreground">Carregando…</p>
+      ) : isError ? (
+        <p className="rounded-xl border border-destructive/20 bg-destructive/10 p-4 text-sm text-destructive">
+          {error instanceof Error ? error.message : "Não foi possível carregar o dashboard."}
+        </p>
+      ) : !data ? (
+        <p className="text-sm text-muted-foreground">Nenhum dado encontrado.</p>
       ) : (
         <>
           <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
