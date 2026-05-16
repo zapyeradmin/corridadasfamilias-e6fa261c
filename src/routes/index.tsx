@@ -5,6 +5,7 @@ import { Countdown } from "@/components/site/countdown";
 import { ContentSection } from "@/components/site/page-shell";
 import { SITE } from "@/lib/site-config";
 import heroRunner from "@/assets/hero-runner.jpg";
+import informacoesCorrida from "@/assets/informacoes-corrida.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
