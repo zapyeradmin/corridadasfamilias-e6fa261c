@@ -51,13 +51,26 @@ function HomePage() {
   return (
     <>
       {/* HERO */}
-      <section className="relative overflow-hidden bg-gradient-premium text-white">
+      <section className="relative isolate overflow-hidden bg-gradient-premium text-white">
         <img
           src={heroRunner}
-          alt="Corredor ao entardecer"
-          className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-40"
+          alt="Corredores na largada da Corrida das Famílias"
+          className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center opacity-55"
         />
-        <div className="relative mx-auto grid max-w-[1360px] gap-12 px-5 py-20 md:grid-cols-[1.2fr_1fr] md:px-8 md:py-32">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-[linear-gradient(115deg,rgba(22,9,31,0.92)_0%,rgba(67,17,129,0.55)_45%,rgba(22,9,31,0.15)_75%,rgba(255,83,0,0.25)_100%)]"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#16091f] to-transparent"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -top-40 -right-32 h-[520px] w-[520px] rounded-full bg-[radial-gradient(circle_at_center,rgba(255,83,0,0.35),transparent_65%)] blur-2xl"
+        />
+
+        <div className="relative mx-auto grid max-w-[1360px] items-center gap-14 px-5 py-24 md:grid-cols-[1.25fr_1fr] md:gap-16 md:px-8 md:py-36">
           <div>
             <motion.p
               initial={{ opacity: 0, y: 12 }}
