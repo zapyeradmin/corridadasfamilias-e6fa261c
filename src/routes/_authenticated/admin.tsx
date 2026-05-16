@@ -5,17 +5,27 @@ import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   beforeLoad: async () => {
-    const { data: userData } = await supabase.auth.getUser();
+    const { data: userData, error: userError } = await supabase.auth.getUser();
     if (!userData.user) {
       throw redirect({ to: "/login", search: { redirect: "/admin/dashboard" } as never });
     }
-    const { data: roles } = await supabase
+
+    if (userError) {
+      throw new Error("Não foi possível confirmar sua sessão. Faça login novamente.");
+    }
+
+    const { data: role, error: roleError } = await supabase
       .from("user_roles")
       .select("role")
       .eq("user_id", userData.user.id)
       .eq("role", "admin")
       .maybeSingle();
-    if (!roles) {
+
+    if (roleError) {
+      throw new Error("Não foi possível verificar seu acesso administrativo. Tente novamente.");
+    }
+
+    if (!role) {
       throw redirect({ to: "/" });
     }
   },
