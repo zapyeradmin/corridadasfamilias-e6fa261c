@@ -1,5 +1,6 @@
 import { Link, Outlet, createFileRoute, redirect, useNavigate, useRouter, useRouterState } from "@tanstack/react-router";
 import { LogOut } from "lucide-react";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
