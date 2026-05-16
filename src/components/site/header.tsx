@@ -139,6 +139,14 @@ export function SiteHeader() {
           >
             Inscreva-se
           </Link>
+          {isAuthenticated && (
+            <button
+              onClick={handleLogout}
+              className="mt-2 flex items-center justify-center gap-2 rounded-xl border border-white/20 px-4 py-3 text-sm font-bold uppercase tracking-wide text-white/85 hover:bg-white/10"
+            >
+              <LogOut className="h-4 w-4" /> Sair
+            </button>
+          )}
         </nav>
       </div>
     </header>
