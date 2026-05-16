@@ -256,8 +256,8 @@ function HomePage() {
             />
             <div className="relative aspect-square overflow-hidden rounded-3xl border border-border shadow-card">
               <img
-                src={heroRunner}
-                alt="Famílias participando da Corrida das Famílias"
+                src={informacoesCorrida}
+                alt="Famílias participando da II Corrida das Famílias em Serra Talhada"
                 className="h-full w-full object-cover"
               />
             </div>
