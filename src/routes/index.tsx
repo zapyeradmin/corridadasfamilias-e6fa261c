@@ -52,7 +52,13 @@ function HomePage() {
     <>
       {/* HERO */}
       <section className="relative overflow-hidden bg-gradient-premium text-white">
-        
+        <img
+          src={heroRunner}
+          alt="Corredor ao entardecer"
+          className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-40"
+        />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#16091f]/85 via-[#431181]/70 to-[#ff5300]/50 mix-blend-multiply" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#16091f] via-transparent to-transparent" />
         <div className="relative mx-auto grid max-w-[1360px] gap-12 px-5 py-20 md:grid-cols-[1.2fr_1fr] md:px-8 md:py-32">
           <div>
             <motion.p
