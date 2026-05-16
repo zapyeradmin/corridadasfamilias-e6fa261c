@@ -23,6 +23,10 @@ export const Route = createFileRoute("/")({
         content: `Corrida de 5km em ${SITE.city}. ${SITE.eventDateLabel}.`,
       },
     ],
+    links: [
+      // Preload da imagem LCP do hero para acelerar o First Contentful Paint
+      { rel: "preload", as: "image", href: heroRunner, fetchpriority: "high" },
+    ],
   }),
   component: HomePage,
 });
