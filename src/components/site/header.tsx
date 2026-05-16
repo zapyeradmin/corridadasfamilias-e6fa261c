@@ -163,6 +163,10 @@ export function SiteHeader() {
           )}
         </nav>
       </div>
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent"
+      />
     </header>
   );
 }
