@@ -23,6 +23,10 @@ export const Route = createFileRoute("/")({
         content: `Corrida de 5km em ${SITE.city}. ${SITE.eventDateLabel}.`,
       },
     ],
+    links: [
+      // Preload da imagem LCP do hero para acelerar o First Contentful Paint
+      { rel: "preload", as: "image", href: heroRunner, fetchpriority: "high" },
+    ],
   }),
   component: HomePage,
 });
@@ -94,6 +98,8 @@ function HomePage() {
         <img
           src={heroRunner}
           alt="Corredores na largada da Corrida das Famílias"
+          fetchPriority="high"
+          decoding="async"
           className="pointer-events-none absolute inset-0 h-full w-full object-cover object-[50%_30%] opacity-45 sm:object-center sm:opacity-55"
         />
         <div
@@ -296,6 +302,8 @@ function HomePage() {
               <img
                 src={informacoesCorrida}
                 alt="Famílias participando da II Corrida das Famílias em Serra Talhada"
+                loading="lazy"
+                decoding="async"
                 className="h-full w-full object-cover"
               />
             </div>

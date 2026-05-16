@@ -24,6 +24,7 @@ function Page() {
   const { data: items, isLoading } = useQuery({
     queryKey: ["gallery"],
     queryFn: () => fetchGallery(),
+    staleTime: 5 * 60 * 1000,
   });
 
   return (
