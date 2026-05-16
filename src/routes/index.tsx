@@ -302,6 +302,8 @@ function HomePage() {
               <img
                 src={informacoesCorrida}
                 alt="Famílias participando da II Corrida das Famílias em Serra Talhada"
+                loading="lazy"
+                decoding="async"
                 className="h-full w-full object-cover"
               />
             </div>
