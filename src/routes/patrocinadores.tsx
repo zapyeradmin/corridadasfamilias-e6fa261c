@@ -33,6 +33,7 @@ function Page() {
   const { data: sponsors, isLoading } = useQuery({
     queryKey: ["sponsors"],
     queryFn: () => fetchSponsors(),
+    staleTime: 5 * 60 * 1000,
   });
 
   const grouped = (sponsors ?? []).reduce<Record<string, typeof sponsors>>((acc, s) => {
