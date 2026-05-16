@@ -129,9 +129,13 @@ function AuthSync() {
   useEffect(() => {
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(() => {
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_OUT" || !session) {
+        qc.clear();
+      } else {
+        qc.invalidateQueries();
+      }
       router.invalidate();
-      qc.invalidateQueries();
     });
     return () => subscription.unsubscribe();
   }, [router, qc]);
