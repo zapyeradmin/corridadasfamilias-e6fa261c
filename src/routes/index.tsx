@@ -70,7 +70,7 @@ function HomePage() {
               className="heading-display mt-6 text-5xl text-white sm:text-7xl md:text-[5.5rem]"
             >
               II Corrida{" "}
-              <span className="bg-gradient-purple bg-clip-text text-transparent">
+              <span className="bg-gradient-purple bg-clip-text text-orange-600 bg-transparent">
                 das Famílias
               </span>
             </motion.h1>
