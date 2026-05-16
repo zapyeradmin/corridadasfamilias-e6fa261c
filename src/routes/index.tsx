@@ -87,15 +87,16 @@ function HomePage() {
               transition={{ delay: 0.1 }}
               className="heading-display mt-6 text-white"
             >
-              <span className="block text-base font-semibold uppercase tracking-[0.5em] text-white/70">
-                II Edição
+              <span className="block text-xs font-bold uppercase tracking-[0.55em] text-white/65 sm:text-sm">
+                II Edição · 5KM
               </span>
-              <span className="mt-3 block text-5xl font-black leading-[0.95] tracking-tight sm:text-7xl md:text-[5.75rem]">
+              <span className="mt-4 block text-6xl font-black leading-[0.92] tracking-tight sm:text-7xl md:text-[6.25rem]">
                 Corrida
               </span>
-              <span className="mt-1 block text-5xl font-semibold italic leading-[0.95] tracking-tight text-white/90 sm:text-7xl md:text-[5.75rem]">
+              <span className="mt-2 block text-5xl font-semibold italic leading-[0.95] tracking-tight text-white/95 sm:text-6xl md:text-[5.25rem]">
                 das Famílias
               </span>
+              <span aria-hidden className="mt-6 block h-px w-24 bg-gradient-to-r from-[color:var(--color-brand-orange)] to-transparent" />
             </motion.h1>
 
             <motion.p
