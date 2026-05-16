@@ -58,14 +58,18 @@ export function SiteHeader() {
   }
 
   return (
-    <header className="sticky top-0 z-40 isolate bg-[color:var(--color-brand-dark)]/40 backdrop-blur-xl backdrop-saturate-150 supports-[backdrop-filter]:bg-[color:var(--color-brand-dark)]/35">
+    <header className="sticky top-0 z-40 isolate bg-[#2a0f4a]/70 backdrop-blur-xl backdrop-saturate-150 supports-[backdrop-filter]:bg-[#2a0f4a]/55">
       <div
         aria-hidden
-        className="pointer-events-none absolute -top-10 right-0 h-32 w-3/5 bg-[radial-gradient(ellipse_at_top_right,rgba(255,83,0,0.28),transparent_70%)] blur-2xl"
+        className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(22,9,31,0.85)_0%,rgba(67,17,129,0.55)_45%,rgba(67,17,129,0.6)_60%,rgba(120,30,80,0.55)_100%)]"
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute -top-10 left-0 h-32 w-2/5 bg-[radial-gradient(ellipse_at_top_left,rgba(123,58,237,0.28),transparent_70%)] blur-2xl"
+        className="pointer-events-none absolute -top-12 right-0 h-32 w-3/5 bg-[radial-gradient(ellipse_at_top_right,rgba(255,83,0,0.22),transparent_70%)] blur-2xl"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -top-12 left-0 h-32 w-2/5 bg-[radial-gradient(ellipse_at_top_left,rgba(123,58,237,0.28),transparent_70%)] blur-2xl"
       />
       <div className="relative mx-auto flex max-w-[1360px] items-center justify-between px-5 py-4 md:px-8">
         <Link to="/" className="flex items-center gap-3">
