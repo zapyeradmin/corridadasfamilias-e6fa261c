@@ -80,7 +80,7 @@ function HomePage() {
               <span className="mt-3 block text-5xl font-black leading-[0.95] tracking-tight sm:text-7xl md:text-[5.75rem]">
                 Corrida
               </span>
-              <span className="mt-1 block text-5xl font-extralight italic leading-[0.95] tracking-tight text-white/90 sm:text-7xl md:text-[5.75rem]">
+              <span className="mt-1 block text-5xl font-semibold italic leading-[0.95] tracking-tight text-white/90 sm:text-7xl md:text-[5.75rem]">
                 das Famílias
               </span>
             </motion.h1>
