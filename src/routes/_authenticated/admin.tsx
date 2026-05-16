@@ -49,11 +49,10 @@ function AdminLayout() {
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
-  async function logout() {
-    await supabase.auth.signOut();
-    await router.invalidate();
-    toast.success("Você saiu da conta.");
+  function logout() {
     navigate({ to: "/", replace: true });
+    toast.success("Você saiu da conta.");
+    supabase.auth.signOut().then(() => router.invalidate());
   }
 
   return (

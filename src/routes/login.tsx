@@ -35,29 +35,21 @@ function Page() {
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) {
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error || !data.session) {
       setLoading(false);
-      const msg = error.message.includes("Invalid login")
+      const msg = error?.message.includes("Invalid login")
         ? "E-mail ou senha incorretos."
-        : error.message.includes("Email not confirmed")
+        : error?.message.includes("Email not confirmed")
           ? "E-mail ainda não confirmado."
           : "Não foi possível entrar. Tente novamente.";
       toast.error(msg);
       return;
     }
 
-    const { data: userData, error: userError } = await supabase.auth.getUser();
-    if (userError || !userData.user) {
-      setLoading(false);
-      toast.error("Login realizado, mas não foi possível confirmar a sessão. Tente novamente.");
-      return;
-    }
-
-    await router.invalidate();
-    setLoading(false);
     toast.success("Bem-vindo!");
     navigate({ to: (search.redirect || "/admin/dashboard") as never, replace: true });
+    router.invalidate();
   }
 
   async function onForgot() {
