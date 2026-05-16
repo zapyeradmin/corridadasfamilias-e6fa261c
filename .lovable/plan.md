@@ -1,36 +1,58 @@
-## Nova seção: Informações da Corrida
+## Nova seção: Cronograma Oficial (timeline com scroll)
 
-Adicionar uma nova seção em `src/routes/index.tsx`, logo após a seção "Pilares do evento" (após o bloco `<ContentSection>` dos pilares) e antes da seção "DETALHES" existente.
+Substituir a seção de background cinza atual (cards "Data / Local / Distância") em `src/routes/index.tsx` pela nova seção **Cronograma Oficial**, posicionada logo após "Informações da Corrida" e antes do CTA final laranja.
 
-### Estrutura
+### Estrutura visual
 
-Layout em duas colunas no desktop (`lg:grid-cols-2`), empilhado no mobile:
+Bloco com fundo `bg-[color:var(--color-brand-soft)]` (mantém o cinza suave) e padding generoso.
 
-**Coluna esquerda:** imagem quadrada (1:1) com cantos arredondados, sombra e leve gradiente decorativo no fundo (mesma linguagem visual dos cards atuais).
+Cabeçalho centralizado:
+- Eyebrow: `CRONOGRAMA OFICIAL` (laranja, mesmo estilo dos outros eyebrows)
+- Título H2: `Veja nosso cronograma completo` (mesmo `heading-section`, cor `--color-brand-purple-title`)
 
-**Coluna direita:** todo o conteúdo textual e blocos informativos.
+Timeline vertical em duas colunas no desktop (zigue-zague) e coluna única no mobile:
+- Linha vertical central (desktop) / à esquerda (mobile) com gradiente laranja → roxo
+- 3 etapas, cada uma com:
+  - Marcador circular numerado (01, 02, 03) sobre a linha, com `bg-gradient-orange` e `shadow-orange`
+  - Card branco (`rounded-3xl border border-border bg-white p-7 shadow-soft`) contendo:
+    - Ícone temático no topo (etapa 1: `ClipboardList`, etapa 2: `Package`, etapa 3: `Flag`)
+    - Título uppercase extrabold (cor `--color-brand-purple-title`)
+    - Texto descritivo justificado (cor `--color-brand-purple-text`)
+  - Etapa 3 ("No dia da corrida"): a lista numerada de horários é renderizada como uma `<ul>` estilizada — cada item com horário em destaque (chip/pill laranja claro) + descrição
 
-### Conteúdo
+### Efeito de scroll
 
-Cabeçalho da seção (acima do grid, ocupando largura total):
-- Eyebrow: "INFORMAÇÕES DA CORRIDA" (mesmo estilo do eyebrow "Pilares do evento")
-- Título H2: "Fique por dentro da corrida" (mesmo estilo `heading-section`)
-- Parágrafo introdutório com o texto fornecido sobre a II Corrida e o lema
+Usar `framer-motion` com `useScroll` + `useTransform` para:
+- Animar a altura da linha vertical conforme o scroll progride dentro da seção (efeito de "preenchimento" da timeline)
+- Cada item entra com `whileInView` (fade + slide horizontal alternado: ímpares da esquerda, pares da direita no desktop; todos da esquerda no mobile)
+- Marcadores numerados fazem `scale` 0 → 1 ao entrar na viewport
 
-Coluna direita (ao lado da imagem):
-- Semi-título (H3): "Venha fazer parte dessa experiência única de alegria, fé e saúde com toda a família."
-- Parágrafo: "Reúna a sua família, amigos e toda sua equipe de corrida, coloque o seu tênis e venha celebrar com a gente. Fique por dentro de todas as informações:"
-- 4 blocos de informação, cada um com ícone à esquerda + título + linhas de detalhe:
-  1. **Data e Horários** (ícone `Calendar`): Data, Concentração 05:00, Largada 06:00 (sem atrasos)
-  2. **Localização Estratégica** (ícone `MapPin`): Igreja Matriz do Rosário, Serra Talhada/PE
-  3. **Percurso Oficial** (ícone `Route` ou `Activity`): 5km
-  4. **Suporte ao Atleta** (ícone `HeartPulse` ou `ShieldPlus`): pontos de hidratação, apoio de saúde, suporte (banheiros, massagens, frutas, repositores)
+Implementação:
+```tsx
+const ref = useRef<HTMLDivElement>(null);
+const { scrollYProgress } = useScroll({ target: ref, offset: ["start center", "end center"] });
+const lineHeight = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
+```
+
+### Conteúdo (texto exato)
+
+1. **Abertura das Inscrições** — "Garanta sua inscrição na corrida mais vibrante da cidade! Inscrições online com vagas limitadas. A partir das 17h do dia 17 de maio de 2026 até às 23h59 do dia 12 de julho de 2026."
+
+2. **Entrega dos Kits** — "Retire seu kit atleta (Camiseta Oficial, Número) das 19:30 às 21:30 nos dias 4, 5 e 6 de agosto de 2026. No Centro Pastoral da Igreja de N. Sra. da Conceição. Não esqueça de levar sua doação de 1Kg de Alimento não perecível, e para os inscritos que forem retirar seu Kit do Atleta no dia 09 de agosto, deverá receber até o horário limite das 5:30, no local da largada."
+
+3. **No dia da corrida** — intro: "No dia 09 de agosto de 2026, se liguem:" + lista:
+   - 05:00 — Concentração e Abertura da Arena das Famílias
+   - 05:30 — Limite da entrega dos Kits e início do Aquecimento Coletivo
+   - 05:50 — Momento de Oração e devoção antes da largada
+   - 06:00 — Largada Oficial da Corrida
+   - 08:30 — Início da Cerimônia de Premiação
+   - 10:00 — Encerramento do Evento
 
 ### Detalhes técnicos
 
-- Reutilizar `ContentSection` para padding/largura consistentes
-- Tokens de cor existentes: `--color-brand-orange`, `--color-brand-purple-title`, `--color-brand-purple-text`, `--color-brand-soft`
-- Imports adicionais de `lucide-react`: `Route` (ou reusar `Activity`), `HeartPulse`
-- Imagem: usar `heroRunner` por enquanto como placeholder (o usuário pode trocar depois) com `aspect-square` + `object-cover`
-- Animações leves com `framer-motion` (`whileInView`) seguindo o padrão dos pilares
-- Sem alterações em outras seções
+- Arquivo único alterado: `src/routes/index.tsx`
+- Remover a seção atual de cards (Data/Local/Distância) — será substituída pela timeline
+- Imports adicionais de `lucide-react`: `ClipboardList`, `Package`, `Flag`
+- Imports adicionais de `framer-motion`: `useScroll`, `useTransform`, `useRef` (de React)
+- Reutilizar tokens de cor existentes; nenhuma alteração em `styles.css`
+- Sem mudanças em outras rotas, componentes ou backend
