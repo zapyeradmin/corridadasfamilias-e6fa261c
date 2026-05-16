@@ -79,6 +79,7 @@ const TIMELINE = [
 ] as const;
 
 function HomePage() {
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const timelineRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: timelineRef,
