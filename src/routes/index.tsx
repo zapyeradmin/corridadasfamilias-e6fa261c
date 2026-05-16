@@ -98,6 +98,8 @@ function HomePage() {
         <img
           src={heroRunner}
           alt="Corredores na largada da Corrida das Famílias"
+          fetchPriority="high"
+          decoding="async"
           className="pointer-events-none absolute inset-0 h-full w-full object-cover object-[50%_30%] opacity-45 sm:object-center sm:opacity-55"
         />
         <div
