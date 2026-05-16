@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { Heart, Activity, Users, HandHeart, MapPin, Calendar, Trophy, ChevronRight } from "lucide-react";
+import { Heart, Activity, Users, HandHeart, MapPin, Calendar, Trophy, ChevronRight, Route as RouteIcon, HeartPulse } from "lucide-react";
 import { Countdown } from "@/components/site/countdown";
 import { ContentSection } from "@/components/site/page-shell";
 import { SITE } from "@/lib/site-config";
