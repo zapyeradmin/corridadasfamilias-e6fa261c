@@ -1,6 +1,8 @@
-import { Link } from "@tanstack/react-router";
-import { Menu, Shield, X } from "lucide-react";
+import { Link, useNavigate, useRouter } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
+import { LogOut, Menu, Shield, X } from "lucide-react";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { NAV_LINKS, SITE } from "@/lib/site-config";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
@@ -8,6 +10,10 @@ import { cn } from "@/lib/utils";
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const router = useRouter();
+  const navigate = useNavigate();
+  const qc = useQueryClient();
 
   useEffect(() => {
     let active = true;
@@ -16,8 +22,10 @@ export function SiteHeader() {
       if (!active) return;
       if (!data.user) {
         setIsAdmin(false);
+        setIsAuthenticated(false);
         return;
       }
+      setIsAuthenticated(true);
       const { data: role } = await supabase
         .from("user_roles")
         .select("role")
@@ -33,6 +41,15 @@ export function SiteHeader() {
       subscription.unsubscribe();
     };
   }, []);
+
+  async function handleLogout() {
+    await supabase.auth.signOut();
+    qc.clear();
+    await router.invalidate();
+    setOpen(false);
+    toast.success("Você saiu da conta.");
+    navigate({ to: "/", replace: true });
+  }
 
   return (
     <header className="sticky top-0 z-40 border-b border-white/5 bg-[color:var(--color-brand-dark)]/85 backdrop-blur-xl">

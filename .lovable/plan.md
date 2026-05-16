@@ -1,30 +1,32 @@
-Diagnóstico do teste:
+# Logout acessível e redirect para home
 
-- O login como admin funcionou quando os dois campos foram enviados preenchidos.
-- A requisição do Supabase `/auth/v1/token?grant_type=password` retornou `200`.
-- A URL mudou para `/admin/dashboard`, então o usuário passou pelo guard de admin.
-- O erro `postMessage` do `lovable.js` é do script do Lovable Preview e não é o bloqueador do login.
-- O `400` que apareceu no Supabase foi uma tentativa com e-mail vazio (`missing email or phone`).
-- O problema real restante é que o dashboard entra, mas fica em `Carregando…` porque as server functions retornam: `Missing Supabase environment variable(s): SUPABASE_SERVICE_ROLE_KEY`.
+## Problema
+Hoje o botão "Sair" só existe na sidebar do `/admin`. Usuários autenticados que não são admin (ou que estão fora do painel) não têm como deslogar pela interface. Além disso, queremos garantir que ao sair o usuário sempre vá para `/`.
 
-Plano de correção:
+## Mudanças
 
-1. Corrigir o acesso aos dados administrativos
-   - Atualizar `src/lib/admin.functions.ts` para não depender do `supabaseAdmin` quando a `SUPABASE_SERVICE_ROLE_KEY` não estiver disponível no preview.
-   - Manter a validação server-side de admin usando o usuário autenticado e RLS, sem expor chave privada no frontend.
-   - Trocar consultas administrativas de leitura para o cliente Supabase autenticado recebido pelo `requireSupabaseAuth`, que já respeita as policies `has_role(auth.uid(), 'admin')`.
+### 1. `src/components/site/header.tsx`
+- Acompanhar o estado de sessão (já existe um `onAuthStateChange` para detectar admin) e expor também `isAuthenticated`.
+- Quando autenticado:
+  - Desktop: mostrar botão "Sair" ao lado do badge Admin (ícone `LogOut`).
+  - Mobile: adicionar item "Sair" no menu lateral.
+- Ação de sair:
+  1. `await supabase.auth.signOut()`
+  2. `router.invalidate()` + `queryClient.clear()` (limpar caches autenticados)
+  3. `navigate({ to: "/", replace: true })`
+  4. `toast.success("Você saiu da conta.")`
+- Fechar o menu mobile após sair.
 
-2. Preservar segurança do painel
-   - Continuar exigindo sessão autenticada via `requireSupabaseAuth`.
-   - Continuar validando a role `admin` no servidor antes das consultas.
-   - Não mover roles para `profiles` ou metadata; manter `user_roles` como tabela separada.
+### 2. `src/routes/_authenticated/admin.tsx`
+- Ajustar a função `logout` existente para:
+  - Usar `navigate({ to: "/", replace: true })` (já vai para `/`, apenas confirmar `replace`).
+  - Adicionar toast de confirmação para feedback visível.
+  - Manter `router.invalidate()` para que o guard de `_authenticated` reavalie e não mantenha telas em cache.
 
-3. Melhorar o estado de erro no dashboard
-   - Se alguma server function falhar, mostrar uma mensagem clara em vez de deixar `Carregando…` indefinidamente.
-   - Manter a navegação admin existente.
+### 3. Sem mudanças de backend
+Nenhuma alteração de RLS, migrations ou server functions. Apenas UI/estado de cliente.
 
-4. Validar novamente
-   - Refazer login admin.
-   - Confirmar `/auth/v1/token` com status `200`.
-   - Confirmar `/admin/dashboard` carregando métricas ou mensagem útil.
-   - Confirmar que as chamadas `_serverFn` não retornam mais erro de variável ausente.
+## Verificação
+- Logar com a conta admin → ver botão "Sair" no header → clicar → deve ir para `/` e o badge Admin some.
+- Tentar acessar `/admin/dashboard` após sair → redireciona para `/login` (guard `_authenticated` já cuida).
+- Repetir o fluxo no menu mobile (viewport <1024px).
