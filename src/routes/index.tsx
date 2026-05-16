@@ -51,13 +51,26 @@ function HomePage() {
   return (
     <>
       {/* HERO */}
-      <section className="relative overflow-hidden bg-gradient-premium text-white">
+      <section className="relative isolate overflow-hidden bg-gradient-premium text-white">
         <img
           src={heroRunner}
-          alt="Corredor ao entardecer"
-          className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-40"
+          alt="Corredores na largada da Corrida das Famílias"
+          className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center opacity-55"
         />
-        <div className="relative mx-auto grid max-w-[1360px] gap-12 px-5 py-20 md:grid-cols-[1.2fr_1fr] md:px-8 md:py-32">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-[linear-gradient(115deg,rgba(22,9,31,0.92)_0%,rgba(67,17,129,0.55)_45%,rgba(22,9,31,0.15)_75%,rgba(255,83,0,0.25)_100%)]"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#16091f] to-transparent"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -top-40 -right-32 h-[520px] w-[520px] rounded-full bg-[radial-gradient(circle_at_center,rgba(255,83,0,0.35),transparent_65%)] blur-2xl"
+        />
+
+        <div className="relative mx-auto grid max-w-[1360px] items-center gap-14 px-5 py-24 md:grid-cols-[1.25fr_1fr] md:gap-16 md:px-8 md:py-36">
           <div>
             <motion.p
               initial={{ opacity: 0, y: 12 }}
@@ -74,15 +87,16 @@ function HomePage() {
               transition={{ delay: 0.1 }}
               className="heading-display mt-6 text-white"
             >
-              <span className="block text-base font-semibold uppercase tracking-[0.5em] text-white/70">
-                II Edição
+              <span className="block text-xs font-bold uppercase tracking-[0.55em] text-white/65 sm:text-sm">
+                II Edição · 5KM
               </span>
-              <span className="mt-3 block text-5xl font-black leading-[0.95] tracking-tight sm:text-7xl md:text-[5.75rem]">
+              <span className="mt-4 block text-6xl font-black leading-[0.92] tracking-tight sm:text-7xl md:text-[6.25rem]">
                 Corrida
               </span>
-              <span className="mt-1 block text-5xl font-semibold italic leading-[0.95] tracking-tight text-white/90 sm:text-7xl md:text-[5.75rem]">
+              <span className="mt-2 block text-5xl font-semibold italic leading-[0.95] tracking-tight text-white/95 sm:text-6xl md:text-[5.25rem]">
                 das Famílias
               </span>
+              <span aria-hidden className="mt-6 block h-px w-24 bg-gradient-to-r from-[color:var(--color-brand-orange)] to-transparent" />
             </motion.h1>
 
             <motion.p
@@ -134,22 +148,36 @@ function HomePage() {
           </div>
 
           <motion.div
-            initial={{ opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2 }}
-            className="rounded-3xl border border-white/15 bg-white/5 p-6 backdrop-blur-xl shadow-premium"
+            initial={{ opacity: 0, y: 24, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ delay: 0.25, duration: 0.6 }}
+            className="relative w-full max-w-md justify-self-center md:justify-self-end"
           >
-            <p className="text-xs font-bold uppercase tracking-[0.3em] text-[color:var(--color-brand-orange)]">
-              Contagem regressiva
-            </p>
-            <h2 className="heading-section mt-2 text-2xl text-white">Faltam para a largada</h2>
-            <Countdown className="mt-6" />
-            <Link
-              to="/inscricao"
-              className="mt-8 block rounded-full bg-white px-5 py-3 text-center text-sm font-extrabold uppercase tracking-wide text-[color:var(--color-brand-purple-text)]"
-            >
-              Inscreva-se agora
-            </Link>
+            <div
+              aria-hidden
+              className="absolute -inset-1 rounded-[2rem] bg-gradient-to-br from-[color:var(--color-brand-orange)]/40 via-white/5 to-[color:var(--color-brand-purple)]/40 blur-xl"
+            />
+            <div className="relative overflow-hidden rounded-[1.75rem] border border-white/15 bg-white/[0.07] p-7 backdrop-blur-2xl shadow-premium">
+              <div className="flex items-center justify-between">
+                <p className="text-[10px] font-bold uppercase tracking-[0.35em] text-[color:var(--color-brand-orange)]">
+                  Contagem regressiva
+                </p>
+                <span className="grid h-9 w-9 place-items-center rounded-full bg-white/10 text-[color:var(--color-brand-orange)]">
+                  <Calendar className="h-4 w-4" />
+                </span>
+              </div>
+              <h2 className="heading-section mt-3 text-2xl text-white">
+                Faltam para a largada
+              </h2>
+              <Countdown className="mt-6" />
+              <Link
+                to="/inscricao"
+                className="group mt-8 flex items-center justify-center gap-2 rounded-full bg-white px-5 py-3.5 text-sm font-extrabold uppercase tracking-wide text-[color:var(--color-brand-purple-text)] transition hover:bg-white/95"
+              >
+                Inscreva-se agora
+                <ChevronRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+              </Link>
+            </div>
           </motion.div>
         </div>
       </section>
