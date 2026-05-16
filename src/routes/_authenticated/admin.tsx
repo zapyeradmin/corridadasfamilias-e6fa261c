@@ -1,5 +1,6 @@
 import { Link, Outlet, createFileRoute, redirect, useNavigate, useRouter, useRouterState } from "@tanstack/react-router";
 import { LogOut } from "lucide-react";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
@@ -50,8 +51,9 @@ function AdminLayout() {
 
   async function logout() {
     await supabase.auth.signOut();
-    router.invalidate();
-    navigate({ to: "/" });
+    await router.invalidate();
+    toast.success("Você saiu da conta.");
+    navigate({ to: "/", replace: true });
   }
 
   return (

@@ -1,6 +1,8 @@
-import { Link } from "@tanstack/react-router";
-import { Menu, Shield, X } from "lucide-react";
+import { Link, useNavigate, useRouter } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
+import { LogOut, Menu, Shield, X } from "lucide-react";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { NAV_LINKS, SITE } from "@/lib/site-config";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
@@ -8,6 +10,10 @@ import { cn } from "@/lib/utils";
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const router = useRouter();
+  const navigate = useNavigate();
+  const qc = useQueryClient();
 
   useEffect(() => {
     let active = true;
@@ -16,8 +22,10 @@ export function SiteHeader() {
       if (!active) return;
       if (!data.user) {
         setIsAdmin(false);
+        setIsAuthenticated(false);
         return;
       }
+      setIsAuthenticated(true);
       const { data: role } = await supabase
         .from("user_roles")
         .select("role")
@@ -33,6 +41,15 @@ export function SiteHeader() {
       subscription.unsubscribe();
     };
   }, []);
+
+  async function handleLogout() {
+    await supabase.auth.signOut();
+    qc.clear();
+    await router.invalidate();
+    setOpen(false);
+    toast.success("Você saiu da conta.");
+    navigate({ to: "/", replace: true });
+  }
 
   return (
     <header className="sticky top-0 z-40 border-b border-white/5 bg-[color:var(--color-brand-dark)]/85 backdrop-blur-xl">
@@ -77,6 +94,14 @@ export function SiteHeader() {
               <Shield className="h-3.5 w-3.5" /> Admin
             </Link>
           )}
+          {isAuthenticated && (
+            <button
+              onClick={handleLogout}
+              className="ml-1 inline-flex items-center gap-1.5 rounded-full border border-white/20 px-3 py-2 text-xs font-bold uppercase tracking-wide text-white/85 hover:bg-white/10"
+            >
+              <LogOut className="h-3.5 w-3.5" /> Sair
+            </button>
+          )}
         </nav>
 
         <button
@@ -114,6 +139,14 @@ export function SiteHeader() {
           >
             Inscreva-se
           </Link>
+          {isAuthenticated && (
+            <button
+              onClick={handleLogout}
+              className="mt-2 flex items-center justify-center gap-2 rounded-xl border border-white/20 px-4 py-3 text-sm font-bold uppercase tracking-wide text-white/85 hover:bg-white/10"
+            >
+              <LogOut className="h-4 w-4" /> Sair
+            </button>
+          )}
         </nav>
       </div>
     </header>
