@@ -1,30 +1,30 @@
-## Plano para corrigir o acesso ao admin
+Diagnóstico do teste:
 
-Pelo que já foi verificado:
-- O login no Supabase está funcionando.
-- O usuário `c82fbe1f-f164-4518-80e8-4d94fc80aa05` já possui o papel `admin` em `public.user_roles`.
-- As permissões da função `has_role` estão concedidas para `authenticated` e `anon`.
-- A árvore de rotas agora registra `/admin/dashboard` corretamente.
+- O login como admin funcionou quando os dois campos foram enviados preenchidos.
+- A requisição do Supabase `/auth/v1/token?grant_type=password` retornou `200`.
+- A URL mudou para `/admin/dashboard`, então o usuário passou pelo guard de admin.
+- O erro `postMessage` do `lovable.js` é do script do Lovable Preview e não é o bloqueador do login.
+- O `400` que apareceu no Supabase foi uma tentativa com e-mail vazio (`missing email or phone`).
+- O problema real restante é que o dashboard entra, mas fica em `Carregando…` porque as server functions retornam: `Missing Supabase environment variable(s): SUPABASE_SERVICE_ROLE_KEY`.
 
-O problema mais provável está no fluxo do frontend: após o login, a navegação acontece antes de a sessão do Supabase estar totalmente refletida no roteador/guard, ou o guard admin redireciona silenciosamente para `/` quando a consulta de papel ainda não retorna o admin.
+Plano de correção:
 
-## Alterações propostas
+1. Corrigir o acesso aos dados administrativos
+   - Atualizar `src/lib/admin.functions.ts` para não depender do `supabaseAdmin` quando a `SUPABASE_SERVICE_ROLE_KEY` não estiver disponível no preview.
+   - Manter a validação server-side de admin usando o usuário autenticado e RLS, sem expor chave privada no frontend.
+   - Trocar consultas administrativas de leitura para o cliente Supabase autenticado recebido pelo `requireSupabaseAuth`, que já respeita as policies `has_role(auth.uid(), 'admin')`.
 
-1. **Fortalecer o login**
-   - Após `signInWithPassword`, buscar explicitamente o usuário com `supabase.auth.getUser()`.
-   - Invalidar o roteador antes de navegar para `/admin/dashboard`.
-   - Usar `replace: true` para evitar voltar ao formulário com sessão antiga.
+2. Preservar segurança do painel
+   - Continuar exigindo sessão autenticada via `requireSupabaseAuth`.
+   - Continuar validando a role `admin` no servidor antes das consultas.
+   - Não mover roles para `profiles` ou metadata; manter `user_roles` como tabela separada.
 
-2. **Corrigir o guard do admin**
-   - No `beforeLoad` de `/admin`, diferenciar falha de autenticação, falha de consulta e ausência real de permissão.
-   - Se o usuário estiver logado, aguardar a sessão e consultar `user_roles` de forma confiável.
-   - Em caso de erro na consulta de papel, não redirecionar silenciosamente para a home; mostrar erro útil ou enviar para login/admin conforme apropriado.
+3. Melhorar o estado de erro no dashboard
+   - Se alguma server function falhar, mostrar uma mensagem clara em vez de deixar `Carregando…` indefinidamente.
+   - Manter a navegação admin existente.
 
-3. **Evitar dependência excessiva de consulta client-side para papel admin**
-   - Manter a validação forte nos server functions via `assertAdmin` com `supabaseAdmin`.
-   - Usar a consulta client-side apenas como guard de navegação, com tratamento de erro melhor.
-
-4. **Verificação final**
-   - Conferir que `/admin/dashboard` abre depois do login.
-   - Conferir que usuário sem papel admin continua bloqueado.
-   - Conferir logs/console se ainda houver redirecionamento inesperado.
+4. Validar novamente
+   - Refazer login admin.
+   - Confirmar `/auth/v1/token` com status `200`.
+   - Confirmar `/admin/dashboard` carregando métricas ou mensagem útil.
+   - Confirmar que as chamadas `_serverFn` não retornam mais erro de variável ausente.
