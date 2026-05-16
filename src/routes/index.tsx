@@ -28,22 +28,22 @@ const PILARES = [
   {
     icon: Heart,
     title: "Fé",
-    desc: "Largada com bênção na Matriz do Rosário e oração pela família.",
+    desc: "A base que nos une em propósito e fortalece nossa caminhada em comunidade.",
   },
   {
     icon: Users,
     title: "Esporte em Família",
-    desc: "Para atletas, amadores, crianças e idosos correrem juntos.",
+    desc: "O caminho para superar limites, integrar gerações e celebrar a vida em movimento.",
   },
   {
     icon: Activity,
     title: "Saúde",
-    desc: "Movimento, bem-estar e qualidade de vida para a comunidade.",
+    desc: "O cuidado essencial com o corpo e a mente, promovendo o bem-estar de toda a família.",
   },
   {
     icon: HandHeart,
     title: "Solidariedade",
-    desc: "Cada atleta contribui com 1kg de alimento não perecível.",
+    desc: "O olhar de amor ao próximo, transformando nossa união em apoio real a quem mais precisa.",
   },
 ];
 
@@ -211,7 +211,7 @@ function HomePage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.06 }}
-              className="rounded-3xl border border-border bg-white p-6 shadow-soft transition hover:-translate-y-1 hover:shadow-card"
+              className="flex flex-col items-center rounded-3xl border border-border bg-white p-6 text-center shadow-soft transition hover:-translate-y-1 hover:shadow-card"
             >
               <span className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-orange text-white shadow-orange">
                 <p.icon className="h-6 w-6" />

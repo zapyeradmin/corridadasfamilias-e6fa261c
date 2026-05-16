@@ -1,6 +1,15 @@
-## Mudança
-Em `src/routes/index.tsx`, na seção "Pilares do evento", substituir o parágrafo atual (uma frase curta) pelos dois parágrafos fornecidos.
+## Ajustes nos cards da seção "Pilares do evento"
 
-- Trocar o `<p>` único por dois `<p>` consecutivos para preservar a quebra entre os blocos.
-- Manter as classes existentes (`mt-4 max-w-2xl text-base text-[color:var(--color-brand-purple-text)]`) no primeiro parágrafo; aplicar `mt-4 max-w-2xl ...` também ao segundo para consistência.
-- Manter aspas tipográficas em "Juntos no Rosário, Famílias unidas na Fé".
+Em `src/routes/index.tsx`:
+
+### 1. Atualizar textos dos pilares (array `PILARES`)
+- **Fé**: "A base que nos une em propósito e fortalece nossa caminhada em comunidade."
+- **Esporte em Família**: "O caminho para superar limites, integrar gerações e celebrar a vida em movimento."
+- **Saúde**: "O cuidado essencial com o corpo e a mente, promovendo o bem-estar de toda a família."
+- **Solidariedade**: "O olhar de amor ao próximo, transformando nossa união em apoio real a quem mais precisa."
+
+### 2. Centralizar conteúdo dos cards
+No `motion.div` de cada card:
+- Adicionar `flex flex-col items-center text-center` ao container
+- O ícone (`<span>`) ficará centralizado horizontalmente pelo `items-center`
+- Título e descrição herdam `text-center` do container
