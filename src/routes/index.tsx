@@ -72,10 +72,15 @@ function HomePage() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="heading-display mt-6 text-5xl text-white sm:text-7xl md:text-[5.5rem]"
+              className="heading-display mt-6 text-white"
             >
-              II Corrida{" "}
-              <span className="bg-gradient-purple bg-clip-text text-orange-600 bg-transparent">
+              <span className="block text-base font-semibold uppercase tracking-[0.5em] text-white/70">
+                II Edição
+              </span>
+              <span className="mt-3 block text-5xl font-black leading-[0.95] tracking-tight sm:text-7xl md:text-[5.75rem]">
+                Corrida
+              </span>
+              <span className="mt-1 block text-5xl font-extralight italic leading-[0.95] tracking-tight text-white/90 sm:text-7xl md:text-[5.75rem]">
                 das Famílias
               </span>
             </motion.h1>
