@@ -1,4 +1,4 @@
-import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, redirect, useNavigate, useRouter } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -26,6 +26,7 @@ export const Route = createFileRoute("/login")({
 function Page() {
   const search = Route.useSearch();
   const navigate = useNavigate();
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -35,8 +36,8 @@ function Page() {
     e.preventDefault();
     setLoading(true);
     const { error } = await supabase.auth.signInWithPassword({ email, password });
-    setLoading(false);
     if (error) {
+      setLoading(false);
       const msg = error.message.includes("Invalid login")
         ? "E-mail ou senha incorretos."
         : error.message.includes("Email not confirmed")
@@ -45,8 +46,18 @@ function Page() {
       toast.error(msg);
       return;
     }
+
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+    if (userError || !userData.user) {
+      setLoading(false);
+      toast.error("Login realizado, mas não foi possível confirmar a sessão. Tente novamente.");
+      return;
+    }
+
+    await router.invalidate();
+    setLoading(false);
     toast.success("Bem-vindo!");
-    navigate({ to: (search.redirect || "/admin/dashboard") as never });
+    navigate({ to: (search.redirect || "/admin/dashboard") as never, replace: true });
   }
 
   async function onForgot() {
