@@ -50,8 +50,9 @@ function AdminLayout() {
 
   async function logout() {
     await supabase.auth.signOut();
-    router.invalidate();
-    navigate({ to: "/" });
+    await router.invalidate();
+    toast.success("Você saiu da conta.");
+    navigate({ to: "/", replace: true });
   }
 
   return (
