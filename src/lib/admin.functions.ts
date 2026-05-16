@@ -1,12 +1,13 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "@/integrations/supabase/types";
 
 type RegistrationStatus = "pending" | "processing" | "paid" | "canceled" | "refunded";
 
-async function assertAdmin(userId: string, claims: { email?: string }) {
-  const { data, error } = await supabaseAdmin
+async function assertAdmin(supabase: SupabaseClient<Database>, userId: string, claims: { email?: string }) {
+  const { data, error } = await supabase
     .from("user_roles")
     .select("role")
     .eq("user_id", userId)
@@ -17,7 +18,9 @@ async function assertAdmin(userId: string, claims: { email?: string }) {
   return { userId, email: claims.email ?? null };
 }
 
-async function logAction(args: {
+async function logAction(
+  supabase: SupabaseClient<Database>,
+  args: {
   actorId: string;
   actorEmail: string | null;
   action: string;
@@ -25,7 +28,7 @@ async function logAction(args: {
   entityId?: string;
   details?: Record<string, unknown>;
 }) {
-  await supabaseAdmin.from("access_logs").insert({
+  await supabase.from("access_logs").insert({
     actor_id: args.actorId,
     actor_email: args.actorEmail,
     action: args.action,
@@ -38,7 +41,7 @@ async function logAction(args: {
 export const getCurrentUserRoles = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await context.supabase
       .from("user_roles")
       .select("role")
       .eq("user_id", context.userId);
@@ -53,17 +56,17 @@ export const getCurrentUserRoles = createServerFn({ method: "GET" })
 export const getDashboardKPIs = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    await assertAdmin(context.userId, context.claims as { email?: string });
+    await assertAdmin(context.supabase, context.userId, context.claims as { email?: string });
 
     const [regsRes, paymentsRes, recentRes, lotsRes] = await Promise.all([
-      supabaseAdmin.from("registrations").select("status, amount_cents"),
-      supabaseAdmin.from("payments").select("status, amount_cents, paid_at"),
-      supabaseAdmin
+      context.supabase.from("registrations").select("status, amount_cents"),
+      context.supabase.from("payments").select("status, amount_cents, paid_at"),
+      context.supabase
         .from("registrations")
         .select("id, protocol, full_name, status, amount_cents, created_at")
         .order("created_at", { ascending: false })
         .limit(10),
-      supabaseAdmin.from("lots").select("id, name, price_cents"),
+      context.supabase.from("lots").select("id, name, price_cents"),
     ]);
 
     const regs = regsRes.data ?? [];
@@ -100,11 +103,11 @@ export const listRegistrations = createServerFn({ method: "GET" })
       .parse(input ?? {}),
   )
   .handler(async ({ context, data }) => {
-    await assertAdmin(context.userId, context.claims as { email?: string });
+    await assertAdmin(context.supabase, context.userId, context.claims as { email?: string });
     const from = (data.page - 1) * data.pageSize;
     const to = from + data.pageSize - 1;
 
-    let query = supabaseAdmin
+    let query = context.supabase
       .from("registrations")
       .select(
         "id, protocol, full_name, email, whatsapp, cpf, category, shirt_size, status, amount_cents, created_at",
@@ -130,15 +133,15 @@ export const getRegistrationDetail = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
   .handler(async ({ context, data }) => {
-    await assertAdmin(context.userId, context.claims as { email?: string });
-    const { data: reg, error } = await supabaseAdmin
+    await assertAdmin(context.supabase, context.userId, context.claims as { email?: string });
+    const { data: reg, error } = await context.supabase
       .from("registrations")
       .select("*")
       .eq("id", data.id)
       .maybeSingle();
     if (error) throw new Error(error.message);
     if (!reg) throw new Error("Inscrição não encontrada.");
-    const { data: payments } = await supabaseAdmin
+    const { data: payments } = await context.supabase
       .from("payments")
       .select("*")
       .eq("registration_id", data.id)
@@ -157,13 +160,13 @@ export const updateRegistrationStatus = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ context, data }) => {
-    const admin = await assertAdmin(context.userId, context.claims as { email?: string });
-    const { error } = await supabaseAdmin
+    const admin = await assertAdmin(context.supabase, context.userId, context.claims as { email?: string });
+    const { error } = await context.supabase
       .from("registrations")
       .update({ status: data.status })
       .eq("id", data.id);
     if (error) throw new Error(error.message);
-    await logAction({
+    await logAction(context.supabase, {
       actorId: admin.userId,
       actorEmail: admin.email,
       action: "registration.update_status",
@@ -178,20 +181,20 @@ export const simulatePaymentApproval = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => z.object({ protocol: z.string().min(4) }).parse(input))
   .handler(async ({ context, data }) => {
-    const admin = await assertAdmin(context.userId, context.claims as { email?: string });
-    const { data: reg } = await supabaseAdmin
+    const admin = await assertAdmin(context.supabase, context.userId, context.claims as { email?: string });
+    const { data: reg } = await context.supabase
       .from("registrations")
       .select("id")
       .eq("protocol", data.protocol)
       .maybeSingle();
     if (!reg) throw new Error("Protocolo não encontrado.");
     const nowIso = new Date().toISOString();
-    await supabaseAdmin.from("registrations").update({ status: "paid" }).eq("id", reg.id);
-    await supabaseAdmin
+    await context.supabase.from("registrations").update({ status: "paid" }).eq("id", reg.id);
+    await context.supabase
       .from("payments")
       .update({ status: "paid", paid_at: nowIso })
       .eq("registration_id", reg.id);
-    await logAction({
+    await logAction(context.supabase, {
       actorId: admin.userId,
       actorEmail: admin.email,
       action: "payment.simulate_approval",
@@ -214,10 +217,10 @@ export const listPayments = createServerFn({ method: "GET" })
       .parse(input ?? {}),
   )
   .handler(async ({ context, data }) => {
-    await assertAdmin(context.userId, context.claims as { email?: string });
+    await assertAdmin(context.supabase, context.userId, context.claims as { email?: string });
     const from = (data.page - 1) * data.pageSize;
     const to = from + data.pageSize - 1;
-    let query = supabaseAdmin
+    let query = context.supabase
       .from("payments")
       .select(
         "id, status, amount_cents, provider, external_reference, paid_at, created_at, registration_id",
@@ -236,12 +239,12 @@ export const listPayments = createServerFn({ method: "GET" })
 export const listEventsAdmin = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    await assertAdmin(context.userId, context.claims as { email?: string });
-    const { data: events } = await supabaseAdmin
+    await assertAdmin(context.supabase, context.userId, context.claims as { email?: string });
+    const { data: events } = await context.supabase
       .from("events")
       .select("*")
       .order("event_date", { ascending: true });
-    const { data: lots } = await supabaseAdmin
+    const { data: lots } = await context.supabase
       .from("lots")
       .select("*")
       .order("sort_order", { ascending: true });
@@ -251,8 +254,8 @@ export const listEventsAdmin = createServerFn({ method: "GET" })
 export const listSponsorsAdmin = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    await assertAdmin(context.userId, context.claims as { email?: string });
-    const { data, error } = await supabaseAdmin
+    await assertAdmin(context.supabase, context.userId, context.claims as { email?: string });
+    const { data, error } = await context.supabase
       .from("sponsors")
       .select("*")
       .order("sort_order", { ascending: true });
@@ -263,8 +266,8 @@ export const listSponsorsAdmin = createServerFn({ method: "GET" })
 export const listGalleryAdmin = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    await assertAdmin(context.userId, context.claims as { email?: string });
-    const { data, error } = await supabaseAdmin
+    await assertAdmin(context.supabase, context.userId, context.claims as { email?: string });
+    const { data, error } = await context.supabase
       .from("gallery_items")
       .select("*")
       .order("sort_order", { ascending: true });
@@ -275,8 +278,8 @@ export const listGalleryAdmin = createServerFn({ method: "GET" })
 export const listSettingsAdmin = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    await assertAdmin(context.userId, context.claims as { email?: string });
-    const { data, error } = await supabaseAdmin
+    await assertAdmin(context.supabase, context.userId, context.claims as { email?: string });
+    const { data, error } = await context.supabase
       .from("settings")
       .select("*")
       .order("key", { ascending: true });
@@ -287,8 +290,8 @@ export const listSettingsAdmin = createServerFn({ method: "GET" })
 export const listAccessLogs = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    await assertAdmin(context.userId, context.claims as { email?: string });
-    const { data, error } = await supabaseAdmin
+    await assertAdmin(context.supabase, context.userId, context.claims as { email?: string });
+    const { data, error } = await context.supabase
       .from("access_logs")
       .select("*")
       .order("created_at", { ascending: false })
