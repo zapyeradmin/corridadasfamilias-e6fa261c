@@ -192,6 +192,9 @@
   .bg-gradient-premium {
     background: var(--gradient-premium);
   }
+  .bg-gradient-purple {
+    background: linear-gradient(135deg, #16091f 0%, #431181 55%, #761fab 100%);
+  }
   .shadow-soft {
     box-shadow: var(--shadow-soft);
   }
