@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef, useState } from "react";
-import { Heart, Activity, Users, HandHeart, MapPin, Calendar, Trophy, ChevronRight, Route as RouteIcon, HeartPulse, ClipboardList, Package, Flag, Play, PersonStanding, Medal, Mountain } from "lucide-react";
+import { Heart, Activity, Users, HandHeart, MapPin, Calendar, Trophy, ChevronRight, Route as RouteIcon, HeartPulse, ClipboardList, Package, Flag, Play, PersonStanding, Medal, Mountain, Shirt, Hash, Droplets } from "lucide-react";
 import { Countdown } from "@/components/site/countdown";
 import { ContentSection } from "@/components/site/page-shell";
 import { SITE } from "@/lib/site-config";
@@ -9,6 +9,7 @@ import heroRunner from "@/assets/hero-runner.jpg";
 import informacoesCorrida from "@/assets/informacoes-corrida.jpg";
 import capaVideoLancamento from "@/assets/capa-video-lancamento.jpg";
 import percursoMapa from "@/assets/percurso-mapa.png";
+import kitExclusivo from "@/assets/kit-exclusivo.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -378,6 +379,10 @@ function HomePage() {
           </motion.div>
         </div>
       </ContentSection>
+
+      {/* KIT EXCLUSIVO DOS ATLETAS */}
+      <KitExclusivo />
+
       {/* CRONOGRAMA OFICIAL */}
       <section className="bg-[color:var(--color-brand-soft)]">
         <div className="mx-auto max-w-[1200px] px-5 py-20 md:px-8 md:py-24">
@@ -767,6 +772,109 @@ function PercursoCompleto() {
             <ul className="mt-8 flex flex-col gap-6">
               {PERCURSO_INFOS.map((info) => (
                 <PercursoInfoItem key={info.titulo} {...info} />
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+const KIT_ITENS = [
+  {
+    icon: Shirt,
+    titulo: "Camiseta Oficial",
+    texto:
+      "Camiseta exclusiva do evento para os atletas, confortável, respirável e personalizada especialmente para corrida.",
+  },
+  {
+    icon: Hash,
+    titulo: "Número de Peito",
+    texto:
+      "Número de identificação personalizado exclusiva para cada atleta. Cada atleta terá número único.",
+  },
+  {
+    icon: Droplets,
+    titulo: "Hidratação",
+    texto:
+      "Hidratação durante todo percurso, distribuimos 5 pontos de hidratação, disponibilizando água para você.",
+  },
+  {
+    icon: Medal,
+    titulo: "Medalha Finisher",
+    texto:
+      "Medalha Personalizada comemorativa exclusiva para todos que completarem o percurso.",
+  },
+];
+
+function KitItem({
+  icon: Icon,
+  titulo,
+  texto,
+}: {
+  icon: typeof Shirt;
+  titulo: string;
+  texto: string;
+}) {
+  return (
+    <li className="flex gap-4">
+      <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[color:var(--color-brand-orange)]/10 text-[color:var(--color-brand-orange)]">
+        <Icon className="h-5 w-5" />
+      </span>
+      <div>
+        <h4 className="text-sm font-extrabold uppercase tracking-[0.18em] text-[color:var(--color-brand-purple-title)]">
+          {titulo}
+        </h4>
+        <p className="mt-1 text-sm leading-relaxed text-[color:var(--color-brand-purple-text)]/80">
+          {texto}
+        </p>
+      </div>
+    </li>
+  );
+}
+
+function KitExclusivo() {
+  return (
+    <section className="bg-white">
+      <div className="mx-auto max-w-[1200px] px-5 py-20 md:px-8 md:py-28">
+        <p className="text-xs font-bold uppercase tracking-[0.35em] text-[color:var(--color-brand-orange)]">
+          Kit Exclusivo dos Atletas
+        </p>
+        <h2 className="heading-section mt-3 text-3xl text-[color:var(--color-brand-purple-title)] md:text-5xl">
+          Inscreva-se e garanta o seu kit exclusivo
+        </h2>
+        <p className="mt-4 max-w-3xl text-base text-[color:var(--color-brand-purple-text)]">
+          Confira todos os itens exclusivos que você receberá no seu kit atleta para tornar sua
+          experiência ainda mais especial.
+        </p>
+
+        <div className="mt-12 grid gap-10 md:grid-cols-2 md:items-center md:gap-12">
+          <div className="relative aspect-square overflow-hidden rounded-3xl border border-border shadow-card">
+            <img
+              src={kitExclusivo}
+              alt="Kit exclusivo do atleta da II Corrida das Famílias"
+              loading="lazy"
+              decoding="async"
+              width={1024}
+              height={1024}
+              className="h-full w-full object-cover"
+            />
+          </div>
+
+          <div>
+            <h3 className="text-2xl font-extrabold leading-tight text-[color:var(--color-brand-purple-title)] md:text-3xl">
+              Kit Exclusivo para sua Corrida
+            </h3>
+            <p className="mt-4 text-base text-[color:var(--color-brand-purple-text)]">
+              Desenvolvemos um kit especial para que você tenha tudo o que precisa para participar
+              da corrida com conforto e estilo. Cada item foi cuidadosamente selecionado pensando
+              na sua experiência.
+            </p>
+
+            <ul className="mt-8 space-y-5">
+              {KIT_ITENS.map((item) => (
+                <KitItem key={item.titulo} {...item} />
               ))}
             </ul>
           </div>
