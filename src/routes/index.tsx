@@ -850,7 +850,7 @@ function KitExclusivo() {
         </p>
 
         <div className="mt-12 grid gap-10 md:grid-cols-2 md:items-center md:gap-12">
-          <div className="relative aspect-square overflow-hidden rounded-3xl border border-border shadow-card">
+          <div className="relative aspect-square">
             <img
               src={kitExclusivo}
               alt="Kit exclusivo do atleta da II Corrida das Famílias"
@@ -858,7 +858,7 @@ function KitExclusivo() {
               decoding="async"
               width={1024}
               height={1024}
-              className="h-full w-full object-cover"
+              className="h-full w-full object-contain"
             />
           </div>
 
