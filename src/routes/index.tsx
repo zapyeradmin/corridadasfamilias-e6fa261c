@@ -744,7 +744,7 @@ function PercursoCompleto() {
         </div>
 
         <div className="mt-12 grid items-center gap-10 md:grid-cols-2 md:gap-12">
-          <div className="aspect-[4/3] w-full overflow-hidden rounded-3xl bg-[color:var(--color-brand-soft)]/40 shadow-card">
+          <div className="aspect-[4/3] w-full">
             <img
               src={percursoMapa}
               alt="Mapa do percurso oficial da II Corrida das Famílias em Serra Talhada"
