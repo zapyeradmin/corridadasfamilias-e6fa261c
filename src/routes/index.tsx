@@ -628,14 +628,17 @@ function CategoriasPremiacoes() {
       }}
     >
       <div className="mx-auto max-w-[1200px] px-5 py-20 md:px-8 md:py-28">
-        <div className="max-w-3xl text-left">
+        <div className="text-left">
           <p className="text-xs font-bold uppercase tracking-[0.35em] text-white/85">
             Categorias e premiações
           </p>
           <h2 className="heading-section mt-3 text-3xl text-white md:text-5xl">
             Categorias e premiações da corrida
           </h2>
-          <p className="mt-5 text-base leading-relaxed text-white/95 md:text-lg" style={{ textAlign: "justify" }}>
+          <p
+            className="mt-5 text-base leading-relaxed text-white/95 md:text-lg"
+            style={{ textAlign: "justify" }}
+          >
             Confira todas categorias e as premiações para os três melhores
             colocados de cada categoria. Todos os participantes recebem medalha!
           </p>
