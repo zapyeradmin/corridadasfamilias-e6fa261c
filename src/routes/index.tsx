@@ -9,6 +9,7 @@ import heroRunner from "@/assets/hero-runner.jpg";
 import informacoesCorrida from "@/assets/informacoes-corrida.jpg";
 import capaVideoLancamento from "@/assets/capa-video-lancamento.jpg";
 import percursoMapa from "@/assets/percurso-mapa.png";
+import kitExclusivo from "@/assets/kit-exclusivo.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
