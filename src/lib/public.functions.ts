@@ -1,5 +1,14 @@
 import { createServerFn } from "@tanstack/react-start";
-import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { createClient } from "@supabase/supabase-js";
+import type { Database } from "@/integrations/supabase/types";
+
+function publicClient() {
+  const url = process.env.SUPABASE_URL!;
+  const key = process.env.SUPABASE_PUBLISHABLE_KEY!;
+  return createClient<Database>(url, key, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
+}
 
 export type ActiveLot = {
   id: string;
@@ -11,7 +20,8 @@ export type ActiveLot = {
 };
 
 export const getActiveEvent = createServerFn({ method: "GET" }).handler(async () => {
-  const { data: event } = await supabaseAdmin
+  const supabase = publicClient();
+  const { data: event } = await supabase
     .from("events")
     .select("id, slug, name, edition, description, event_date, location, city, state")
     .eq("is_active", true)
@@ -22,7 +32,7 @@ export const getActiveEvent = createServerFn({ method: "GET" }).handler(async ()
   if (!event) return { event: null, currentLot: null as ActiveLot | null };
 
   const nowIso = new Date().toISOString();
-  const { data: lots } = await supabaseAdmin
+  const { data: lots } = await supabase
     .from("lots")
     .select("id, name, price_cents, starts_at, ends_at, max_slots")
     .eq("event_id", event.id)
@@ -36,7 +46,8 @@ export const getActiveEvent = createServerFn({ method: "GET" }).handler(async ()
 });
 
 export const getPublishedSponsors = createServerFn({ method: "GET" }).handler(async () => {
-  const { data } = await supabaseAdmin
+  const supabase = publicClient();
+  const { data } = await supabase
     .from("sponsors")
     .select("id, name, logo_url, website_url, tier, sort_order")
     .eq("is_published", true)
@@ -45,7 +56,8 @@ export const getPublishedSponsors = createServerFn({ method: "GET" }).handler(as
 });
 
 export const getPublishedGallery = createServerFn({ method: "GET" }).handler(async () => {
-  const { data } = await supabaseAdmin
+  const supabase = publicClient();
+  const { data } = await supabase
     .from("gallery_items")
     .select("id, image_url, title, caption, sort_order")
     .eq("is_published", true)
@@ -54,7 +66,8 @@ export const getPublishedGallery = createServerFn({ method: "GET" }).handler(asy
 });
 
 export const getPublicSettings = createServerFn({ method: "GET" }).handler(async () => {
-  const { data } = await supabaseAdmin
+  const supabase = publicClient();
+  const { data } = await supabase
     .from("settings")
     .select("key, value")
     .eq("is_public", true);
