@@ -844,7 +844,7 @@ function KitExclusivo() {
         <h2 className="heading-section mt-3 text-3xl text-[color:var(--color-brand-purple-title)] md:text-5xl">
           Inscreva-se e garanta o seu kit exclusivo
         </h2>
-        <p className="mt-4 max-w-3xl text-base text-[color:var(--color-brand-purple-text)]">
+        <p className="mt-4 text-base text-justify text-[color:var(--color-brand-purple-text)]">
           Confira todos os itens exclusivos que você receberá no seu kit atleta para tornar sua
           experiência ainda mais especial.
         </p>
