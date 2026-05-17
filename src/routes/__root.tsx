@@ -101,7 +101,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/24NXY8uInCbJ0YtSRcez5EU2T9E3/social-images/social-1778899143554-banner-1.webp" },
       { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/24NXY8uInCbJ0YtSRcez5EU2T9E3/social-images/social-1778899143554-banner-1.webp" },
     ],
-    links: [{ rel: "stylesheet", href: appCss }],
+    links: [
+      { rel: "stylesheet", href: appCss },
+      { rel: "preconnect", href: "https://ljquyrrprrwqpmaomwsh.supabase.co", crossOrigin: "anonymous" },
+      { rel: "dns-prefetch", href: "https://ljquyrrprrwqpmaomwsh.supabase.co" },
+    ],
   }),
   shellComponent: RootShell,
   component: RootComponent,
