@@ -672,3 +672,106 @@ function CategoriasPremiacoes() {
   );
 }
 
+
+const PERCURSO_INFOS: { icon: typeof Flag; titulo: string; texto: string }[] = [
+  {
+    icon: Flag,
+    titulo: "Percurso Oficial",
+    texto:
+      "Largada e chegada na Igreja Matriz do Rosário na Rua Cornélio Soares, Rua Joca Magalhães, Rua José Alves da Silveira, Avenida Afonso Magalhães (retorno no cruzamento com a Rua Neco Maranhão, próximo à Drogaria DjaFarma), Rua Enock Ignácio de Oliveira, Rua Joaquim Conrado de Lorena e Sá, retorno à Rua Cornélio Soares e chegada na Igreja Matriz do Rosário na Rua Cornélio Soares.",
+  },
+  {
+    icon: MapPin,
+    titulo: "Sinalização e Apoio",
+    texto:
+      "Percurso sinalizado, com staff dedicados e pontos de hidratação durante todo percurso.",
+  },
+  {
+    icon: RouteIcon,
+    titulo: "Distância",
+    texto: "5km de percurso oficial cronometrado.",
+  },
+  {
+    icon: Mountain,
+    titulo: "Altimetria",
+    texto:
+      "Percurso 100% asfaltado, com poucas elevações, ideal para uma corrida sem grandes dificuldades.",
+  },
+];
+
+function PercursoInfoItem({
+  icon: Icon,
+  titulo,
+  texto,
+}: {
+  icon: typeof Flag;
+  titulo: string;
+  texto: string;
+}) {
+  return (
+    <li className="flex gap-4">
+      <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[color:var(--color-brand-orange)]/10 text-[color:var(--color-brand-orange)]">
+        <Icon className="h-5 w-5" />
+      </span>
+      <div className="flex-1">
+        <h4 className="text-sm font-extrabold uppercase tracking-[0.18em] text-[color:var(--color-brand-purple-title)]">
+          {titulo}
+        </h4>
+        <p className="mt-1 text-sm leading-relaxed text-[color:var(--color-brand-purple-text)]/80">
+          {texto}
+        </p>
+      </div>
+    </li>
+  );
+}
+
+function PercursoCompleto() {
+  return (
+    <section className="bg-white">
+      <div className="mx-auto max-w-[1200px] px-5 py-20 md:px-8 md:py-28">
+        <div className="text-left">
+          <p className="text-xs font-bold uppercase tracking-[0.35em] text-[color:var(--color-brand-purple-text)]/70">
+            Percurso completo da corrida
+          </p>
+          <h2 className="heading-section mt-3 text-3xl text-[color:var(--color-brand-purple-title)] md:text-5xl">
+            Fique por dentro do percurso, para não errar no dia da corrida
+          </h2>
+          <p className="mt-5 max-w-3xl text-base leading-relaxed text-[color:var(--color-brand-purple-text)]/80 md:text-lg">
+            Explore um trajeto que celebra a beleza da nossa Serra Talhada,
+            passando por pontos importantes da cidade. Fiquem atentos ao
+            trajeto:
+          </p>
+        </div>
+
+        <div className="mt-12 grid items-center gap-10 md:grid-cols-2 md:gap-12">
+          <div className="aspect-[4/3] w-full overflow-hidden rounded-3xl bg-[color:var(--color-brand-soft)]/40 shadow-card">
+            <img
+              src={percursoMapa}
+              alt="Mapa do percurso oficial da II Corrida das Famílias em Serra Talhada"
+              loading="lazy"
+              decoding="async"
+              className="h-full w-full object-contain"
+            />
+          </div>
+
+          <div>
+            <h3 className="text-2xl font-extrabold leading-tight text-[color:var(--color-brand-purple-title)] md:text-3xl">
+              O trajeto passa pelas principais ruas da Cidade
+            </h3>
+            <p className="mt-4 text-base leading-relaxed text-[color:var(--color-brand-purple-text)]/80">
+              O percurso de 5km foi desenhado para ser acessível a todos os
+              níveis de corredores, desde iniciantes até os mais experientes,
+              proporcionando uma experiência inesquecível.
+            </p>
+
+            <ul className="mt-8 flex flex-col gap-6">
+              {PERCURSO_INFOS.map((info) => (
+                <PercursoInfoItem key={info.titulo} {...info} />
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
