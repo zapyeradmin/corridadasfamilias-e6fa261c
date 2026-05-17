@@ -379,6 +379,10 @@ function HomePage() {
           </motion.div>
         </div>
       </ContentSection>
+
+      {/* KIT EXCLUSIVO DOS ATLETAS */}
+      <KitExclusivo />
+
       {/* CRONOGRAMA OFICIAL */}
       <section className="bg-[color:var(--color-brand-soft)]">
         <div className="mx-auto max-w-[1200px] px-5 py-20 md:px-8 md:py-24">
