@@ -853,7 +853,7 @@ function PercursoCompleto() {
           <h2 className="heading-section mt-3 text-3xl text-[color:var(--color-brand-purple-title)] md:text-5xl">
             Fique por dentro do percurso, para não errar no dia da corrida
           </h2>
-          <p className="mt-5 max-w-3xl text-base leading-relaxed text-[color:var(--color-brand-purple-text)]/80 md:text-lg">
+          <p className="mt-5 max-w-3xl text-base leading-relaxed text-[color:var(--color-brand-purple-text)]/80 text-justify md:text-lg">
             Explore um trajeto que celebra a beleza da nossa Serra Talhada,
             passando por pontos importantes da cidade. Fiquem atentos ao
             trajeto:
