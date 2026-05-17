@@ -1,60 +1,27 @@
-## Nova seção: "Kit Exclusivo dos Atletas"
+## Diagnóstico
 
-Inserir nova seção em `src/routes/index.tsx` **logo após** o fechamento da seção "Informações da Corrida" (linha 380, `</ContentSection>`), antes da seção "Cronograma Oficial".
+O preview ainda registra erros de servidor informando ausência de `SUPABASE_SERVICE_ROLE_KEY`. A página `/` responde HTTP 200, mas o iframe do preview pode cair quando alguma chamada de servidor inicializa o cliente admin sem essa variável disponível no runtime local.
 
-### Asset
-- Aguardar upload da imagem do kit (formato 1:1) → copiar para `src/assets/kit-exclusivo.png` e importar como ES module no topo do arquivo (`import kitExclusivo from "@/assets/kit-exclusivo.png"`).
+O ponto crítico encontrado é `src/lib/registrations.functions.ts`, que importa `supabaseAdmin` e exige `SUPABASE_SERVICE_ROLE_KEY` para criar/consultar inscrições. Já as leituras públicas em `src/lib/public.functions.ts` foram migradas para a chave publicável.
 
-### Estrutura visual
+## Plano de correção
 
-```text
-<section bg branco / soft, py-20 md:py-28>
-  container max-w-[1200px], px-5 md:px-8
-    [eyebrow] "KIT EXCLUSIVO DOS ATLETAS"   ← orange tracking-[0.35em] uppercase
-    [h2]      "INSCREVA-SE E GARANTA O SEU KIT EXCLUSIVO"  ← heading-section, purple-title
-    [p intro] "Confira todos os itens exclusivos..."  ← purple-text
+1. **Endurecer o cliente público do Supabase**
+   - Ajustar `src/lib/public.functions.ts` para validar `SUPABASE_URL` e `SUPABASE_PUBLISHABLE_KEY` com erro controlado.
+   - Evitar falhas inesperadas caso alguma variável pública esteja ausente.
 
-    [grid 1 col mobile / 2 cols md, gap-10/12, items-center, mt-12]
-      [coluna esquerda] Imagem 1:1
-        <div aspect-square rounded-3xl overflow-hidden shadow-card>
-          <img kitExclusivo loading="lazy" decoding="async" object-cover>
-        </div>
+2. **Remover dependência de service role da inscrição pública**
+   - Alterar `src/lib/registrations.functions.ts` para usar um cliente Supabase com `SUPABASE_PUBLISHABLE_KEY` nas operações públicas de inscrição.
+   - Manter validação do CPF e regras atuais de evento/lote/duplicidade.
+   - As escritas em `registrations` e `payments` passarão a depender das políticas RLS corretas para permitir inserção pública segura.
 
-      [coluna direita]
-        [h3] "Kit Exclusivo para sua Corrida" — text-2xl/3xl extrabold, purple-title
-        [p]  "Desenvolvemos um kit especial..."
+3. **Corrigir aviso de React que aparece no console**
+   - Trocar `fetchpriority` por `fetchPriority` no preload/render da imagem do hero em `src/routes/index.tsx`, pois o console mostra esse erro de propriedade DOM inválida.
 
-        [ul space-y-5 mt-6]
-          <KitItem icon=Shirt>     Camiseta Oficial / texto
-          <KitItem icon=Hash>      Número de Peito / texto
-          <KitItem icon=Droplets>  Hidratação / texto
-          <KitItem icon=Medal>     Medalha Finisher / texto
-</section>
-```
+4. **Validar o resultado**
+   - Reabrir `/` no preview e conferir se o site carrega.
+   - Conferir logs do servidor para garantir que o erro `Missing Supabase environment variable(s): SUPABASE_SERVICE_ROLE_KEY` não aparece mais ao carregar a página.
 
-### Componente local `KitItem`
-- `<li className="flex gap-4">` com círculo `h-11 w-11 rounded-full bg-[color:var(--color-brand-orange)]/10 text-[color:var(--color-brand-orange)]` + ícone.
-- Título `text-sm font-extrabold uppercase tracking-[0.18em] text-[color:var(--color-brand-purple-title)]`.
-- Texto `text-sm/relaxed text-[color:var(--color-brand-purple-text)]/80 mt-1`.
+## Observação técnica
 
-### Ícones (lucide-react)
-- `Shirt` — Camiseta Oficial
-- `Hash` — Número de Peito
-- `Droplets` — Hidratação
-- `Medal` — Medalha Finisher
-
-(Adicionar os que faltarem ao import existente de `lucide-react` no topo do arquivo.)
-
-### Responsividade
-- Mobile: imagem em cima, conteúdo embaixo (single column).
-- `md:grid-cols-2` com imagem à esquerda e bloco textual à direita, `items-center`.
-- Mesmo padrão de paddings já usado em "Percurso Completo" para manter consistência.
-
-### Arquivos alterados
-- `src/routes/index.tsx` — adicionar import da imagem + ícones faltantes, inserir `<KitExclusivo />` após o `</ContentSection>` da seção "Informações da Corrida" (linha 380), definir o componente `KitExclusivo` (+ helper `KitItem`) no fim do arquivo.
-- `src/assets/kit-exclusivo.png` — novo asset (cópia do upload).
-
-### Fora de escopo
-- Sem alterações na rota `/kit`.
-- Sem novas dependências.
-- Nenhuma outra seção tocada.
+Se as políticas RLS atuais não permitirem inserir inscrições/pagamentos com a chave publicável, a página carregará, mas o envio do formulário poderá falhar. Nesse caso, a próxima correção deve ser ajustar as políticas RLS com segurança para permitir apenas os inserts necessários e não expor dados sensíveis.
