@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { Heart, Activity, Users, HandHeart, MapPin, Calendar, Trophy, ChevronRight, Route as RouteIcon, HeartPulse, ClipboardList, Package, Flag, Play, PersonStanding, Medal, Mountain, Shirt, Hash, Droplets } from "lucide-react";
 import { Countdown } from "@/components/site/countdown";
 import { ContentSection } from "@/components/site/page-shell";
+import { SponsorsMarquee } from "@/components/site/sponsors-marquee";
 import { SITE } from "@/lib/site-config";
 import heroRunner from "@/assets/hero-runner.jpg";
 import informacoesCorrida from "@/assets/informacoes-corrida.jpg";
@@ -340,6 +341,9 @@ function HomePage() {
           </motion.div>
         </div>
       </section>
+
+      {/* PATROCINADORES DIAMANTE */}
+      <SponsorsMarquee />
 
       {/* PILARES */}
       <ContentSection>
