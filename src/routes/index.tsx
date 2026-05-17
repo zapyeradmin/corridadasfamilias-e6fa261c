@@ -879,6 +879,15 @@ function KitExclusivo() {
             </ul>
           </div>
         </div>
+
+        <div className="mt-12 flex justify-center">
+          <Link
+            to="/inscricao"
+            className="inline-flex items-center justify-center rounded-full bg-[color:var(--color-brand-orange)] px-8 py-4 text-sm font-extrabold uppercase tracking-[0.18em] text-white shadow-card transition hover:brightness-110"
+          >
+            Faça a sua Inscrição
+          </Link>
+        </div>
       </div>
     </section>
   );
