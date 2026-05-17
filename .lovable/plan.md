@@ -1,103 +1,77 @@
-# Refatoração, Performance e Documentação
+## Nova seção: "Categorias e Premiações"
 
-## Objetivos
-1. Refatorar código e organização de arquivos seguindo boas práticas.
-2. Otimizar carregamento (mais rápido e leve).
-3. Criar `DESENVOLVIMENTO.md` documentando tudo que foi feito até agora.
+Adicionar uma nova seção na home (`src/routes/index.tsx`), **logo após** a seção "Inscrições abertas" (CTA Final, linha 472-523), antes do fechamento `</>`.
 
----
+### Continuidade visual com a seção anterior
+A seção "Inscrições abertas" usa `bg-gradient-orange` (gradiente laranja). Para garantir continuidade visual com fundo sólido `#ff5300`:
+- A nova seção usará `bg-[color:var(--color-brand-orange)]` (= `#ff5300`).
+- O gradiente da seção anterior já termina em `#e9591b`, então adicionarei uma transição suave: a nova seção começa com um pequeno gradiente do tom final do laranja anterior para o `#ff5300` sólido, mantendo a sensação de fundo contínuo.
 
-## 1. Organização e Refatoração de Código
+### Estrutura da seção
 
-### Header (`src/components/site/header.tsx`)
-- Extrair sub-componentes: `HeaderLogo`, `DesktopNav`, `MobileMenu`, `HeaderDecorations`.
-- Mover hook de auth/admin para `src/hooks/use-auth.ts` (reutilizável em outras páginas).
-- Reduzir className longos com `cva` ou constantes.
+```text
+<section bg=#ff5300, py grande>
+  container max-w-[1200px]
+    [eyebrow] "CATEGORIAS E PREMIAÇÕES"            ← esquerda, branco/80
+    [h2]      "CATEGORIAS E PREMIAÇÕES DA CORRIDA" ← esquerda, branco, heading-section
+    [p]       texto introdutório justificado, branco/90, max-w controlado
+    
+    [grid 1 col mobile / 3 cols desktop, gap-6]
+      Card 1: Geral Masc + Geral Fem
+      Card 2: Infanto-Juvenil Masc + Fem
+      Card 3: 60+ Masc + Fem
+</section>
+```
 
-### Estrutura de pastas
-- Criar `src/components/site/header/` com os sub-componentes acima.
-- Criar `src/hooks/use-auth.ts` e `src/hooks/use-admin-role.ts`.
-- Consolidar utilitários de UI repetidos (gradientes, badges) em `src/components/ui/` quando fizer sentido.
-- Garantir que todos tokens de cor estejam em `src/styles.css` (remover hex inline restantes no header — `#2a0f4a` vira token `--color-brand-dark` ou `--color-header-bg`).
+### Anatomia de cada card
+Card branco: `bg-white rounded-3xl shadow-card p-8`, flex coluna, altura igual (`h-full`) com distribuição uniforme do grid.
 
-### Server functions
-- Revisar `src/lib/public.functions.ts`, `admin.functions.ts`, `registrations.functions.ts` para garantir uso consistente de `inputValidator` com Zod onde houver entrada do cliente.
+Cada card contém **dois sub-blocos** (Masculino e Feminino) separados por divisor sutil (`border-t border-[color:var(--color-brand-purple)]/10`) e `mt-8 pt-8`.
 
-### Limpeza
-- Remover imports não utilizados.
-- Padronizar nomes de arquivos (kebab-case já está em uso).
-- Remover `.lovable/plan.md` (artefato de planejamento, não pertence ao repo de runtime).
+Estrutura de cada sub-bloco:
+1. Ícone esportivo centralizado em círculo de fundo suave (azul `bg-blue-50 text-blue-600` para masculino / rosa `bg-pink-50 text-pink-600` para feminino), tamanho 64x64.
+2. Título centralizado (ex: "Geral Masculino"), `text-xl font-extrabold uppercase` na cor `--color-brand-purple-text`.
+3. Lista das 3 premiações: cada linha com badge do lugar (1º/2º/3º) com cor crescente (ouro/prata/bronze ou laranja em tons) + texto da premiação.
 
----
+### Ícones (lucide-react, já instalado)
+Lucide não tem ícones específicos por gênero/idade, mas tem família de pessoas esportivas. Usarei:
+- **Geral Masculino / Feminino**: `PersonStanding` (genérico esportivo) — diferenciado pela cor (azul vs rosa) e legenda.
+- **Infanto-Juvenil Masc / Fem**: `Baby` ou `Footprints` — usarei `Footprints` com cor (mais "jovem corredor").
+- **60+ Masc / Fem**: `Accessibility` ou novamente `PersonStanding` com badge "60+".
 
-## 2. Otimização de Performance
+Para clareza visual, usarei o mesmo ícone `PersonStanding` em todos os cards (única opção esportiva de pessoa no Lucide), mas:
+- Diferenciado por **cor** (azul `#2563eb` para masculino, rosa `#ec4899` para feminino).
+- Diferenciado por **badge sobreposto** no círculo do ícone para categorias não-gerais: "Jovem" no infanto-juvenil e "60+" no idoso.
 
-### Code-splitting
-- Garantir que componentes de rota não estejam exportados (TanStack auto code-split).
-- Avaliar `.lazy.tsx` para rotas admin pesadas (`admin.dashboard`, `admin.inscricoes`, `admin.galeria`, etc.) — admin não precisa entrar no bundle público.
+Isso mantém consistência visual e atende ao requisito de ícones azuis/rosas para masc/fem.
 
-### Imagens
-- Converter imagens grandes em `src/assets/` para `.webp`/`.avif` via `?format=webp` (vite-imagetools) onde aplicável.
-- Adicionar `loading="lazy"` e `decoding="async"` em imagens fora do hero.
-- Definir `width`/`height` explícitos para evitar CLS.
-- Adicionar `<link rel="preload" as="image">` na rota `/` para a imagem LCP via `head().links`.
+### Dados (array local na seção)
+```ts
+const categorias = [
+  { titulo: "Geral", premiosMasc: [...500/300/200], premiosFem: [...], badge: null },
+  { titulo: "Infanto-Juvenil", premios: [só troféu+medalha], badge: "Jovem" },
+  { titulo: "60+", premios: [só troféu+medalha], badge: "60+" },
+];
+```
 
-### Fontes
-- Verificar `src/styles.css` — usar `font-display: swap` em todas `@font-face`.
-- Preconnect para domínios de fontes externas se houver.
+### Responsividade
+- Mobile: 1 coluna, cards empilhados (`grid-cols-1`).
+- Tablet/Desktop: 3 colunas (`md:grid-cols-3`).
+- Cards mantêm `h-full` para alturas uniformes.
+- Espaçamento interno generoso em desktop (`p-8`) e confortável em mobile (`p-6`).
 
-### Queries / Data
-- React Query: definir `staleTime` adequado em queries públicas (`getActiveEvent`, `getPublishedSponsors`, `getPublishedGallery`) para reduzir refetches.
-- Usar `loader` em rotas públicas para SSR de dados (quando server fn não exigir auth).
+### Tokens de design
+- Fundo seção: `#ff5300` (já existe `--color-brand-orange`).
+- Cards: branco com `shadow-card` (já existente).
+- Cor masculino: `text-blue-600` / `bg-blue-50`.
+- Cor feminino: `text-pink-600` / `bg-pink-50`.
+- Títulos dos cards: `--color-brand-purple-text`.
+- Badges de lugar: gradiente do `--color-brand-orange` para tom mais escuro (1º), tom médio (2º), tom claro (3º) — mantendo paleta da marca.
 
-### Bundle
-- Auditar imports do `lucide-react` — já usa import por nome (tree-shake ok).
-- Remover componentes shadcn não utilizados de `src/components/ui/` (decisão conservadora — só remover os comprovadamente não importados em nenhum arquivo).
+### Arquivos a alterar
+- `src/routes/index.tsx` — apenas adicionar o novo `<section>` antes do `</>` final. Sem novos arquivos.
 
-### Meta / SEO (afeta perceived performance)
-- Garantir `head()` com title/description únicos por rota.
-
----
-
-## 3. `DESENVOLVIMENTO.md`
-
-Arquivo na raiz do projeto, em português, registrando o histórico do desenvolvimento:
-
-Seções:
-1. **Visão geral do projeto** — II Corrida das Famílias, stack (TanStack Start, React 19, Vite 7, Tailwind v4, Supabase via Lovable Cloud).
-2. **Arquitetura** — file-based routing, server functions, autenticação, RLS.
-3. **Modelo de dados** — tabelas (`events`, `lots`, `registrations`, `sponsors`, `gallery_items`, `settings`, `user_roles`) com descrição.
-4. **Funcionalidades implementadas**:
-   - Site público: Home, Percurso, Kit, Premiação, Patrocinadores, Galeria, FAQ, Regulamento, Política de Privacidade.
-   - Inscrição e página de sucesso.
-   - Login / Reset password.
-   - Painel admin: dashboard, inscrições, pagamentos, eventos & lotes, patrocinadores, galeria, configurações, logs.
-5. **Design system** — tokens em `src/styles.css`, gradientes (`gradient-orange`, `gradient-hero`), tipografia, cores brand.
-6. **Header** — evolução: alinhamento, menu mobile sem sobreposição, gradiente uniforme em desktop.
-7. **Refatoração desta etapa** — listagem do que foi reorganizado/otimizado.
-8. **Performance** — medidas aplicadas (code-split admin, lazy images, preload LCP, staleTime).
-9. **Como rodar** — comandos básicos.
-10. **Próximos passos sugeridos**.
-
----
-
-## Arquivos a criar
-- `DESENVOLVIMENTO.md`
-- `src/hooks/use-auth.ts`
-- `src/components/site/header/header-logo.tsx`
-- `src/components/site/header/desktop-nav.tsx`
-- `src/components/site/header/mobile-menu.tsx`
-- `src/components/site/header/header-decorations.tsx`
-- Possíveis `*.lazy.tsx` para rotas admin.
-
-## Arquivos a editar
-- `src/components/site/header.tsx` (vira composição dos sub-componentes)
-- `src/styles.css` (novo token de cor para header bg)
-- `src/routes/index.tsx` (preload LCP, lazy imgs)
-- `src/lib/public.functions.ts` (revisão)
-- Rotas admin (mover componente para `.lazy.tsx` quando aplicável)
-
-## Confirmações antes de implementar
-1. Posso mover rotas admin para `.lazy.tsx` (afeta como o bundle é dividido, sem mudar comportamento)?
-2. Posso converter imagens em `src/assets/` para WebP via `vite-imagetools`?
-3. Devo remover `.lovable/plan.md`?
+### Fora de escopo
+- Sem alterações na página `/premiacao` existente.
+- Sem mudanças no header/footer.
+- Sem novas dependências.
