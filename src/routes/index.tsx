@@ -474,7 +474,7 @@ function HomePage() {
                 {
                   icon: MapPin,
                   title: "Localização Estratégica",
-                  lines: ["Local: Igreja Matriz do Rosário em Serra Talhada/PE"],
+                  lines: ["Local: Igreja Matriz de Nossa Senhora do Rosário em Serra Talhada/PE"],
                 },
                 {
                   icon: RouteIcon,
@@ -1042,7 +1042,7 @@ const PERCURSO_INFOS: { icon: typeof Flag; titulo: string; texto: string }[] = [
     icon: Flag,
     titulo: "Percurso Oficial",
     texto:
-      "Largada e chegada na Igreja Matriz do Rosário na Rua Cornélio Soares, Rua Joca Magalhães, Rua José Alves da Silveira, Avenida Afonso Magalhães (retorno no cruzamento com a Rua Neco Maranhão, próximo à Drogaria DjaFarma), Rua Enock Ignácio de Oliveira, Rua Joaquim Conrado de Lorena e Sá, retorno à Rua Cornélio Soares e chegada na Igreja Matriz do Rosário na Rua Cornélio Soares.",
+      "Largada e chegada na Igreja Matriz de Nossa Senhora do Rosário na Rua Cornélio Soares, Rua Joca Magalhães, Rua José Alves da Silveira, Avenida Afonso Magalhães (retorno no cruzamento com a Rua Neco Maranhão, próximo à Drogaria DjaFarma), Rua Enock Ignácio de Oliveira, Rua Joaquim Conrado de Lorena e Sá, retorno à Rua Cornélio Soares e chegada na Igreja Matriz de Nossa Senhora do Rosário na Rua Cornélio Soares.",
   },
   {
     icon: MapPin,
