@@ -6,6 +6,10 @@ import { Countdown } from "@/components/site/countdown";
 import { ContentSection } from "@/components/site/page-shell";
 import { SponsorsMarquee } from "@/components/site/sponsors-marquee";
 import { getPublishedSponsors } from "@/lib/public.functions";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { cn } from "@/lib/utils";
+import { LOGO_ASSETS, LOGO_SCALE, slugFromUrl, FALLBACK_DIAMOND } from "@/lib/sponsors-assets";
 import { SITE } from "@/lib/site-config";
 import heroRunner from "@/assets/hero-runner.jpg";
 import informacoesCorrida from "@/assets/informacoes-corrida.jpg";
@@ -658,7 +662,119 @@ function HomePage() {
 
       {/* PERCURSO COMPLETO */}
       <PercursoCompleto />
+
+      {/* NOSSOS PATROCINADORES */}
+      <NossosPatrocinadores />
     </>
+  );
+}
+
+function NossosPatrocinadores() {
+  const fetchSponsors = useServerFn(getPublishedSponsors);
+  const { data } = useQuery({
+    queryKey: ["sponsors"],
+    queryFn: () => fetchSponsors(),
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const fromDb = (data ?? [])
+    .filter((s) => s.tier === "diamond")
+    .map((s) => ({
+      id: s.id,
+      name: s.name,
+      slug: slugFromUrl(s.logo_url),
+      website_url: s.website_url,
+    }))
+    .filter((s) => LOGO_ASSETS[s.slug]);
+
+  const diamond = fromDb.length > 0 ? fromDb : FALLBACK_DIAMOND;
+  const TOTAL = 24;
+  const placeholders = Array.from(
+    { length: Math.max(0, TOTAL - diamond.length) },
+    (_, i) => i + diamond.length + 1,
+  );
+
+  const waMsg = encodeURIComponent(
+    "Olá! Tenho interesse em patrocinar a II Corrida das Famílias.",
+  );
+  const waHref = `https://wa.me/${SITE.whatsapp}?text=${waMsg}`;
+
+  return (
+    <section className="bg-[color:var(--color-brand-orange)]">
+      <div className="mx-auto max-w-[1200px] px-5 py-20 md:px-8 md:py-28">
+        <div className="text-left">
+          <p className="text-xs font-bold uppercase tracking-[0.35em] text-white">
+            Quem apoia a corrida
+          </p>
+          <h2 className="heading-section mt-3 text-3xl text-white md:text-5xl">
+            Veja quem são os nossos patrocinadores
+          </h2>
+          <p className="mt-5 max-w-3xl text-base leading-relaxed text-white text-justify md:text-lg">
+            Marcas que acreditam no esporte, na fé e nas famílias da nossa comunidade.
+          </p>
+        </div>
+
+        <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 md:mt-14 md:grid-cols-4 md:gap-6">
+          {diamond.map((s) => {
+            const src = LOGO_ASSETS[s.slug];
+            const scale = LOGO_SCALE[s.slug] ?? "scale-100";
+            const inner = (
+              <img
+                src={src}
+                alt={s.name}
+                loading="lazy"
+                decoding="async"
+                draggable={false}
+                className={cn("max-h-[78%] max-w-[82%] object-contain", scale)}
+              />
+            );
+            return (
+              <div
+                key={s.id}
+                className="grid aspect-[16/9] place-items-center rounded-2xl border border-white/40 bg-white p-3 shadow-[0_8px_24px_rgba(22,9,31,0.12)] ring-1 ring-black/5 md:p-4"
+              >
+                {s.website_url ? (
+                  <a
+                    href={s.website_url}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label={s.name}
+                    className="grid h-full w-full place-items-center"
+                  >
+                    {inner}
+                  </a>
+                ) : (
+                  inner
+                )}
+              </div>
+            );
+          })}
+          {placeholders.map((n) => (
+            <div
+              key={`ph-${n}`}
+              className="grid aspect-[16/9] place-items-center rounded-2xl border border-white/40 bg-white p-3 shadow-[0_8px_24px_rgba(22,9,31,0.12)] ring-1 ring-black/5 md:p-4"
+            >
+              <span className="text-sm font-extrabold uppercase tracking-wider text-[color:var(--color-brand-orange)] md:text-base">
+                Patrocinador {n}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        <p className="mt-10 text-center text-base text-white md:mt-14 md:text-lg">
+          Quer apoiar o evento?{" "}
+          <a
+            href={waHref}
+            target="_blank"
+            rel="noreferrer"
+            className="font-bold underline underline-offset-4 transition hover:text-white/85"
+          >
+            Fale conosco no WhatsApp
+          </a>{" "}
+          e receba nossa proposta.
+        </p>
+      </div>
+    </section>
   );
 }
 
