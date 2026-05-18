@@ -4,6 +4,12 @@ import { useRef, useState } from "react";
 import { Heart, Activity, Users, HandHeart, MapPin, Calendar, Trophy, ChevronRight, Route as RouteIcon, HeartPulse, ClipboardList, Package, Flag, Play, PersonStanding, Medal, Mountain, Shirt, Hash, Droplets } from "lucide-react";
 import { Countdown } from "@/components/site/countdown";
 import { ContentSection } from "@/components/site/page-shell";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { SponsorsMarquee } from "@/components/site/sponsors-marquee";
 import { getPublishedSponsors } from "@/lib/public.functions";
 import { useQuery } from "@tanstack/react-query";
