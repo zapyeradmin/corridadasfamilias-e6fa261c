@@ -474,7 +474,7 @@ function HomePage() {
                 {
                   icon: MapPin,
                   title: "Localização Estratégica",
-                  lines: ["Local: Igreja Matriz do Rosário em Serra Talhada/PE"],
+                  lines: ["Local: Igreja Matriz de Nossa Senhora do Rosário em Serra Talhada/PE"],
                 },
                 {
                   icon: RouteIcon,
