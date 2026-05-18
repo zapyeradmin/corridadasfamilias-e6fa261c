@@ -15,8 +15,10 @@ export function SponsorsMarquee() {
   const diamond = (data ?? []).filter((s) => s.tier === "diamond");
   if (diamond.length === 0) return null;
 
-  // Duplica para garantir loop suave quando há poucos logos
-  const items = diamond.length < 6 ? [...diamond, ...diamond, ...diamond] : diamond;
+  // Garante itens suficientes para preencher o viewport e permitir o auto-scroll em loop
+  const minItems = 12;
+  const repeats = Math.max(1, Math.ceil(minItems / diamond.length));
+  const items = Array.from({ length: repeats }, () => diamond).flat();
 
   return (
     <section className="border-y border-[color:var(--color-brand-purple)]/10 bg-white py-10">
