@@ -1,29 +1,55 @@
 ## Objetivo
 
-Adicionar um carrossel auto-scroll com as logos dos patrocinadores **Diamante**, posicionado **acima da seção "Pilares do Evento"** na home, conforme o print enviado.
+Garantir que o carrossel auto-scroll dos patrocinadores Diamante apareça corretamente na home e otimizar movimento, espaçamento e responsividade — com tratamento especial para logos de larguras diferentes (ex.: Urbano Alimentos) para que todas pareçam visualmente equivalentes.
 
-## Implementação
+## Diagnóstico atual
 
-1. **Instalar dependência**
-   - `bun add embla-carousel-auto-scroll` (o `embla-carousel-react` já está instalado).
+- `SponsorsMarquee` já está montado em `src/routes/index.tsx` (linha 346), acima de "Pilares do Evento".
+- 4 patrocinadores Diamond publicados no banco: Oracle Digital, Nattivo Café, Urbano Alimentos, Prefeitura de Serra Talhada.
+- Implementação atual usa `Carousel` shadcn + `embla-carousel-auto-scroll` com `basis-1/3 … lg:basis-1/6`. Problemas:
+  - Logos com proporções diferentes geram "ilhas" visuais — Urbano fica pequena.
+  - `dragFree: true` + `loop: true` + breakpoints fixos podem causar pequenos saltos no loop quando o número de itens não enche o viewport.
+  - Sem skeleton/SSR fallback enquanto a query carrega → seção some no primeiro paint.
+  - No mobile, `basis-1/3` aperta demais o espaçamento.
 
-2. **Criar componente `src/components/site/sponsors-marquee.tsx`**
-   - Adaptado do `logos3.tsx` enviado, usando os componentes `Carousel` / `CarouselContent` / `CarouselItem` já existentes em `@/components/ui/carousel`.
-   - Busca os patrocinadores via `getPublishedSponsors` (serverFn já existente) com `useQuery` + `useServerFn`, filtrando `tier === "diamond"`.
-   - Renderiza cada logo (`logo_url`) com `loading="lazy"`, altura fixa (~h-12/h-16), em escala de cinza com hover colorido (opcional, para consistência visual).
-   - Wrapper com `AutoScroll({ playOnInit: true, stopOnInteraction: false, speed: 1 })`, `opts={{ loop: true, align: "start" }}`.
-   - Gradiente fade nas bordas esquerda/direita para suavizar o loop.
-   - Se não houver patrocinador diamante, o componente retorna `null` (não ocupa espaço).
-   - Pequeno título/eyebrow opcional ("Patrocínio Diamante") acima do carrossel — confirmar com você.
+## Mudanças
 
-3. **Inserir no `src/routes/index.tsx`**
-   - Importar `SponsorsMarquee` e colocá-lo imediatamente **antes** do bloco `{/* PILARES */}` (linha ~344), dentro do mesmo container/section pattern para manter espaçamento consistente com o restante da página.
+1. **`src/components/site/sponsors-marquee.tsx`** — refatorar:
+   - Trocar `Carousel` shadcn por um marquee CSS puro (`@keyframes` translateX em `src/styles.css`), com 2 trilhas duplicadas lado a lado para loop perfeito sem "jump". Mais leve e fluido que Embla para esse caso, e elimina a dependência de breakpoints.
+   - Container de cada logo com **altura fixa** (`h-14` mobile, `h-20` desktop) e **largura mínima uniforme** (`min-w-[140px]` mobile, `min-w-[200px]` desktop), com `flex items-center justify-center`. Isso normaliza o espaço ocupado, independente da proporção da imagem.
+   - `img` com `max-h-full max-w-full object-contain` + `loading="lazy"` + `decoding="async"` + `draggable={false}`.
+   - Ajuste fino por logo via um pequeno map `{ slug → scaleClass }` para empurrar logos estreitas (Urbano) a uma escala um pouco maior (ex.: `scale-110`) e logos largas a `scale-95`, mantendo equilíbrio óptico.
+   - Pausar animação no hover (`group-hover:[animation-play-state:paused]`).
+   - `prefers-reduced-motion`: animação desativada.
+   - Gradientes de fade nas bordas mantidos, com largura responsiva (`w-10 md:w-20`).
+   - Eyebrow "Patrocínio Diamante" mantido.
+   - Quando `isLoading` e ainda sem dados: render de placeholder com altura reservada (evita CLS e a seção "sumir").
+   - Quando nenhum diamond publicado: retorna `null` (mantém comportamento).
+   - Remover dependência `embla-carousel-auto-scroll` deste componente (não precisa desinstalar).
+
+2. **`src/styles.css`** — adicionar:
+   ```css
+   @keyframes marquee-x {
+     from { transform: translateX(0); }
+     to   { transform: translateX(-50%); }
+   }
+   .animate-marquee { animation: marquee-x var(--marquee-duration, 40s) linear infinite; }
+   @media (prefers-reduced-motion: reduce) {
+     .animate-marquee { animation: none; }
+   }
+   ```
+   Duração controlada por CSS var inline (`--marquee-duration`) calculada a partir do nº de itens para velocidade constante.
+
+3. **Mobile**:
+   - Padding lateral da seção `px-4`, gap entre slides `gap-8` (mobile) / `gap-16` (desktop).
+   - Altura da seção menor (`py-8 md:py-12`).
+   - Min-width dos slides garante respiração entre logos.
 
 ## Fora do escopo
 
-- Não alterar a página `/patrocinadores` nem o schema do banco.
-- Não mexer nas outras seções da home.
+- Não alterar dados/banco nem outras seções da home.
+- Não mexer em `/patrocinadores` admin.
 
-## Pergunta
+## Detalhe técnico
 
-Quer que eu inclua o eyebrow "PATROCÍNIO DIAMANTE" acima do carrossel, ou deixar somente as logos rolando, sem título?
+A duplicação da trilha (`[items, items].flat()`) com `translateX(-50%)` no keyframe é o padrão para loop infinito sem salto. A largura uniforme dos itens é o que faz logos de proporções diferentes parecerem alinhadas — não mexer no SVG/PNG das logos.
