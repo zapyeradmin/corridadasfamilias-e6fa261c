@@ -33,6 +33,14 @@ export const Route = createFileRoute("/")({
     ],
   }),
   component: HomePage,
+  loader: ({ context }) => {
+    // Prefetch dos patrocinadores para evitar flash de skeleton na marquee
+    context.queryClient.prefetchQuery({
+      queryKey: ["sponsors"],
+      queryFn: () => getPublishedSponsors(),
+      staleTime: 5 * 60 * 1000,
+    });
+  },
 });
 
 const PILARES = [
