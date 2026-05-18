@@ -773,6 +773,16 @@ function NossosPatrocinadores() {
           </a>{" "}
           e receba nossa proposta.
         </p>
+
+        <div className="mt-8 flex justify-center md:mt-10">
+          <Link
+            to="/inscricao"
+            className="inline-flex items-center justify-center rounded-full bg-[#431181] px-8 py-4 text-base font-extrabold uppercase tracking-wide text-white shadow-[0_10px_30px_rgba(67,17,129,0.35)] transition hover:bg-[#3a0e72] hover:shadow-[0_14px_36px_rgba(67,17,129,0.45)] md:text-lg"
+          >
+            Inscreva-se Já!
+          </Link>
+        </div>
+
       </div>
     </section>
   );
