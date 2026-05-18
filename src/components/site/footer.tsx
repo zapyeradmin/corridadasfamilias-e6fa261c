@@ -39,7 +39,7 @@ export function SiteFooter() {
           <ul className="mt-4 space-y-3 text-sm text-white/80">
             <li className="flex items-start gap-3">
               <MapPin className="mt-0.5 h-4 w-4 text-[color:var(--color-brand-orange)]" />
-              {SITE.location} — {SITE.city}
+              {SITE.location} em {SITE.city}
             </li>
             <li className="flex items-center gap-3">
               <MessageCircle className="h-4 w-4 text-[color:var(--color-brand-orange)]" />
