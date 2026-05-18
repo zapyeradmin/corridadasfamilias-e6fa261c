@@ -5,6 +5,7 @@ import { Heart, Activity, Users, HandHeart, MapPin, Calendar, Trophy, ChevronRig
 import { Countdown } from "@/components/site/countdown";
 import { ContentSection } from "@/components/site/page-shell";
 import { SponsorsMarquee } from "@/components/site/sponsors-marquee";
+import { getPublishedSponsors } from "@/lib/public.functions";
 import { SITE } from "@/lib/site-config";
 import heroRunner from "@/assets/hero-runner.jpg";
 import informacoesCorrida from "@/assets/informacoes-corrida.jpg";
@@ -32,6 +33,14 @@ export const Route = createFileRoute("/")({
     ],
   }),
   component: HomePage,
+  loader: ({ context }) => {
+    // Prefetch dos patrocinadores para evitar flash de skeleton na marquee
+    context.queryClient.prefetchQuery({
+      queryKey: ["sponsors"],
+      queryFn: () => getPublishedSponsors(),
+      staleTime: 5 * 60 * 1000,
+    });
+  },
 });
 
 const PILARES = [
