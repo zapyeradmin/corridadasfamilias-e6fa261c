@@ -739,7 +739,7 @@ Importante: preencher o formulário sem concluir o pagamento não garante a conf
 function PerguntasFrequentes() {
   return (
     <section className="bg-[color:var(--color-brand-orange)]">
-      <div className="mx-auto max-w-[1200px] px-5 py-20 md:px-8 md:py-28">
+      <div className="mx-auto max-w-[1200px] px-5 pt-6 pb-20 md:px-8 md:pt-10 md:pb-28">
         <div className="text-left">
           <p className="text-xs font-bold uppercase tracking-[0.35em] text-white">
             Tire suas dúvidas
