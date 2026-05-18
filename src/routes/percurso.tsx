@@ -28,9 +28,9 @@ function Page() {
       <ContentSection>
         <div className="grid gap-6 md:grid-cols-3">
           {[
-            { icon: Flag, title: "Largada", value: "Igreja Matriz do Rosário" },
+            { icon: Flag, title: "Largada", value: "Igreja Matriz de Nossa Senhora do Rosário" },
             { icon: Mountain, title: "Distância", value: "5km — terreno plano" },
-            { icon: MapPin, title: "Chegada", value: "Igreja Matriz do Rosário" },
+            { icon: MapPin, title: "Chegada", value: "Igreja Matriz de Nossa Senhora do Rosário" },
           ].map((c) => (
             <div key={c.title} className="rounded-3xl border border-border bg-white p-6 shadow-soft">
               <span className="grid h-11 w-11 place-items-center rounded-full bg-[color:var(--color-brand-purple)]/10 text-[color:var(--color-brand-purple)]">
