@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
-import { CheckCircle2, CreditCard, Loader2, MessageCircle, QrCode, Receipt } from "lucide-react";
+import { CheckCircle2, CreditCard, Loader2, MessageCircle, QrCode } from "lucide-react";
 import { ContentSection, PageHeader } from "@/components/site/page-shell";
 import { SITE } from "@/lib/site-config";
 import { getRegistrationByProtocol } from "@/lib/registrations.functions";
@@ -101,8 +101,8 @@ function Page() {
               </p>
               <ul className="mt-4 grid gap-3 sm:grid-cols-3">
                 <PayMethod icon={<QrCode className="h-5 w-5" />} label="PIX" hint="Aprovação imediata" />
-                <PayMethod icon={<CreditCard className="h-5 w-5" />} label="Cartão" hint="Até 12x" />
-                <PayMethod icon={<Receipt className="h-5 w-5" />} label="Boleto" hint="Compensação em 1–3 dias" />
+                <PayMethod icon={<CreditCard className="h-5 w-5" />} label="Cartão à vista" hint="Crédito em 1x" />
+                <PayMethod icon={<CreditCard className="h-5 w-5" />} label="Cartão parcelado" hint="Até 12x" />
               </ul>
             </div>
 
