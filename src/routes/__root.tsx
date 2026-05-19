@@ -15,7 +15,7 @@ import { SiteFooter } from "@/components/site/footer";
 import { WhatsAppFab } from "@/components/site/whatsapp-fab";
 import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { SITE } from "@/lib/site-config";
+
 
 function NotFoundComponent() {
   return (
