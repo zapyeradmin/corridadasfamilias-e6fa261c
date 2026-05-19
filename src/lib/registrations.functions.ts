@@ -164,8 +164,27 @@ export const getRegistrationByProtocol = createServerFn({ method: "GET" })
   .handler(async ({ data }) => {
     const { data: reg } = await supabaseAdmin
       .from("registrations")
-      .select("protocol, full_name, status, amount_cents, created_at")
+      .select("id, protocol, full_name, status, amount_cents, created_at")
       .eq("protocol", data.protocol)
       .maybeSingle();
-    return reg;
+    if (!reg) return null;
+
+    const { data: pay } = await supabaseAdmin
+      .from("payments")
+      .select("status, checkout_url, amount_cents")
+      .eq("registration_id", reg.id)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    return {
+      protocol: reg.protocol,
+      full_name: reg.full_name,
+      status: reg.status,
+      amount_cents: reg.amount_cents,
+      created_at: reg.created_at,
+      payment: pay
+        ? { status: pay.status, checkout_url: pay.checkout_url, amount_cents: pay.amount_cents }
+        : null,
+    };
   });
