@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { PageHeader } from "@/components/site/page-shell";
 import { getPublishedSponsors } from "@/lib/public.functions";
 import { SITE } from "@/lib/site-config";
-import { LOGO_ASSETS, LOGO_SCALE, slugFromUrl } from "@/lib/sponsors-assets";
+import { LOGO_ASSETS, LOGO_SCALE, slugFromUrl, FALLBACK_DIAMOND } from "@/lib/sponsors-assets";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/patrocinadores")({
