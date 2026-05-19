@@ -42,7 +42,12 @@ export type RegistrationInput = z.infer<typeof registrationSchema>;
 
 export const createRegistration = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => registrationSchema.parse(input))
-  .handler(async ({ data }) => {
+  .handler(async ({ data }): Promise<
+    | { ok: true; protocol: string; amount_cents: number; checkout_url: string }
+    | { ok: false; error: string }
+  > => {
+    const fail = (error: string) => ({ ok: false as const, error });
+
     // Buscar evento ativo + lote vigente (servidor recalcula preço)
     const { data: event } = await supabaseAdmin
       .from("events")
@@ -51,7 +56,7 @@ export const createRegistration = createServerFn({ method: "POST" })
       .order("event_date", { ascending: true })
       .limit(1)
       .maybeSingle();
-    if (!event) throw new Error("Nenhum evento ativo no momento.");
+    if (!event) return fail("Nenhum evento ativo no momento.");
 
     const nowIso = new Date().toISOString();
     const { data: lots } = await supabaseAdmin
@@ -64,7 +69,7 @@ export const createRegistration = createServerFn({ method: "POST" })
       .order("sort_order", { ascending: true })
       .limit(1);
     const lot = lots?.[0];
-    if (!lot) throw new Error("Não há lote de inscrições aberto no momento.");
+    if (!lot) return fail("Não há lote de inscrições aberto no momento.");
 
     // Calcula idade na data do evento e preço aplicável (até 9 anos = infantil)
     const ageAtEvent = yearsBetween(data.birth_date, event.event_date);
@@ -72,23 +77,23 @@ export const createRegistration = createServerFn({ method: "POST" })
     const amountCents = isChild && lot.child_price_cents ? lot.child_price_cents : lot.price_cents;
 
     // Validações de categoria por idade/gênero
-    const g = GENDER_DB[data.gender]; // M | F | O
+    const g = GENDER_DB[data.gender];
     const cat = data.category;
     if (cat === "infanto_juvenil_masculino" || cat === "infanto_juvenil_feminino") {
       if (ageAtEvent < 9 || ageAtEvent > 17) {
-        throw new Error("Categoria Infanto-Juvenil é destinada a participantes de 9 a 17 anos.");
+        return fail("Categoria Infanto-Juvenil é destinada a participantes de 9 a 17 anos.");
       }
     }
     if (cat === "60_masculino" || cat === "60_feminino") {
       if (ageAtEvent < 60) {
-        throw new Error("Categoria 60+ é destinada a participantes com 60 anos ou mais.");
+        return fail("Categoria 60+ é destinada a participantes com 60 anos ou mais.");
       }
     }
     if (cat.endsWith("_masculino") && g === "F") {
-      throw new Error("Categoria masculina não disponível para o gênero informado.");
+      return fail("Categoria masculina não disponível para o gênero informado.");
     }
     if (cat.endsWith("_feminino") && g === "M") {
-      throw new Error("Categoria feminina não disponível para o gênero informado.");
+      return fail("Categoria feminina não disponível para o gênero informado.");
     }
 
     // Checagem de duplicidade por CPF + status ativo
@@ -101,7 +106,7 @@ export const createRegistration = createServerFn({ method: "POST" })
       .in("status", ["pending", "processing", "paid"])
       .maybeSingle();
     if (existing) {
-      throw new Error(
+      return fail(
         existing.status === "paid"
           ? `Este CPF já possui inscrição confirmada (protocolo ${existing.protocol}).`
           : `Já existe uma inscrição em andamento para este CPF (protocolo ${existing.protocol}).`,
@@ -132,9 +137,8 @@ export const createRegistration = createServerFn({ method: "POST" })
       })
       .select("id, protocol, amount_cents")
       .single();
-    if (regErr || !registration) throw new Error(regErr?.message ?? "Falha ao criar inscrição.");
+    if (regErr || !registration) return fail(regErr?.message ?? "Falha ao criar inscrição.");
 
-    // Mock de checkout — Infinity Pay será integrado nos sprints finais.
     const checkoutUrl = `/inscricao/sucesso?protocol=${registration.protocol}`;
 
     const { error: payErr } = await supabaseAdmin.from("payments").insert({
@@ -145,9 +149,10 @@ export const createRegistration = createServerFn({ method: "POST" })
       checkout_url: checkoutUrl,
       external_reference: registration.protocol,
     });
-    if (payErr) throw new Error(payErr.message);
+    if (payErr) return fail(payErr.message);
 
     return {
+      ok: true,
       protocol: registration.protocol,
       amount_cents: registration.amount_cents,
       checkout_url: checkoutUrl,
