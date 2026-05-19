@@ -195,14 +195,35 @@ function Page() {
               {eventData?.event?.name ?? "II Corrida das Famílias"}
             </h3>
             {eventData?.currentLot ? (
-              <>
-                <p className="mt-3 text-sm text-[color:var(--color-brand-purple-text)]">
-                  Lote vigente: <strong>{eventData.currentLot.name}</strong>
-                </p>
-                <p className="mt-1 text-3xl font-black text-[color:var(--color-brand-purple-title)]">
-                  {formatBRL(eventData.currentLot.price_cents)}
-                </p>
-              </>
+              (() => {
+                const lot = eventData.currentLot;
+                const birth = form.watch("birth_date");
+                const eventDate = eventData.event?.event_date;
+                const age = birth && eventDate ? ageOn(birth, eventDate) : null;
+                const isChild = age != null && age <= 9;
+                const price = resolvePrice(birth, eventDate, lot);
+                return (
+                  <>
+                    <p className="mt-3 text-sm text-[color:var(--color-brand-purple-text)]">
+                      Lote vigente: <strong>{lot.name}</strong>
+                    </p>
+                    <p className="mt-1 text-3xl font-black text-[color:var(--color-brand-purple-title)]">
+                      {formatBRL(price ?? lot.price_cents)}
+                    </p>
+                    {age != null && (
+                      <p className="mt-1 text-xs font-bold uppercase tracking-wide text-[color:var(--color-brand-orange)]">
+                        {isChild ? "Valor infantil (até 9 anos)" : "Valor adulto"}
+                      </p>
+                    )}
+                    <p className="mt-3 text-xs text-[color:var(--color-brand-purple-text)]/80">
+                      Adulto {formatBRL(lot.price_cents)}
+                      {lot.child_price_cents
+                        ? ` · Criança até 9 anos ${formatBRL(lot.child_price_cents)}`
+                        : ""}
+                    </p>
+                  </>
+                );
+              })()
             ) : (
               <p className="mt-3 text-sm text-[color:var(--color-brand-purple-text)]">
                 Carregando lote vigente...
