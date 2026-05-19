@@ -12,7 +12,7 @@ const registrationSchema = z.object({
   email: z.string().email().max(160),
   whatsapp: z.string().min(10).max(20),
   birth_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Data inválida"),
-  gender: z.enum(["male", "female", "other"]),
+  gender: z.enum(["male", "female"]),
   shirt_size: z.enum(["pp", "p", "m", "g", "gg", "xgg"]),
   category: z.enum([
     "geral_masculino",
