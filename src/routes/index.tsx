@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef, useState } from "react";
-import { Heart, Activity, Users, HandHeart, MapPin, Calendar, Trophy, ChevronRight, Route as RouteIcon, HeartPulse, ClipboardList, Package, Flag, Play, PersonStanding, Medal, Mountain, Shirt, Hash, Droplets } from "lucide-react";
+import { Heart, Activity, Users, HandHeart, MapPin, Calendar, Trophy, ChevronRight, Route as RouteIcon, HeartPulse, ClipboardList, Package, Flag, Play, Mountain, Shirt, Hash, Droplets } from "lucide-react";
 import { Countdown } from "@/components/site/countdown";
 import { ContentSection } from "@/components/site/page-shell";
 import {
