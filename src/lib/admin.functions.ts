@@ -287,6 +287,34 @@ export const listSettingsAdmin = createServerFn({ method: "GET" })
     return data ?? [];
   });
 
+export const updateSettingAdmin = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z
+      .object({
+        key: z.string().min(1).max(120),
+        value: z.unknown(),
+      })
+      .parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    const admin = await assertAdmin(context.supabase, context.userId, context.claims as { email?: string });
+    const { error } = await context.supabase
+      .from("settings")
+      .update({ value: data.value as never, updated_at: new Date().toISOString() })
+      .eq("key", data.key);
+    if (error) throw new Error(error.message);
+    await logAction(context.supabase, {
+      actorId: admin.userId,
+      actorEmail: admin.email,
+      action: "settings.update",
+      entityType: "settings",
+      entityId: data.key,
+      details: { key: data.key },
+    });
+    return { ok: true };
+  });
+
 export const listAccessLogs = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {

@@ -1,10 +1,13 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { toast } from "sonner";
 import { CheckCircle2, CreditCard, Loader2, MessageCircle, QrCode } from "lucide-react";
 import { ContentSection, PageHeader } from "@/components/site/page-shell";
 import { SITE } from "@/lib/site-config";
 import { getRegistrationByProtocol } from "@/lib/registrations.functions";
+import { getCheckoutUrlForRegistration } from "@/lib/infinitepay.functions";
 import { formatBRL } from "@/lib/cpf";
 
 export const Route = createFileRoute("/inscricao_/sucesso")({
@@ -26,13 +29,37 @@ export const Route = createFileRoute("/inscricao_/sucesso")({
 
 function Page() {
   const { protocol } = Route.useSearch();
-  const navigate = useNavigate();
   const fetchReg = useServerFn(getRegistrationByProtocol);
+  const fetchCheckout = useServerFn(getCheckoutUrlForRegistration);
+  const [redirecting, setRedirecting] = useState(false);
   const { data, isLoading } = useQuery({
     queryKey: ["registration", protocol],
     queryFn: () => fetchReg({ data: { protocol } }),
     enabled: !!protocol,
   });
+
+  async function handleCheckout() {
+    if (!protocol || redirecting) return;
+    setRedirecting(true);
+    try {
+      const res = await fetchCheckout({ data: { protocol } });
+      if (!res.ok) {
+        toast.error(res.error);
+        setRedirecting(false);
+        return;
+      }
+      if (!res.checkoutUrl) {
+        toast.message("Checkout em configuração. Tente novamente em instantes.");
+        setRedirecting(false);
+        return;
+      }
+      window.location.href = res.checkoutUrl;
+    } catch {
+      toast.error("Não foi possível abrir o checkout. Tente novamente.");
+      setRedirecting(false);
+    }
+  }
+
 
   if (!protocol) {
     return (
@@ -109,10 +136,12 @@ function Page() {
             <div className="mt-8 flex flex-col items-center gap-3">
               <button
                 type="button"
-                onClick={() => navigate({ to: "/pagamento", search: { protocol } })}
-                className="inline-flex items-center gap-2 rounded-full bg-gradient-orange px-8 py-4 text-sm font-extrabold uppercase tracking-wide text-white shadow-orange"
+                onClick={handleCheckout}
+                disabled={redirecting}
+                className="inline-flex items-center gap-2 rounded-full bg-gradient-orange px-8 py-4 text-sm font-extrabold uppercase tracking-wide text-white shadow-orange disabled:cursor-not-allowed disabled:opacity-70"
               >
-                <CreditCard className="h-5 w-5" /> Realizar pagamento
+                {redirecting ? <Loader2 className="h-5 w-5 animate-spin" /> : <CreditCard className="h-5 w-5" />}
+                {redirecting ? "Abrindo checkout..." : "Realizar pagamento"}
               </button>
               <a
                 href={`https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(

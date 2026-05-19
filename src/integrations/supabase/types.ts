@@ -131,6 +131,42 @@ export type Database = {
         }
         Relationships: []
       }
+      infinitepay_events: {
+        Row: {
+          id: string
+          match_status: string
+          notes: string | null
+          order_nsu: string | null
+          payload: Json
+          processed: boolean
+          received_at: string
+          registration_id: string | null
+          transaction_nsu: string | null
+        }
+        Insert: {
+          id?: string
+          match_status?: string
+          notes?: string | null
+          order_nsu?: string | null
+          payload?: Json
+          processed?: boolean
+          received_at?: string
+          registration_id?: string | null
+          transaction_nsu?: string | null
+        }
+        Update: {
+          id?: string
+          match_status?: string
+          notes?: string | null
+          order_nsu?: string | null
+          payload?: Json
+          processed?: boolean
+          received_at?: string
+          registration_id?: string | null
+          transaction_nsu?: string | null
+        }
+        Relationships: []
+      }
       lots: {
         Row: {
           child_price_cents: number | null
@@ -187,47 +223,65 @@ export type Database = {
       payments: {
         Row: {
           amount_cents: number
+          capture_method: string | null
           checkout_url: string | null
           created_at: string
           external_reference: string | null
           id: string
+          installments: number | null
+          invoice_slug: string | null
+          paid_amount_cents: number | null
           paid_at: string | null
           provider: string
           provider_event_id: string | null
           provider_session_id: string | null
           raw_payload: Json
+          receipt_url: string | null
           registration_id: string
           status: Database["public"]["Enums"]["payment_status"]
+          transaction_nsu: string | null
           updated_at: string
         }
         Insert: {
           amount_cents: number
+          capture_method?: string | null
           checkout_url?: string | null
           created_at?: string
           external_reference?: string | null
           id?: string
+          installments?: number | null
+          invoice_slug?: string | null
+          paid_amount_cents?: number | null
           paid_at?: string | null
           provider?: string
           provider_event_id?: string | null
           provider_session_id?: string | null
           raw_payload?: Json
+          receipt_url?: string | null
           registration_id: string
           status?: Database["public"]["Enums"]["payment_status"]
+          transaction_nsu?: string | null
           updated_at?: string
         }
         Update: {
           amount_cents?: number
+          capture_method?: string | null
           checkout_url?: string | null
           created_at?: string
           external_reference?: string | null
           id?: string
+          installments?: number | null
+          invoice_slug?: string | null
+          paid_amount_cents?: number | null
           paid_at?: string | null
           provider?: string
           provider_event_id?: string | null
           provider_session_id?: string | null
           raw_payload?: Json
+          receipt_url?: string | null
           registration_id?: string
           status?: Database["public"]["Enums"]["payment_status"]
+          transaction_nsu?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -260,6 +314,8 @@ export type Database = {
           lot_id: string
           medical_notes: string | null
           metadata: Json
+          order_nsu: string | null
+          participant_type: string | null
           protocol: string
           shirt_size: Database["public"]["Enums"]["shirt_size"]
           status: Database["public"]["Enums"]["registration_status"]
@@ -285,6 +341,8 @@ export type Database = {
           lot_id: string
           medical_notes?: string | null
           metadata?: Json
+          order_nsu?: string | null
+          participant_type?: string | null
           protocol?: string
           shirt_size: Database["public"]["Enums"]["shirt_size"]
           status?: Database["public"]["Enums"]["registration_status"]
@@ -310,6 +368,8 @@ export type Database = {
           lot_id?: string
           medical_notes?: string | null
           metadata?: Json
+          order_nsu?: string | null
+          participant_type?: string | null
           protocol?: string
           shirt_size?: Database["public"]["Enums"]["shirt_size"]
           status?: Database["public"]["Enums"]["registration_status"]
