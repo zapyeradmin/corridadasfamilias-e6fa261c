@@ -24,7 +24,6 @@ import { Route as FaqRouteImport } from './routes/faq'
 import { Route as FalhanopagamentoRouteImport } from './routes/falhanopagamento'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as InscricaoSucessoRouteImport } from './routes/inscricao.sucesso'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminPatrocinadoresRouteImport } from './routes/_authenticated/admin.patrocinadores'
 import { Route as AuthenticatedAdminPagamentosRouteImport } from './routes/_authenticated/admin.pagamentos'
@@ -110,11 +109,6 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const InscricaoSucessoRoute = InscricaoSucessoRouteImport.update({
-  id: '/sucesso',
-  path: '/sucesso',
-  getParentRoute: () => InscricaoRoute,
-} as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -179,7 +173,7 @@ export interface FileRoutesByFullPath {
   '/falhanopagamento': typeof FalhanopagamentoRoute
   '/faq': typeof FaqRoute
   '/galeria': typeof GaleriaRoute
-  '/inscricao': typeof InscricaoRouteWithChildren
+  '/inscricao': typeof InscricaoRoute
   '/kit': typeof KitRoute
   '/login': typeof LoginRoute
   '/patrocinadores': typeof PatrocinadoresRoute
@@ -190,7 +184,6 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/sucesso': typeof SucessoRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
-  '/inscricao/sucesso': typeof InscricaoSucessoRoute
   '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/admin/eventos': typeof AuthenticatedAdminEventosRoute
@@ -206,7 +199,7 @@ export interface FileRoutesByTo {
   '/falhanopagamento': typeof FalhanopagamentoRoute
   '/faq': typeof FaqRoute
   '/galeria': typeof GaleriaRoute
-  '/inscricao': typeof InscricaoRouteWithChildren
+  '/inscricao': typeof InscricaoRoute
   '/kit': typeof KitRoute
   '/login': typeof LoginRoute
   '/patrocinadores': typeof PatrocinadoresRoute
@@ -217,7 +210,6 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/sucesso': typeof SucessoRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
-  '/inscricao/sucesso': typeof InscricaoSucessoRoute
   '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/admin/eventos': typeof AuthenticatedAdminEventosRoute
@@ -235,7 +227,7 @@ export interface FileRoutesById {
   '/falhanopagamento': typeof FalhanopagamentoRoute
   '/faq': typeof FaqRoute
   '/galeria': typeof GaleriaRoute
-  '/inscricao': typeof InscricaoRouteWithChildren
+  '/inscricao': typeof InscricaoRoute
   '/kit': typeof KitRoute
   '/login': typeof LoginRoute
   '/patrocinadores': typeof PatrocinadoresRoute
@@ -246,7 +238,6 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/sucesso': typeof SucessoRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
-  '/inscricao/sucesso': typeof InscricaoSucessoRoute
   '/_authenticated/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/_authenticated/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/_authenticated/admin/eventos': typeof AuthenticatedAdminEventosRoute
@@ -275,7 +266,6 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/sucesso'
     | '/admin'
-    | '/inscricao/sucesso'
     | '/admin/configuracoes'
     | '/admin/dashboard'
     | '/admin/eventos'
@@ -302,7 +292,6 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/sucesso'
     | '/admin'
-    | '/inscricao/sucesso'
     | '/admin/configuracoes'
     | '/admin/dashboard'
     | '/admin/eventos'
@@ -330,7 +319,6 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/sucesso'
     | '/_authenticated/admin'
-    | '/inscricao/sucesso'
     | '/_authenticated/admin/configuracoes'
     | '/_authenticated/admin/dashboard'
     | '/_authenticated/admin/eventos'
@@ -348,7 +336,7 @@ export interface RootRouteChildren {
   FalhanopagamentoRoute: typeof FalhanopagamentoRoute
   FaqRoute: typeof FaqRoute
   GaleriaRoute: typeof GaleriaRoute
-  InscricaoRoute: typeof InscricaoRouteWithChildren
+  InscricaoRoute: typeof InscricaoRoute
   KitRoute: typeof KitRoute
   LoginRoute: typeof LoginRoute
   PatrocinadoresRoute: typeof PatrocinadoresRoute
@@ -466,13 +454,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/inscricao/sucesso': {
-      id: '/inscricao/sucesso'
-      path: '/sucesso'
-      fullPath: '/inscricao/sucesso'
-      preLoaderRoute: typeof InscricaoSucessoRouteImport
-      parentRoute: typeof InscricaoRoute
     }
     '/_authenticated/admin': {
       id: '/_authenticated/admin'
@@ -599,25 +580,13 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
   AuthenticatedRouteChildren,
 )
 
-interface InscricaoRouteChildren {
-  InscricaoSucessoRoute: typeof InscricaoSucessoRoute
-}
-
-const InscricaoRouteChildren: InscricaoRouteChildren = {
-  InscricaoSucessoRoute: InscricaoSucessoRoute,
-}
-
-const InscricaoRouteWithChildren = InscricaoRoute._addFileChildren(
-  InscricaoRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   FalhanopagamentoRoute: FalhanopagamentoRoute,
   FaqRoute: FaqRoute,
   GaleriaRoute: GaleriaRoute,
-  InscricaoRoute: InscricaoRouteWithChildren,
+  InscricaoRoute: InscricaoRoute,
   KitRoute: KitRoute,
   LoginRoute: LoginRoute,
   PatrocinadoresRoute: PatrocinadoresRoute,
@@ -631,3 +600,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

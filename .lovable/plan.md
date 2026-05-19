@@ -1,46 +1,49 @@
-## Contexto
 
-Hoje existem duas rotas:
-- `/inscricao` — formulário de 3 passos. Ao enviar, cria o registro no banco (status `pending`) e redireciona para `/inscricao/sucesso?protocol=XYZ`.
-- `/inscricao/sucesso` — apenas mostra "Inscrição registrada!" e um texto genérico sobre pagamento, sem CTA real nem dados da inscrição.
+## Causa raiz do bug (URL correta, mas conteúdo errado)
 
-Não há duplicação de inscrição: o `POST` só acontece uma vez (no submit do formulário). O que existe é uma falta de clareza visual — a página de sucesso parece "outra inscrição" porque não comunica que é o passo seguinte (pagamento).
+No TanStack Router, arquivos com nome `inscricao.sucesso.tsx` se tornam **filhos** de `inscricao.tsx`. Para o filho aparecer, o pai precisa renderizar `<Outlet />`. Como `src/routes/inscricao.tsx` renderiza o formulário diretamente (sem `<Outlet />`), ao acessar `/inscricao/sucesso` o router exibe o formulário do pai — por isso a tela mostra "Confirmar Inscrição" e o toast de "Já existe uma inscrição em andamento" (o React Query rebatendo a rota anterior).
 
-## Objetivo
-
-Transformar `/inscricao/sucesso` numa página de **confirmação parcial + chamada para pagamento**, deixando claro que:
-1. Os dados foram registrados (Etapa 1 concluída).
-2. A vaga só é garantida após o pagamento (Etapa 2 pendente).
-3. Existe uma ação principal: **Pagar agora** (abre `checkout_url` da `payments`).
+A página `inscricao.sucesso.tsx` que já existe está correta em intenção, mas nunca é renderizada por causa desse aninhamento.
 
 ## Mudanças
 
-### 1. `src/lib/registrations.functions.ts`
-Estender `getRegistrationByProtocol` para também retornar o pagamento mais recente associado (status + `checkout_url` + `amount_cents`). Assim a página de sucesso busca tudo em uma chamada.
+### 1. Corrigir o roteamento (renomear o arquivo)
 
-```text
-return {
-  protocol, full_name, status, amount_cents, created_at,
-  payment: { status, checkout_url, amount_cents } | null
-}
-```
+Renomear `src/routes/inscricao.sucesso.tsx` → `src/routes/inscricao_.sucesso.tsx`.
 
-### 2. `src/routes/inscricao.sucesso.tsx` — reescrever
-- Buscar dados via `useServerFn(getRegistrationByProtocol)` + `useQuery`.
-- Layout em 2 blocos:
-  - **Stepper de 2 etapas**: "1. Dados ✓ concluído" / "2. Pagamento • pendente".
-  - **Card de resumo**: protocolo, nome, valor formatado (BRL).
-  - **CTA primário**: botão "Pagar agora" → abre `payment.checkout_url` em nova aba (quando InfinityPay estiver integrado).
-  - **CTAs secundários**: WhatsApp da organização e voltar para `/`.
-- Mensagem clara: "Sua inscrição foi registrada, mas a vaga só será confirmada após a aprovação do pagamento."
-- Tratar estados: loading (skeleton), protocolo inválido (mensagem + link para `/inscricao`), `status = paid` (mostrar "Pagamento confirmado" em vez do botão).
+O sufixo `_` no segmento `inscricao_` é a convenção do TanStack para **opt-out de aninhamento**: a URL continua `/inscricao/sucesso`, mas a rota deixa de ser filha de `inscricao.tsx` e passa a renderizar de forma independente. Sem isso, qualquer alternativa exigiria adicionar `<Outlet />` no formulário, o que quebraria a UX.
 
-### 3. Sem mudanças em `src/routes/inscricao.tsx`
-O redirect atual (`navigate({ to: "/inscricao/sucesso", search: { protocol } })`) continua válido — apenas o destino fica útil.
+### 2. Reescrever `inscricao_.sucesso.tsx` conforme o pedido
+
+Conteúdo "apenas informativo" sobre o próximo passo, sem duplicar formulário nem checagens automáticas:
+
+- **PageHeader**: eyebrow "Etapa 1 de 2 concluída", título **"Primeiro passo concluído!"**, descrição: "Agora, para confirmar e garantir de vez sua vaga, realize o seu pagamento com sucesso."
+- **Card de confirmação** (centralizado, max-w-2xl):
+  - Ícone `CheckCircle2` verde grande no topo
+  - Bloco com **Protocolo** (lido de `?protocol=` na URL) e nome do inscrito (busca leve via `getRegistrationByProtocol` apenas para exibir nome + valor — sem stepper, sem detecção `paid`)
+  - Mensagem: "Sua inscrição foi registrada. A vaga só será confirmada após a aprovação do pagamento."
+- **Bloco "Formas de pagamento"** com 3 itens (ícones + texto): PIX, Cartão de crédito (até 12x), Boleto. Texto informativo apenas, sem lógica.
+- **Botão primário "Realizar pagamento"** (gradient laranja, grande): navega para `/pagamento?protocol=${protocol}` (rota nova, placeholder por enquanto).
+- **Link secundário** "Falar no WhatsApp" para suporte com o protocolo.
+
+Remover do arquivo atual: stepper de 2 etapas, lógica `isPaid`, leitura do `payment.checkout_url`, abertura em nova aba. Tudo simplificado para "apenas informar".
+
+### 3. Criar `src/routes/pagamento.tsx` (placeholder)
+
+Página placeholder até integrar Infinity Pay:
+- PageHeader "Pagamento"
+- Mensagem: "Integração com Infinity Pay em andamento. Em breve você poderá finalizar o pagamento por aqui."
+- Mostra o protocolo (lido de `?protocol=`) e link para voltar / WhatsApp.
+
+Assim o botão "Realizar pagamento" já tem destino válido e mais tarde você só preenche essa rota com o checkout real.
+
+### 4. Não mexer em
+
+- `src/routes/inscricao.tsx` — o redirect com `navigate({ to: "/inscricao/sucesso", search: { protocol } })` continua válido.
+- `src/lib/registrations.functions.ts` — `getRegistrationByProtocol` continua igual (a página nova só usa `protocol`, `full_name` e `amount_cents`).
 
 ## Detalhes técnicos
 
-- Não cria nova rota nem deleta nenhuma; mantém URLs estáveis.
-- A query usa o `protocol` da search param como `queryKey`.
-- Mantém o `head()` com título "Inscrição registrada — falta o pagamento" para refletir o novo conteúdo.
-- Usa tokens de design já existentes (`--color-brand-orange`, `gradient-orange`, `shadow-orange`).
+- Convenção TanStack: segmento terminado em `_` (ex.: `inscricao_.sucesso.tsx`) gera URL `/inscricao/sucesso` sem aninhar no layout `inscricao.tsx`. O `routeTree.gen.ts` é regenerado automaticamente pelo plugin Vite — não editar à mão.
+- A página antiga `src/routes/sucesso.tsx` permanece intocada (é outra rota, `/sucesso`).
+- Sem alterações de schema, server functions ou business logic.
