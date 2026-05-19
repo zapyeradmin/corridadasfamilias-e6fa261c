@@ -142,7 +142,16 @@ function Page() {
 
             {step === 0 && <StepPersonal form={form} />}
             {step === 1 && <StepKit form={form} />}
-            {step === 2 && <StepReview form={form} amount={eventData?.currentLot?.price_cents} />}
+            {step === 2 && (
+              <StepReview
+                form={form}
+                amount={resolvePrice(
+                  form.watch("birth_date"),
+                  eventData?.event?.event_date,
+                  eventData?.currentLot,
+                )}
+              />
+            )}
 
             <div className="mt-10 flex items-center justify-between gap-3">
               <button
