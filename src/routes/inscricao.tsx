@@ -90,7 +90,7 @@ function Page() {
       whatsapp: "",
       birth_date: "",
       gender: undefined as unknown as FormValues["gender"],
-      category: "",
+      category: undefined as unknown as FormValues["category"],
       shirt_size: undefined as unknown as FormValues["shirt_size"],
       emergency_contact_name: "",
       emergency_contact_phone: "",
