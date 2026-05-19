@@ -39,31 +39,8 @@ function Page() {
         }}
       >
         <div className="mx-auto max-w-[1200px] px-5 pt-6 pb-20 md:px-8 md:pt-8 md:pb-28">
-          <div className="text-left">
-            <p className="text-xs font-bold uppercase tracking-[0.35em] text-white/85">
-              Categorias e premiações
-            </p>
-            <h2 className="heading-section mt-3 text-3xl text-white md:text-5xl">
-              Categorias e premiações da corrida
-            </h2>
-            <p
-              className="mt-5 text-base leading-relaxed text-white/95 md:text-lg"
-              style={{ textAlign: "justify" }}
-            >
-              Confira todas categorias e as premiações para os três melhores
-              colocados de cada categoria. Todos os participantes recebem
-              medalha!
-            </p>
-          </div>
+          <CategoriasGrid />
 
-          <div className="mt-12">
-            <CategoriasGrid />
-          </div>
-
-          <p className="mt-12 rounded-2xl bg-white/10 p-6 text-sm text-white/95 ring-1 ring-white/20">
-            Todos os participantes que cruzarem a linha de chegada recebem a
-            medalha de finisher da II Corrida das Famílias.
-          </p>
         </div>
       </section>
 
