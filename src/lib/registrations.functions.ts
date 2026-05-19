@@ -113,6 +113,9 @@ export const createRegistration = createServerFn({ method: "POST" })
       );
     }
 
+    const participantType: "adulto" | "crianca" = isChild ? "crianca" : "adulto";
+    const orderNsu = `inscricao_${participantType}_lote1_${crypto.randomUUID()}`;
+
     const { data: registration, error: regErr } = await supabaseAdmin
       .from("registrations")
       .insert({
@@ -134,6 +137,8 @@ export const createRegistration = createServerFn({ method: "POST" })
         accepted_lgpd: true,
         status: "pending",
         amount_cents: amountCents,
+        order_nsu: orderNsu,
+        participant_type: participantType,
       })
       .select("id, protocol, amount_cents")
       .single();
@@ -147,7 +152,7 @@ export const createRegistration = createServerFn({ method: "POST" })
       status: "pending",
       amount_cents: registration.amount_cents,
       checkout_url: checkoutUrl,
-      external_reference: registration.protocol,
+      external_reference: orderNsu,
     });
     if (payErr) return fail(payErr.message);
 

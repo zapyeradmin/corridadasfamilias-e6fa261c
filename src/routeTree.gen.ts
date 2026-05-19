@@ -27,6 +27,7 @@ import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as InscricaoSucessoRouteImport } from './routes/inscricao_.sucesso'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as ApiWebhooksInfinitepayRouteImport } from './routes/api/webhooks/infinitepay'
 import { Route as AuthenticatedAdminPatrocinadoresRouteImport } from './routes/_authenticated/admin.patrocinadores'
 import { Route as AuthenticatedAdminPagamentosRouteImport } from './routes/_authenticated/admin.pagamentos'
 import { Route as AuthenticatedAdminLogsRouteImport } from './routes/_authenticated/admin.logs'
@@ -126,6 +127,11 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const ApiWebhooksInfinitepayRoute = ApiWebhooksInfinitepayRouteImport.update({
+  id: '/api/webhooks/infinitepay',
+  path: '/api/webhooks/infinitepay',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminPatrocinadoresRoute =
   AuthenticatedAdminPatrocinadoresRouteImport.update({
     id: '/patrocinadores',
@@ -206,6 +212,7 @@ export interface FileRoutesByFullPath {
   '/admin/logs': typeof AuthenticatedAdminLogsRoute
   '/admin/pagamentos': typeof AuthenticatedAdminPagamentosRoute
   '/admin/patrocinadores': typeof AuthenticatedAdminPatrocinadoresRoute
+  '/api/webhooks/infinitepay': typeof ApiWebhooksInfinitepayRoute
   '/admin/inscricoes/$id': typeof AuthenticatedAdminInscricoesIdRoute
 }
 export interface FileRoutesByTo {
@@ -234,6 +241,7 @@ export interface FileRoutesByTo {
   '/admin/logs': typeof AuthenticatedAdminLogsRoute
   '/admin/pagamentos': typeof AuthenticatedAdminPagamentosRoute
   '/admin/patrocinadores': typeof AuthenticatedAdminPatrocinadoresRoute
+  '/api/webhooks/infinitepay': typeof ApiWebhooksInfinitepayRoute
   '/admin/inscricoes/$id': typeof AuthenticatedAdminInscricoesIdRoute
 }
 export interface FileRoutesById {
@@ -264,6 +272,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/logs': typeof AuthenticatedAdminLogsRoute
   '/_authenticated/admin/pagamentos': typeof AuthenticatedAdminPagamentosRoute
   '/_authenticated/admin/patrocinadores': typeof AuthenticatedAdminPatrocinadoresRoute
+  '/api/webhooks/infinitepay': typeof ApiWebhooksInfinitepayRoute
   '/_authenticated/admin/inscricoes/$id': typeof AuthenticatedAdminInscricoesIdRoute
 }
 export interface FileRouteTypes {
@@ -294,6 +303,7 @@ export interface FileRouteTypes {
     | '/admin/logs'
     | '/admin/pagamentos'
     | '/admin/patrocinadores'
+    | '/api/webhooks/infinitepay'
     | '/admin/inscricoes/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -322,6 +332,7 @@ export interface FileRouteTypes {
     | '/admin/logs'
     | '/admin/pagamentos'
     | '/admin/patrocinadores'
+    | '/api/webhooks/infinitepay'
     | '/admin/inscricoes/$id'
   id:
     | '__root__'
@@ -351,6 +362,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/logs'
     | '/_authenticated/admin/pagamentos'
     | '/_authenticated/admin/patrocinadores'
+    | '/api/webhooks/infinitepay'
     | '/_authenticated/admin/inscricoes/$id'
   fileRoutesById: FileRoutesById
 }
@@ -372,6 +384,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   SucessoRoute: typeof SucessoRoute
   InscricaoSucessoRoute: typeof InscricaoSucessoRoute
+  ApiWebhooksInfinitepayRoute: typeof ApiWebhooksInfinitepayRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -501,6 +514,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin'
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRoute
+    }
+    '/api/webhooks/infinitepay': {
+      id: '/api/webhooks/infinitepay'
+      path: '/api/webhooks/infinitepay'
+      fullPath: '/api/webhooks/infinitepay'
+      preLoaderRoute: typeof ApiWebhooksInfinitepayRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin/patrocinadores': {
       id: '/_authenticated/admin/patrocinadores'
@@ -638,6 +658,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   SucessoRoute: SucessoRoute,
   InscricaoSucessoRoute: InscricaoSucessoRoute,
+  ApiWebhooksInfinitepayRoute: ApiWebhooksInfinitepayRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
