@@ -308,9 +308,12 @@ function StepPersonal({ form }: { form: ReturnType<typeof useForm<FormValues>> }
       <Field label="Categoria" error={formState.errors.category?.message}>
         <select className={inputClass} {...register("category")} defaultValue="">
           <option value="" disabled>Selecione</option>
-          <option value="5km_geral">5km Geral</option>
-          <option value="5km_familia">5km Família</option>
-          <option value="caminhada">Caminhada</option>
+          <option value="geral_masculino">Geral Masculino (idade livre)</option>
+          <option value="geral_feminino">Geral Feminino (idade livre)</option>
+          <option value="infanto_juvenil_masculino">Infanto-Juvenil Masculino (9–17 anos)</option>
+          <option value="infanto_juvenil_feminino">Infanto-Juvenil Feminino (9–17 anos)</option>
+          <option value="60_masculino">60+ Masculino</option>
+          <option value="60_feminino">60+ Feminino</option>
         </select>
       </Field>
     </div>
