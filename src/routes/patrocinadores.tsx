@@ -93,30 +93,82 @@ function PlaceholderCard({ n }: { n: number }) {
   );
 }
 
+function DiamondCard({
+  name,
+  slug,
+  websiteUrl,
+}: {
+  name: string;
+  slug: string;
+  websiteUrl: string | null;
+}) {
+  const src = LOGO_ASSETS[slug];
+  const scale = LOGO_SCALE[slug] ?? "scale-100";
+  if (!src) return null;
+  const img = (
+    <img
+      src={src}
+      alt={name}
+      loading="lazy"
+      decoding="async"
+      draggable={false}
+      className={cn("max-h-[78%] max-w-[82%] object-contain", scale)}
+    />
+  );
+  return (
+    <div className="grid aspect-[16/9] place-items-center rounded-2xl border border-border bg-white p-3 shadow-soft transition hover:-translate-y-0.5 hover:shadow-card md:p-4">
+      {websiteUrl ? (
+        <a
+          href={websiteUrl}
+          target="_blank"
+          rel="noreferrer"
+          aria-label={name}
+          className="grid h-full w-full place-items-center"
+        >
+          {img}
+        </a>
+      ) : (
+        img
+      )}
+    </div>
+  );
+}
+
 function Page() {
   const fetchSponsors = useServerFn(getPublishedSponsors);
-  const { data: sponsors, isLoading } = useQuery({
+  const { data: sponsors } = useQuery({
     queryKey: ["sponsors"],
     queryFn: () => fetchSponsors(),
     staleTime: 5 * 60 * 1000,
   });
 
-  const grouped = (sponsors ?? []).reduce<Record<string, typeof sponsors>>((acc, s) => {
-    (acc[s.tier] ??= []).push(s);
-    return acc;
-  }, {});
+  const all = sponsors ?? [];
 
-  const diamondCount = grouped.diamond?.length ?? 0;
+  // Diamond: mesma lógica da Home (fallback quando DB vazio ou logos não bundled)
+  const diamondFromDb = all
+    .filter((s) => s.tier === "diamond")
+    .map((s) => ({
+      id: s.id,
+      name: s.name,
+      slug: slugFromUrl(s.logo_url),
+      website_url: s.website_url,
+    }))
+    .filter((s) => LOGO_ASSETS[s.slug]);
+  const diamond = diamondFromDb.length > 0 ? diamondFromDb : FALLBACK_DIAMOND;
   const diamondPlaceholders = Array.from(
-    { length: Math.max(0, DIAMOND_TOTAL - diamondCount) },
-    (_, i) => i + diamondCount + 1,
+    { length: Math.max(0, DIAMOND_TOTAL - diamond.length) },
+    (_, i) => i + diamond.length + 1,
   );
+
+  // Outros tiers vêm do DB
+  const otherTiers = (["gold", "silver", "standard"] as const).map((tier) => ({
+    tier,
+    items: all.filter((s) => s.tier === tier),
+  }));
 
   const waHref = `https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(
     "Olá! Tenho interesse em patrocinar a II Corrida das Famílias.",
   )}`;
-
-  const hasAny = !!sponsors && sponsors.length > 0;
 
   return (
     <>
@@ -128,37 +180,34 @@ function Page() {
 
       <section className="bg-white">
         <div className="mx-auto max-w-[1200px] px-5 pt-6 pb-20 md:px-8 md:pt-8 md:pb-28">
-
-          {isLoading && (
-            <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 md:mt-14 md:grid-cols-4 md:gap-6">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="aspect-[16/9] animate-pulse rounded-2xl bg-[color:var(--color-brand-soft)]"
+          <section className="mt-10 first:mt-10 md:mt-14 md:first:mt-14">
+            <p className="text-xs font-bold uppercase tracking-[0.35em] text-[color:var(--color-brand-orange)]">
+              {TIER_LABEL.diamond}
+            </p>
+            <div className="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 md:grid-cols-4 md:gap-6">
+              {diamond.map((s) => (
+                <DiamondCard
+                  key={s.id}
+                  name={s.name}
+                  slug={s.slug}
+                  websiteUrl={s.website_url}
                 />
               ))}
+              {diamondPlaceholders.map((n) => (
+                <PlaceholderCard key={`ph-${n}`} n={n} />
+              ))}
             </div>
-          )}
+          </section>
 
-          {!isLoading && !hasAny && (
-            <div className="mt-10 rounded-3xl border border-dashed border-[color:var(--color-brand-purple)]/25 bg-white p-10 text-center shadow-soft md:mt-14">
-              <p className="text-base font-bold text-[color:var(--color-brand-purple-text)]">
-                Em breve divulgaremos os patrocinadores oficiais.
-              </p>
-            </div>
-          )}
-
-          {!isLoading &&
-            hasAny &&
-            TIER_ORDER.filter(
-              (t) => (grouped[t]?.length ?? 0) > 0 || t === "diamond",
-            ).map((tier) => (
-              <section key={tier} className="mt-12 first:mt-10 md:first:mt-14">
+          {otherTiers
+            .filter((t) => t.items.length > 0)
+            .map(({ tier, items }) => (
+              <section key={tier} className="mt-12">
                 <p className="text-xs font-bold uppercase tracking-[0.35em] text-[color:var(--color-brand-orange)]">
                   {TIER_LABEL[tier]}
                 </p>
                 <div className="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 md:grid-cols-4 md:gap-6">
-                  {(grouped[tier] ?? []).map((s) => (
+                  {items.map((s) => (
                     <SponsorCard
                       key={s.id}
                       name={s.name}
@@ -166,13 +215,10 @@ function Page() {
                       websiteUrl={s.website_url}
                     />
                   ))}
-                  {tier === "diamond" &&
-                    diamondPlaceholders.map((n) => (
-                      <PlaceholderCard key={`ph-${n}`} n={n} />
-                    ))}
                 </div>
               </section>
             ))}
+
 
           <p className="mt-10 text-center text-base text-[color:var(--color-brand-purple-text)] md:mt-14 md:text-lg">
             Quer apoiar o evento?{" "}
