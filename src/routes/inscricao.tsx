@@ -354,7 +354,7 @@ function StepPersonal({ form }: { form: ReturnType<typeof useForm<FormValues>> }
           <option value="" disabled>Selecione</option>
           <option value="female">Feminino</option>
           <option value="male">Masculino</option>
-          <option value="other">Prefiro não informar</option>
+          
         </select>
       </Field>
       <Field label="Categoria" error={formState.errors.category?.message}>
