@@ -1,10 +1,13 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { toast } from "sonner";
 import { CheckCircle2, CreditCard, Loader2, MessageCircle, QrCode } from "lucide-react";
 import { ContentSection, PageHeader } from "@/components/site/page-shell";
 import { SITE } from "@/lib/site-config";
 import { getRegistrationByProtocol } from "@/lib/registrations.functions";
+import { getCheckoutUrlForRegistration } from "@/lib/infinitepay.functions";
 import { formatBRL } from "@/lib/cpf";
 
 export const Route = createFileRoute("/inscricao_/sucesso")({
@@ -26,13 +29,37 @@ export const Route = createFileRoute("/inscricao_/sucesso")({
 
 function Page() {
   const { protocol } = Route.useSearch();
-  const navigate = useNavigate();
   const fetchReg = useServerFn(getRegistrationByProtocol);
+  const fetchCheckout = useServerFn(getCheckoutUrlForRegistration);
+  const [redirecting, setRedirecting] = useState(false);
   const { data, isLoading } = useQuery({
     queryKey: ["registration", protocol],
     queryFn: () => fetchReg({ data: { protocol } }),
     enabled: !!protocol,
   });
+
+  async function handleCheckout() {
+    if (!protocol || redirecting) return;
+    setRedirecting(true);
+    try {
+      const res = await fetchCheckout({ data: { protocol } });
+      if (!res.ok) {
+        toast.error(res.error);
+        setRedirecting(false);
+        return;
+      }
+      if (!res.checkoutUrl) {
+        toast.message("Checkout em configuração. Tente novamente em instantes.");
+        setRedirecting(false);
+        return;
+      }
+      window.location.href = res.checkoutUrl;
+    } catch {
+      toast.error("Não foi possível abrir o checkout. Tente novamente.");
+      setRedirecting(false);
+    }
+  }
+
 
   if (!protocol) {
     return (
