@@ -16,6 +16,7 @@ import { Route as PremiacaoRouteImport } from './routes/premiacao'
 import { Route as PoliticaPrivacidadeRouteImport } from './routes/politica-privacidade'
 import { Route as PercursoRouteImport } from './routes/percurso'
 import { Route as PatrocinadoresRouteImport } from './routes/patrocinadores'
+import { Route as PagamentoRouteImport } from './routes/pagamento'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as KitRouteImport } from './routes/kit'
 import { Route as InscricaoRouteImport } from './routes/inscricao'
@@ -24,7 +25,7 @@ import { Route as FaqRouteImport } from './routes/faq'
 import { Route as FalhanopagamentoRouteImport } from './routes/falhanopagamento'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as InscricaoSucessoRouteImport } from './routes/inscricao.sucesso'
+import { Route as InscricaoSucessoRouteImport } from './routes/inscricao_.sucesso'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminPatrocinadoresRouteImport } from './routes/_authenticated/admin.patrocinadores'
 import { Route as AuthenticatedAdminPagamentosRouteImport } from './routes/_authenticated/admin.pagamentos'
@@ -71,6 +72,11 @@ const PatrocinadoresRoute = PatrocinadoresRouteImport.update({
   path: '/patrocinadores',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PagamentoRoute = PagamentoRouteImport.update({
+  id: '/pagamento',
+  path: '/pagamento',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -111,9 +117,9 @@ const IndexRoute = IndexRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const InscricaoSucessoRoute = InscricaoSucessoRouteImport.update({
-  id: '/sucesso',
-  path: '/sucesso',
-  getParentRoute: () => InscricaoRoute,
+  id: '/inscricao_/sucesso',
+  path: '/inscricao/sucesso',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
@@ -179,9 +185,10 @@ export interface FileRoutesByFullPath {
   '/falhanopagamento': typeof FalhanopagamentoRoute
   '/faq': typeof FaqRoute
   '/galeria': typeof GaleriaRoute
-  '/inscricao': typeof InscricaoRouteWithChildren
+  '/inscricao': typeof InscricaoRoute
   '/kit': typeof KitRoute
   '/login': typeof LoginRoute
+  '/pagamento': typeof PagamentoRoute
   '/patrocinadores': typeof PatrocinadoresRoute
   '/percurso': typeof PercursoRoute
   '/politica-privacidade': typeof PoliticaPrivacidadeRoute
@@ -206,9 +213,10 @@ export interface FileRoutesByTo {
   '/falhanopagamento': typeof FalhanopagamentoRoute
   '/faq': typeof FaqRoute
   '/galeria': typeof GaleriaRoute
-  '/inscricao': typeof InscricaoRouteWithChildren
+  '/inscricao': typeof InscricaoRoute
   '/kit': typeof KitRoute
   '/login': typeof LoginRoute
+  '/pagamento': typeof PagamentoRoute
   '/patrocinadores': typeof PatrocinadoresRoute
   '/percurso': typeof PercursoRoute
   '/politica-privacidade': typeof PoliticaPrivacidadeRoute
@@ -235,9 +243,10 @@ export interface FileRoutesById {
   '/falhanopagamento': typeof FalhanopagamentoRoute
   '/faq': typeof FaqRoute
   '/galeria': typeof GaleriaRoute
-  '/inscricao': typeof InscricaoRouteWithChildren
+  '/inscricao': typeof InscricaoRoute
   '/kit': typeof KitRoute
   '/login': typeof LoginRoute
+  '/pagamento': typeof PagamentoRoute
   '/patrocinadores': typeof PatrocinadoresRoute
   '/percurso': typeof PercursoRoute
   '/politica-privacidade': typeof PoliticaPrivacidadeRoute
@@ -246,7 +255,7 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/sucesso': typeof SucessoRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
-  '/inscricao/sucesso': typeof InscricaoSucessoRoute
+  '/inscricao_/sucesso': typeof InscricaoSucessoRoute
   '/_authenticated/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/_authenticated/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/_authenticated/admin/eventos': typeof AuthenticatedAdminEventosRoute
@@ -267,6 +276,7 @@ export interface FileRouteTypes {
     | '/inscricao'
     | '/kit'
     | '/login'
+    | '/pagamento'
     | '/patrocinadores'
     | '/percurso'
     | '/politica-privacidade'
@@ -294,6 +304,7 @@ export interface FileRouteTypes {
     | '/inscricao'
     | '/kit'
     | '/login'
+    | '/pagamento'
     | '/patrocinadores'
     | '/percurso'
     | '/politica-privacidade'
@@ -322,6 +333,7 @@ export interface FileRouteTypes {
     | '/inscricao'
     | '/kit'
     | '/login'
+    | '/pagamento'
     | '/patrocinadores'
     | '/percurso'
     | '/politica-privacidade'
@@ -330,7 +342,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/sucesso'
     | '/_authenticated/admin'
-    | '/inscricao/sucesso'
+    | '/inscricao_/sucesso'
     | '/_authenticated/admin/configuracoes'
     | '/_authenticated/admin/dashboard'
     | '/_authenticated/admin/eventos'
@@ -348,9 +360,10 @@ export interface RootRouteChildren {
   FalhanopagamentoRoute: typeof FalhanopagamentoRoute
   FaqRoute: typeof FaqRoute
   GaleriaRoute: typeof GaleriaRoute
-  InscricaoRoute: typeof InscricaoRouteWithChildren
+  InscricaoRoute: typeof InscricaoRoute
   KitRoute: typeof KitRoute
   LoginRoute: typeof LoginRoute
+  PagamentoRoute: typeof PagamentoRoute
   PatrocinadoresRoute: typeof PatrocinadoresRoute
   PercursoRoute: typeof PercursoRoute
   PoliticaPrivacidadeRoute: typeof PoliticaPrivacidadeRoute
@@ -358,6 +371,7 @@ export interface RootRouteChildren {
   RegulamentoRoute: typeof RegulamentoRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SucessoRoute: typeof SucessoRoute
+  InscricaoSucessoRoute: typeof InscricaoSucessoRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -409,6 +423,13 @@ declare module '@tanstack/react-router' {
       path: '/patrocinadores'
       fullPath: '/patrocinadores'
       preLoaderRoute: typeof PatrocinadoresRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pagamento': {
+      id: '/pagamento'
+      path: '/pagamento'
+      fullPath: '/pagamento'
+      preLoaderRoute: typeof PagamentoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -467,12 +488,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/inscricao/sucesso': {
-      id: '/inscricao/sucesso'
-      path: '/sucesso'
+    '/inscricao_/sucesso': {
+      id: '/inscricao_/sucesso'
+      path: '/inscricao/sucesso'
       fullPath: '/inscricao/sucesso'
       preLoaderRoute: typeof InscricaoSucessoRouteImport
-      parentRoute: typeof InscricaoRoute
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin': {
       id: '/_authenticated/admin'
@@ -599,27 +620,16 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
   AuthenticatedRouteChildren,
 )
 
-interface InscricaoRouteChildren {
-  InscricaoSucessoRoute: typeof InscricaoSucessoRoute
-}
-
-const InscricaoRouteChildren: InscricaoRouteChildren = {
-  InscricaoSucessoRoute: InscricaoSucessoRoute,
-}
-
-const InscricaoRouteWithChildren = InscricaoRoute._addFileChildren(
-  InscricaoRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   FalhanopagamentoRoute: FalhanopagamentoRoute,
   FaqRoute: FaqRoute,
   GaleriaRoute: GaleriaRoute,
-  InscricaoRoute: InscricaoRouteWithChildren,
+  InscricaoRoute: InscricaoRoute,
   KitRoute: KitRoute,
   LoginRoute: LoginRoute,
+  PagamentoRoute: PagamentoRoute,
   PatrocinadoresRoute: PatrocinadoresRoute,
   PercursoRoute: PercursoRoute,
   PoliticaPrivacidadeRoute: PoliticaPrivacidadeRoute,
@@ -627,6 +637,7 @@ const rootRouteChildren: RootRouteChildren = {
   RegulamentoRoute: RegulamentoRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SucessoRoute: SucessoRoute,
+  InscricaoSucessoRoute: InscricaoSucessoRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
