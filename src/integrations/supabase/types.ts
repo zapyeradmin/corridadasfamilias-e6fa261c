@@ -427,7 +427,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "staff"
-      gender: "M" | "F" | "O"
+      gender: "M" | "F"
       payment_status:
         | "pending"
         | "processing"
@@ -571,7 +571,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "staff"],
-      gender: ["M", "F", "O"],
+      gender: ["M", "F"],
       payment_status: [
         "pending",
         "processing",

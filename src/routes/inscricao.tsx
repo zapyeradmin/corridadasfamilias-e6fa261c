@@ -33,7 +33,7 @@ const formSchema = z.object({
   email: z.string().email("E-mail inválido"),
   whatsapp: z.string().refine((v) => v.replace(/\D/g, "").length >= 10, "WhatsApp inválido"),
   birth_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Data inválida"),
-  gender: z.enum(["male", "female", "other"], { message: "Selecione" }),
+  gender: z.enum(["male", "female"], { message: "Selecione" }),
   category: z.enum(
     [
       "geral_masculino",
@@ -354,7 +354,7 @@ function StepPersonal({ form }: { form: ReturnType<typeof useForm<FormValues>> }
           <option value="" disabled>Selecione</option>
           <option value="female">Feminino</option>
           <option value="male">Masculino</option>
-          <option value="other">Prefiro não informar</option>
+          
         </select>
       </Field>
       <Field label="Categoria" error={formState.errors.category?.message}>
