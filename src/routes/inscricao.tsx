@@ -138,6 +138,10 @@ function Page() {
           medical_notes: values.medical_notes || null,
         },
       });
+      if (!res.ok) {
+        toast.error(res.error);
+        return;
+      }
       toast.success("Inscrição registrada! Redirecionando...");
       navigate({ to: "/inscricao/sucesso", search: { protocol: res.protocol } });
     } catch (err) {
