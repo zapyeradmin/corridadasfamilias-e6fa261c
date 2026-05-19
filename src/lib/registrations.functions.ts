@@ -14,13 +14,29 @@ const registrationSchema = z.object({
   birth_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Data inválida"),
   gender: z.enum(["male", "female", "other"]),
   shirt_size: z.enum(["pp", "p", "m", "g", "gg", "xgg"]),
-  category: z.string().min(1).max(40),
+  category: z.enum([
+    "geral_masculino",
+    "geral_feminino",
+    "infanto_juvenil_masculino",
+    "infanto_juvenil_feminino",
+    "60_masculino",
+    "60_feminino",
+  ]),
   emergency_contact_name: z.string().min(2).max(120),
   emergency_contact_phone: z.string().min(10).max(20),
   medical_notes: z.string().max(500).optional().nullable(),
   accepted_terms: z.literal(true),
   accepted_lgpd: z.literal(true),
 });
+
+function yearsBetween(birthIso: string, refIso: string): number {
+  const birth = new Date(birthIso);
+  const ref = new Date(refIso);
+  let age = ref.getFullYear() - birth.getFullYear();
+  const m = ref.getMonth() - birth.getMonth();
+  if (m < 0 || (m === 0 && ref.getDate() < birth.getDate())) age--;
+  return age;
+}
 
 export type RegistrationInput = z.infer<typeof registrationSchema>;
 
