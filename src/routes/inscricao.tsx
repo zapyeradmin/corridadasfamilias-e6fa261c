@@ -57,6 +57,28 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
+function ageOn(birthIso: string, refIso: string): number {
+  const b = new Date(birthIso);
+  const r = new Date(refIso);
+  let a = r.getFullYear() - b.getFullYear();
+  const m = r.getMonth() - b.getMonth();
+  if (m < 0 || (m === 0 && r.getDate() < b.getDate())) a--;
+  return a;
+}
+
+function resolvePrice(
+  birth: string | undefined,
+  eventDate: string | undefined,
+  lot: { price_cents: number; child_price_cents: number | null } | null | undefined,
+): number | undefined {
+  if (!lot) return undefined;
+  if (birth && /^\d{4}-\d{2}-\d{2}$/.test(birth) && eventDate) {
+    const a = ageOn(birth, eventDate);
+    if (a <= 9 && lot.child_price_cents) return lot.child_price_cents;
+  }
+  return lot.price_cents;
+}
+
 const STEPS: { title: string; fields: (keyof FormValues)[] }[] = [
   {
     title: "Dados pessoais",
