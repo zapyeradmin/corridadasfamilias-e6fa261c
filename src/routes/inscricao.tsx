@@ -34,7 +34,17 @@ const formSchema = z.object({
   whatsapp: z.string().refine((v) => v.replace(/\D/g, "").length >= 10, "WhatsApp inválido"),
   birth_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Data inválida"),
   gender: z.enum(["male", "female", "other"], { message: "Selecione" }),
-  category: z.string().min(1, "Selecione a categoria"),
+  category: z.enum(
+    [
+      "geral_masculino",
+      "geral_feminino",
+      "infanto_juvenil_masculino",
+      "infanto_juvenil_feminino",
+      "60_masculino",
+      "60_feminino",
+    ],
+    { message: "Selecione a categoria" },
+  ),
   shirt_size: z.enum(["pp", "p", "m", "g", "gg", "xgg"], { message: "Selecione" }),
   emergency_contact_name: z.string().min(2, "Informe o contato"),
   emergency_contact_phone: z
