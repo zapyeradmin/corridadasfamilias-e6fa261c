@@ -67,9 +67,8 @@ function Page() {
             </div>
           </div>
 
-          <p className="mt-12 rounded-2xl bg-[color:var(--color-brand-soft)] p-6 text-sm text-[color:var(--color-brand-purple-text)]">
-            A data, horário e local de retirada do kit serão divulgados oficialmente.
-            Acompanhe as redes sociais e o WhatsApp da organização.
+          <p className="mt-12 whitespace-pre-line rounded-2xl bg-[color:var(--color-brand-soft)] p-6 text-sm text-[color:var(--color-brand-purple-text)]">
+            {`A entrega dos kits será realizada nos dias 04, 05 e 06 de agosto de 2026, sempre no horário das 19h30 às 21h30. O local de retirada será o Salão Paroquial da Igreja de Nossa Senhora da Conceição, ao lado da Igreja de Nossa Senhora da Conceição.\n\nCada participante deverá levar 1kg de alimento não perecível no momento da retirada do kit, reforçando o compromisso solidário da II CORRIDA DAS FAMÍLIAS.`}
           </p>
         </div>
       </section>
