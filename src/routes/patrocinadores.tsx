@@ -128,18 +128,6 @@ function Page() {
 
       <section className="bg-white">
         <div className="mx-auto max-w-[1200px] px-5 pt-6 pb-20 md:px-8 md:pt-8 md:pb-28">
-          <div className="text-left">
-            <p className="text-xs font-bold uppercase tracking-[0.35em] text-[color:var(--color-brand-orange)]">
-              Quem apoia a corrida
-            </p>
-            <h2 className="heading-section mt-3 text-3xl text-[color:var(--color-brand-purple-title)] md:text-5xl">
-              Veja quem são os nossos patrocinadores
-            </h2>
-            <p className="mt-5 max-w-3xl text-base leading-relaxed text-[color:var(--color-brand-purple-text)]/80 text-justify md:text-lg">
-              Conheça as marcas e instituições que tornam a II Corrida das
-              Famílias possível, organizadas por cota de patrocínio.
-            </p>
-          </div>
 
           {isLoading && (
             <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 md:mt-14 md:grid-cols-4 md:gap-6">
