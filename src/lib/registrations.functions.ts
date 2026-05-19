@@ -3,7 +3,7 @@ import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { isValidCpf, normalizeCpf } from "@/lib/cpf";
 
-const GENDER_DB = { male: "M", female: "F", other: "O" } as const;
+const GENDER_DB = { male: "M", female: "F" } as const;
 const SHIRT_DB = { pp: "PP", p: "P", m: "M", g: "G", gg: "GG", xgg: "XGG" } as const;
 
 const registrationSchema = z.object({
