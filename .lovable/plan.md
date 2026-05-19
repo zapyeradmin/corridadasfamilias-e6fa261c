@@ -1,28 +1,46 @@
-# Remover opção "Prefiro não informar" do gênero
+## Contexto
 
-Atualmente o gênero aceita `male | female | other` no app e `M | F | O` no banco. Nenhuma inscrição existente usa `O` (0 registros), então é seguro remover.
+Hoje existem duas rotas:
+- `/inscricao` — formulário de 3 passos. Ao enviar, cria o registro no banco (status `pending`) e redireciona para `/inscricao/sucesso?protocol=XYZ`.
+- `/inscricao/sucesso` — apenas mostra "Inscrição registrada!" e um texto genérico sobre pagamento, sem CTA real nem dados da inscrição.
+
+Não há duplicação de inscrição: o `POST` só acontece uma vez (no submit do formulário). O que existe é uma falta de clareza visual — a página de sucesso parece "outra inscrição" porque não comunica que é o passo seguinte (pagamento).
+
+## Objetivo
+
+Transformar `/inscricao/sucesso` numa página de **confirmação parcial + chamada para pagamento**, deixando claro que:
+1. Os dados foram registrados (Etapa 1 concluída).
+2. A vaga só é garantida após o pagamento (Etapa 2 pendente).
+3. Existe uma ação principal: **Pagar agora** (abre `checkout_url` da `payments`).
 
 ## Mudanças
 
-### 1. Migration (Supabase)
-- Recriar o enum `public.gender` apenas com `'M'` e `'F'` (removendo `'O'`).
-- Como o Postgres não permite `ALTER TYPE ... DROP VALUE`, fazer:
-  1. Renomear o enum atual para `gender_old`.
-  2. Criar novo enum `gender` com `('M','F')`.
-  3. `ALTER TABLE registrations ALTER COLUMN gender TYPE gender USING gender::text::gender`.
-  4. `DROP TYPE gender_old`.
+### 1. `src/lib/registrations.functions.ts`
+Estender `getRegistrationByProtocol` para também retornar o pagamento mais recente associado (status + `checkout_url` + `amount_cents`). Assim a página de sucesso busca tudo em uma chamada.
 
-### 2. Validação server-side — `src/lib/registrations.functions.ts`
-- Trocar `z.enum(["male", "female", "other"])` por `z.enum(["male", "female"])`.
-- Atualizar `GENDER_DB` para `{ male: "M", female: "F" }`.
+```text
+return {
+  protocol, full_name, status, amount_cents, created_at,
+  payment: { status, checkout_url, amount_cents } | null
+}
+```
 
-### 3. Formulário de inscrição — `src/routes/inscricao.tsx`
-- Atualizar o schema Zod do form: `gender: z.enum(["male", "female"], ...)`.
-- Remover a `<option value="other">Prefiro não informar</option>` do select de Gênero.
+### 2. `src/routes/inscricao.sucesso.tsx` — reescrever
+- Buscar dados via `useServerFn(getRegistrationByProtocol)` + `useQuery`.
+- Layout em 2 blocos:
+  - **Stepper de 2 etapas**: "1. Dados ✓ concluído" / "2. Pagamento • pendente".
+  - **Card de resumo**: protocolo, nome, valor formatado (BRL).
+  - **CTA primário**: botão "Pagar agora" → abre `payment.checkout_url` em nova aba (quando InfinityPay estiver integrado).
+  - **CTAs secundários**: WhatsApp da organização e voltar para `/`.
+- Mensagem clara: "Sua inscrição foi registrada, mas a vaga só será confirmada após a aprovação do pagamento."
+- Tratar estados: loading (skeleton), protocolo inválido (mensagem + link para `/inscricao`), `status = paid` (mostrar "Pagamento confirmado" em vez do botão).
 
-### 4. Admin (`src/routes/_authenticated/admin.inscricoes.$id.tsx`)
-- Apenas exibe `r.gender` (texto bruto vindo do banco). Nenhuma mudança necessária — continuará mostrando `M` ou `F`.
+### 3. Sem mudanças em `src/routes/inscricao.tsx`
+O redirect atual (`navigate({ to: "/inscricao/sucesso", search: { protocol } })`) continua válido — apenas o destino fica útil.
 
-## Notas
-- Como não há inscrições com gênero `O`, a migração não terá perda de dados.
-- O arquivo `src/integrations/supabase/types.ts` é auto-gerado — será atualizado automaticamente após a migração.
+## Detalhes técnicos
+
+- Não cria nova rota nem deleta nenhuma; mantém URLs estáveis.
+- A query usa o `protocol` da search param como `queryKey`.
+- Mantém o `head()` com título "Inscrição registrada — falta o pagamento" para refletir o novo conteúdo.
+- Usa tokens de design já existentes (`--color-brand-orange`, `gradient-orange`, `shadow-orange`).
