@@ -1,48 +1,48 @@
-# Página /sucesso — Confirmação de pagamento
+# Página /falhanopagamento — Falha no Pagamento
 
-A rota `/sucesso` ainda não existe como arquivo (apenas `/inscricao/sucesso`). Vou criar uma nova página dedicada para o retorno após o pagamento confirmado, mantendo o mesmo design system do site (PageHeader gradiente roxo, tokens de cor da marca, tipografia e botões consistentes). A página NÃO será adicionada ao `NAV_LINKS`, ficando acessível apenas via redirecionamento pós-checkout.
+Criar nova rota top-level `/falhanopagamento` para o retorno pós-checkout quando o pagamento não é concluído. Mesmo design system do site (gradiente roxo no hero, tokens da marca, tipografia, botões), espelhando a estrutura da página `/sucesso` mas com tom de alerta/recuperação em vez de celebração. NÃO será adicionada ao `NAV_LINKS`.
 
-## O que a página vai conter
+## Conteúdo da página
 
 1. **Hero (PageHeader gradiente roxo)**
-   - Eyebrow: "Pagamento confirmado"
-   - Título: "Sua inscrição está garantida!"
-   - Descrição: mensagem de boas-vindas confirmando que a vaga na II Corrida das Famílias está confirmada.
+   - Eyebrow: "Pagamento não concluído"
+   - Título: "Não foi possível confirmar seu pagamento"
+   - Descrição: mensagem tranquilizadora explicando que nenhuma cobrança foi efetivada e que o participante pode tentar novamente.
 
 2. **Bloco principal (fundo branco)**
-   - Ícone grande de check em círculo com cor da marca (laranja/âmbar) e leve animação de entrada.
-   - Card de destaque com o **protocolo da inscrição** (lido via `validateSearch` — `?protocol=XYZ`) caso presente na URL.
-   - Card "Próximos passos" com 3 itens em grid (ícones lucide):
-     - **Confirmação por e-mail** — comprovante enviado para o e-mail cadastrado.
-     - **Retirada do kit** — datas 04, 05 e 06/08/2026, 19h30–21h30, Salão Paroquial.
-     - **Dia da corrida** — 09 de agosto de 2026, Igreja Matriz de Nossa Senhora do Rosário, Serra Talhada/PE.
-   - Aviso solidário: lembrete de levar 1kg de alimento não perecível.
+   - Ícone grande de alerta em círculo (cor vermelha/âmbar suave, baseada nos tokens da marca) com animação de entrada.
+   - Título: "Algo deu errado com a sua transação"
+   - Texto explicativo curto + cards opcionais exibindo `protocol` e/ou `reason` lidos via `validateSearch` (`?protocol=XYZ&reason=...`), quando presentes na URL.
+   - Card "Possíveis motivos" em grid (3 itens com ícones lucide):
+     - **Dados do cartão** — número, validade, CVV ou nome incorretos.
+     - **Limite ou saldo** — limite insuficiente ou compra recusada pelo banco emissor.
+     - **Conexão interrompida** — instabilidade durante o pagamento.
+   - Bloco de orientação: "O que fazer agora" com passos: revisar os dados, tentar outra forma de pagamento (PIX/cartão), ou falar com a organização.
 
-3. **Faixa de ações (CTA)**
-   - Botão WhatsApp (verde `#25D366`) com mensagem pré-preenchida incluindo o protocolo.
-   - Botão "Ver regulamento" → `/regulamento`.
-   - Botão "Voltar ao início" → `/`.
+3. **Faixa de ações (CTAs)**
+   - Botão principal (laranja, estilo `shadow-orange`): "Tentar novamente" → `/inscricao`.
+   - Botão WhatsApp (verde `#25D366`) com mensagem pré-preenchida citando o protocolo quando disponível: "Falar com a organização".
+   - Botão secundário: "Voltar ao início" → `/`.
 
-4. **Faixa final roxa (mesma do `/kit`)**
-   - Mensagem de agradecimento: "Obrigado por correr com a gente!"
-   - Compartilhamento social (links para compartilhar a participação — opcional, abrindo WhatsApp).
+4. **Faixa final roxa**
+   - Mensagem de apoio: "Estamos aqui para ajudar você a completar sua inscrição."
+   - Reforço do contato (WhatsApp e e-mail via `SITE`).
 
 ## Detalhes técnicos
 
-- Novo arquivo: `src/routes/sucesso.tsx` (rota top-level `/sucesso`).
-- `createFileRoute("/sucesso")` com:
-  - `validateSearch` aceitando `protocol?: string` (e opcional `email?: string` para exibir destinatário do comprovante).
-  - `head()` com title "Pagamento confirmado — II Corrida das Famílias", description, og:title/description e `robots: noindex` (página de pós-checkout, não deve ser indexada).
+- Novo arquivo: `src/routes/falhanopagamento.tsx`.
+- `createFileRoute("/falhanopagamento")` com:
+  - `validateSearch` aceitando `protocol?: string` e `reason?: string`.
+  - `head()` com title "Falha no pagamento — II Corrida das Famílias", description, og tags e `robots: noindex,nofollow`.
   - `component: Page`.
 - Reuso de `PageHeader` de `@/components/site/page-shell`.
-- Tokens semânticos: `--color-brand-purple`, `--color-brand-purple-title`, `--color-brand-purple-text`, `--color-brand-orange`, `--color-brand-amber`, `--color-brand-soft`, classe `bg-gradient-hero`, `shadow-orange`, `heading-section`, `heading-display`.
-- Ícones lucide: `CheckCircle2`, `Mail`, `Package`, `CalendarDays`, `MessageCircle`, `Home`, `FileText`, `HandHeart`.
-- Dados de evento via `SITE` de `@/lib/site-config` (whatsapp, eventDateLabel, location, city).
-- Sem alterações em backend, navegação, header ou outras rotas. `NAV_LINKS` permanece inalterado.
-- Sem novas dependências.
+- Tokens semânticos: `--color-brand-purple`, `--color-brand-purple-title`, `--color-brand-purple-text`, `--color-brand-orange`, `--color-brand-soft`, `bg-gradient-hero`, `shadow-orange`, `heading-section`, `heading-display`.
+- Ícones lucide: `XCircle` / `AlertTriangle`, `CreditCard`, `WifiOff`, `ShieldAlert`, `RefreshCw`, `MessageCircle`, `Home`, `Mail`.
+- Dados de contato via `SITE` (whatsapp, whatsappLabel, email).
+- Sem alterações em backend, header, `NAV_LINKS` ou outras rotas. Sem novas dependências.
 
 ## Arquivos afetados
 
-- **Novo**: `src/routes/sucesso.tsx`
+- **Novo**: `src/routes/falhanopagamento.tsx`
 
-Após aprovação, o `routeTree.gen.ts` é regenerado automaticamente pelo plugin do TanStack Router.
+Após aprovação, `routeTree.gen.ts` é regenerado automaticamente pelo plugin do TanStack Router.
