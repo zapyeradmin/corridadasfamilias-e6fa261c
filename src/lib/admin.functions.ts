@@ -299,11 +299,22 @@ export const updateSettingAdmin = createServerFn({ method: "POST" })
   )
   .handler(async ({ context, data }) => {
     const admin = await assertAdmin(context.supabase, context.userId, context.claims as { email?: string });
-    const { error } = await context.supabase
+    const { data: rows, error } = await context.supabase
       .from("settings")
-      .update({ value: data.value as never, updated_at: new Date().toISOString() })
-      .eq("key", data.key);
+      .upsert(
+        {
+          key: data.key,
+          value: data.value as never,
+          is_public: true,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "key" },
+      )
+      .select("key");
     if (error) throw new Error(error.message);
+    if (!rows || rows.length === 0) {
+      throw new Error("Não foi possível salvar a configuração (nenhuma linha afetada).");
+    }
     await logAction(context.supabase, {
       actorId: admin.userId,
       actorEmail: admin.email,
