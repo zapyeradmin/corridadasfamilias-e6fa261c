@@ -81,25 +81,38 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: `${SITE.name} — ${SITE.slogan}` },
+      { name: "theme-color", content: "#16091f" },
+      { title: "II Corrida das Famílias |  Inscreva-se Já!" },
       {
         name: "description",
-        content: `${SITE.shortDescription} ${SITE.eventDateLabel} em ${SITE.city}.`,
+        content:
+          "Juntos no Rosário, Famílias unidas na Fé. Uma corrida de 5km em Serra Talhada/PE para celebrar a Fé, fortalecer Famílias e promover Saúde e Solidariedade.",
       },
-      { name: "theme-color", content: "#16091f" },
-      { property: "og:title", content: `${SITE.name} — ${SITE.slogan}` },
-      { property: "og:description", content: SITE.shortDescription },
       { property: "og:type", content: "website" },
       { property: "og:locale", content: "pt_BR" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { title: "II Corrida das Famílias |  Inscreva-se Já!" },
       { property: "og:title", content: "II Corrida das Famílias |  Inscreva-se Já!" },
+      {
+        property: "og:description",
+        content:
+          "Juntos no Rosário, Famílias unidas na Fé. Uma corrida de 5km em Serra Talhada/PE para celebrar a Fé, fortalecer Famílias e promover Saúde e Solidariedade.",
+      },
+      {
+        property: "og:image",
+        content:
+          "https://storage.googleapis.com/gpt-engineer-file-uploads/24NXY8uInCbJ0YtSRcez5EU2T9E3/social-images/social-1778899143554-banner-1.webp",
+      },
+      { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "II Corrida das Famílias |  Inscreva-se Já!" },
-      { name: "description", content: "Juntos no Rosário, Famílias unidas na Fé. Uma corrida de 5km em Serra Talhada/PE para celebrar a Fé, fortalecer Famílias e promover Saúde e Solidariedade." },
-      { property: "og:description", content: "Juntos no Rosário, Famílias unidas na Fé. Uma corrida de 5km em Serra Talhada/PE para celebrar a Fé, fortalecer Famílias e promover Saúde e Solidariedade." },
-      { name: "twitter:description", content: "Juntos no Rosário, Famílias unidas na Fé. Uma corrida de 5km em Serra Talhada/PE para celebrar a Fé, fortalecer Famílias e promover Saúde e Solidariedade." },
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/24NXY8uInCbJ0YtSRcez5EU2T9E3/social-images/social-1778899143554-banner-1.webp" },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/24NXY8uInCbJ0YtSRcez5EU2T9E3/social-images/social-1778899143554-banner-1.webp" },
+      {
+        name: "twitter:description",
+        content:
+          "Juntos no Rosário, Famílias unidas na Fé. Uma corrida de 5km em Serra Talhada/PE para celebrar a Fé, fortalecer Famílias e promover Saúde e Solidariedade.",
+      },
+      {
+        name: "twitter:image",
+        content:
+          "https://storage.googleapis.com/gpt-engineer-file-uploads/24NXY8uInCbJ0YtSRcez5EU2T9E3/social-images/social-1778899143554-banner-1.webp",
+      },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
