@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { ContentSection, PageHeader } from "@/components/site/page-shell";
 import {
