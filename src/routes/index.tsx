@@ -846,7 +846,7 @@ function NossosPatrocinadores() {
   );
 }
 
-export { CategoriasPremiacoes } from "@/components/site/categorias-premiacoes";
+import { CategoriasPremiacoes } from "@/components/site/categorias-premiacoes";
 
 import { PERCURSO_INFOS, PercursoInfoItem } from "@/components/site/percurso-info";
 
