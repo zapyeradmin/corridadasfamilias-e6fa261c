@@ -21,6 +21,7 @@ import { Route as KitRouteImport } from './routes/kit'
 import { Route as InscricaoRouteImport } from './routes/inscricao'
 import { Route as GaleriaRouteImport } from './routes/galeria'
 import { Route as FaqRouteImport } from './routes/faq'
+import { Route as FalhanopagamentoRouteImport } from './routes/falhanopagamento'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as InscricaoSucessoRouteImport } from './routes/inscricao.sucesso'
@@ -93,6 +94,11 @@ const GaleriaRoute = GaleriaRouteImport.update({
 const FaqRoute = FaqRouteImport.update({
   id: '/faq',
   path: '/faq',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FalhanopagamentoRoute = FalhanopagamentoRouteImport.update({
+  id: '/falhanopagamento',
+  path: '/falhanopagamento',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
@@ -170,6 +176,7 @@ const AuthenticatedAdminInscricoesIdRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/falhanopagamento': typeof FalhanopagamentoRoute
   '/faq': typeof FaqRoute
   '/galeria': typeof GaleriaRoute
   '/inscricao': typeof InscricaoRouteWithChildren
@@ -196,6 +203,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/falhanopagamento': typeof FalhanopagamentoRoute
   '/faq': typeof FaqRoute
   '/galeria': typeof GaleriaRoute
   '/inscricao': typeof InscricaoRouteWithChildren
@@ -224,6 +232,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/falhanopagamento': typeof FalhanopagamentoRoute
   '/faq': typeof FaqRoute
   '/galeria': typeof GaleriaRoute
   '/inscricao': typeof InscricaoRouteWithChildren
@@ -252,6 +261,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/falhanopagamento'
     | '/faq'
     | '/galeria'
     | '/inscricao'
@@ -278,6 +288,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/falhanopagamento'
     | '/faq'
     | '/galeria'
     | '/inscricao'
@@ -305,6 +316,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/falhanopagamento'
     | '/faq'
     | '/galeria'
     | '/inscricao'
@@ -333,6 +345,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  FalhanopagamentoRoute: typeof FalhanopagamentoRoute
   FaqRoute: typeof FaqRoute
   GaleriaRoute: typeof GaleriaRoute
   InscricaoRoute: typeof InscricaoRouteWithChildren
@@ -431,6 +444,13 @@ declare module '@tanstack/react-router' {
       path: '/faq'
       fullPath: '/faq'
       preLoaderRoute: typeof FaqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/falhanopagamento': {
+      id: '/falhanopagamento'
+      path: '/falhanopagamento'
+      fullPath: '/falhanopagamento'
+      preLoaderRoute: typeof FalhanopagamentoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -594,6 +614,7 @@ const InscricaoRouteWithChildren = InscricaoRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  FalhanopagamentoRoute: FalhanopagamentoRoute,
   FaqRoute: FaqRoute,
   GaleriaRoute: GaleriaRoute,
   InscricaoRoute: InscricaoRouteWithChildren,
