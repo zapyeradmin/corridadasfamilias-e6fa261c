@@ -24,6 +24,7 @@ import { Route as FaqRouteImport } from './routes/faq'
 import { Route as FalhanopagamentoRouteImport } from './routes/falhanopagamento'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as InscricaoSucessoRouteImport } from './routes/inscricao_.sucesso'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminPatrocinadoresRouteImport } from './routes/_authenticated/admin.patrocinadores'
 import { Route as AuthenticatedAdminPagamentosRouteImport } from './routes/_authenticated/admin.pagamentos'
@@ -109,6 +110,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const InscricaoSucessoRoute = InscricaoSucessoRouteImport.update({
+  id: '/inscricao_/sucesso',
+  path: '/inscricao/sucesso',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -184,6 +190,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/sucesso': typeof SucessoRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/inscricao/sucesso': typeof InscricaoSucessoRoute
   '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/admin/eventos': typeof AuthenticatedAdminEventosRoute
@@ -210,6 +217,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/sucesso': typeof SucessoRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/inscricao/sucesso': typeof InscricaoSucessoRoute
   '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/admin/eventos': typeof AuthenticatedAdminEventosRoute
@@ -238,6 +246,7 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/sucesso': typeof SucessoRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/inscricao_/sucesso': typeof InscricaoSucessoRoute
   '/_authenticated/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/_authenticated/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/_authenticated/admin/eventos': typeof AuthenticatedAdminEventosRoute
@@ -266,6 +275,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/sucesso'
     | '/admin'
+    | '/inscricao/sucesso'
     | '/admin/configuracoes'
     | '/admin/dashboard'
     | '/admin/eventos'
@@ -292,6 +302,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/sucesso'
     | '/admin'
+    | '/inscricao/sucesso'
     | '/admin/configuracoes'
     | '/admin/dashboard'
     | '/admin/eventos'
@@ -319,6 +330,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/sucesso'
     | '/_authenticated/admin'
+    | '/inscricao_/sucesso'
     | '/_authenticated/admin/configuracoes'
     | '/_authenticated/admin/dashboard'
     | '/_authenticated/admin/eventos'
@@ -346,6 +358,7 @@ export interface RootRouteChildren {
   RegulamentoRoute: typeof RegulamentoRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SucessoRoute: typeof SucessoRoute
+  InscricaoSucessoRoute: typeof InscricaoSucessoRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -453,6 +466,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/inscricao_/sucesso': {
+      id: '/inscricao_/sucesso'
+      path: '/inscricao/sucesso'
+      fullPath: '/inscricao/sucesso'
+      preLoaderRoute: typeof InscricaoSucessoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin': {
@@ -596,6 +616,7 @@ const rootRouteChildren: RootRouteChildren = {
   RegulamentoRoute: RegulamentoRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SucessoRoute: SucessoRoute,
+  InscricaoSucessoRoute: InscricaoSucessoRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
