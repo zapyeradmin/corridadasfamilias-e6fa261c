@@ -31,13 +31,8 @@ function Page() {
         description="Premiação em dinheiro no Geral, troféus por categoria e medalha finisher para todos que cruzarem a linha de chegada."
       />
 
-      <section
-        className="relative text-white"
-        style={{
-          background:
-            "linear-gradient(180deg, #e9591b 0%, #ff5300 12%, #ff5300 100%)",
-        }}
-      >
+      <section className="relative bg-white">
+
         <div className="mx-auto max-w-[1200px] px-5 pt-6 pb-20 md:px-8 md:pt-8 md:pb-28">
           <CategoriasGrid />
 
