@@ -1,62 +1,57 @@
-## Diagnóstico
+## Objetivo
 
-O webhook **está chegando** e sendo gravado em `infinitepay_events`, mas como `unmatched`:
+Substituir o conteúdo atual da página `/regulamento` (que hoje tem 8 seções resumidas) pelo **Regulamento Oficial completo da II Corrida das Famílias**, conforme PDF enviado.
 
-```
-notes: "order_nsu sem inscrição correspondente"
-order_nsu: 3e245ee5-22a8-4b65-a31f-ac9bf15a1916   ← UUID gerado pela InfinitePay
-```
+## Arquivo afetado
 
-**Causa raiz:** o link de checkout da InfinitePay é estático (`https://checkout.infinitepay.io/.../5L9Nn6VwPN`) e nós redirecionamos o usuário direto para ele, **sem anexar nosso `order_nsu`**. Quando o pagamento acontece, a InfinitePay envia um `order_nsu` **gerado por ela** no webhook — que nunca vai casar com o `inscricao_adulto_lote1_<uuid>` salvo em `registrations.order_nsu`.
+- `src/routes/regulamento.tsx` — única edição.
 
-Resultado: o pagamento é processado na InfinitePay, mas a inscrição nunca é marcada como `paid` e o `/pagamento` fica em polling até dar timeout.
+Os demais arquivos (`page-shell.tsx`, header, footer, design tokens) ficam inalterados. Nada de backend, banco de dados ou rotas novas.
 
-## Correção
+## Estrutura da nova página
 
-A InfinitePay aceita query params no link de checkout para passar o pedido e a URL de retorno:
+Mantenho o cabeçalho atual (`PageHeader` com gradiente roxo) e o layout dentro de `ContentSection`, preservando o design system (cards arredondados, tipografia roxa, sombra suave). O conteúdo passa a ter:
 
-```
-https://checkout.infinitepay.io/<slug>/<id>
-  ?order_nsu=<nosso_order_nsu>
-  &redirect_url=https://corridadasfamilias.lovable.app/pagamento?protocol=<PROTOCOLO>
-  &customer_name=...&customer_email=...&customer_cellphone=...
-```
+1. **Bloco de abertura** — título "Regulamento Geral", lema *"Juntos no Rosário, Famílias unidas na Fé"* e os dois parágrafos introdutórios do PDF.
 
-### 1. `src/lib/infinitepay.functions.ts` — anexar query params
+2. **Preâmbulo** — em card destacado.
 
-Em `getCheckoutUrlForRegistration`, depois de carregar a inscrição, ler também `order_nsu`, `full_name`, `email`, `whatsapp`, e montar a URL final assim:
+3. **16 seções numeradas**, cada uma em um card (mesmo estilo visual dos cards atuais), com todos os subitens (1.1 … 16.10) na íntegra:
+   - 1. Do Evento
+   - 2. Das Inscrições
+   - 3. Dos Pagamentos *(inclui tabela de lotes — Adulto/Criança × Lotes 1, 2, 3)*
+   - 4. Percurso
+   - 5. Kit do Atleta
+   - 6. Das Categorias e Premiações *(inclui tabela de premiação Geral e tabela Infanto-Juvenil/60+)*
+   - 7. Ação de Solidariedade
+   - 8. Sobre a Largada e Chegada
+   - 9. Regras da Corrida
+   - 10. Regras de Troca e/ou Repasse
+   - 11. Acompanhamento dos Atletas Durante a Corrida
+   - 12. Saúde do Atleta
+   - 13. Cancelamento com Reembolso
+   - 14. Casos de Não Reembolso
+   - 15. Direito de Imagem e Dados dos Atletas (LGPD)
+   - 16. Disposições Gerais
 
-```ts
-const url = new URL(baseCheckoutUrl);
-url.searchParams.set("order_nsu", reg.order_nsu);
-url.searchParams.set(
-  "redirect_url",
-  `https://corridadasfamilias.lovable.app/pagamento?protocol=${reg.protocol}`,
-);
-url.searchParams.set("customer_name", reg.full_name);
-url.searchParams.set("customer_email", reg.email);
-url.searchParams.set("customer_cellphone", reg.whatsapp.replace(/\D/g, ""));
-return { ok: true, checkoutUrl: url.toString(), ... };
-```
+4. **Anexos** — em cards separados com leve destaque visual:
+   - Anexo I — Termo de Responsabilidade e Ciência do Participante
+   - Anexo II — Autorização para Menor de Idade
+   - Anexo III — Autorização para Retirada de Kit por Terceiro
 
-Assim o webhook receberá o **nosso** `order_nsu` e o match passa a funcionar.
+   Os campos de assinatura (`Nome: [___]`, `CPF: [___]`, etc.) serão exibidos como listas de campos com linhas pontilhadas — apenas leitura, sem formulário interativo (o PDF é referência textual, não um formulário web).
 
-### 2. (Opcional) Reprocessar o evento órfão atual
+## Detalhes técnicos
 
-O evento `117a23cf-…` ficou `unmatched` porque foi feito antes da correção. Não tem como recuperar — a InfinitePay não conhece nosso `order_nsu` daquela tentativa. A inscrição correspondente continua `pending`. Posso:
-
-- (a) marcar manualmente a inscrição como `paid` (preciso que você me diga qual protocolo é) **ou**
-- (b) deixar como está e pedir um novo teste depois da correção.
-
-### 3. Validar com novo teste
-
-Após o deploy:
-1. Fazer uma nova inscrição.
-2. Clicar em "Realizar pagamento" e concluir o checkout.
-3. Conferir em `Admin → Pagamentos` que o status mudou para `paid` e que `/pagamento` redireciona para `/sucesso`.
+- Conteúdo armazenado como array de objetos `{ title, items: string[] }` para as 16 seções e renderizado num `.map()`. Tabelas (lotes e premiações) ficam como JSX inline dentro das respectivas seções, usando o componente `<Table>` do shadcn (`src/components/ui/table.tsx`).
+- Anexos como array separado, renderizados em cards com fundo levemente diferenciado.
+- SEO: atualizar `head().meta` — manter título "Regulamento — II Corrida das Famílias" e ajustar a `description` para refletir o regulamento oficial completo (5 km, Serra Talhada, 09/08/2026, lotes, categorias, LGPD).
+- Tipografia e cores: 100% via tokens já existentes (`--color-brand-purple-title`, `--color-brand-purple-text`, `--color-brand-orange`, `bg-gradient-hero`, `shadow-soft`). Nada de cores hardcoded.
+- Responsivo: tabelas com `overflow-x-auto` em mobile.
+- Sem mudanças em rotas, navegação, hooks, server functions ou banco.
 
 ## Fora do escopo
 
-- Mudanças no painel da InfinitePay (Webhook URL e Redirect URL continuam corretas).
-- Estrutura do webhook (já funciona, só falta o `order_nsu` certo chegar).
-- Tela de admin de configurações.
+- Botão de download do PDF (posso adicionar se você pedir — não foi solicitado).
+- Sumário/índice clicável no topo (idem — posso acrescentar se quiser navegação rápida entre as 16 seções).
+- Mudanças em outras páginas (kit, premiação, FAQ) — embora algumas tenham conteúdo correlato, o pedido é apenas para `/regulamento`.
