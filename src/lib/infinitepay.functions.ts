@@ -22,7 +22,9 @@ export const getCheckoutUrlForRegistration = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { data: reg } = await supabaseAdmin
       .from("registrations")
-      .select("id, protocol, participant_type, amount_cents, status")
+      .select(
+        "id, protocol, participant_type, amount_cents, status, order_nsu, full_name, email, whatsapp",
+      )
       .eq("protocol", data.protocol)
       .maybeSingle();
     if (!reg) {
@@ -30,13 +32,35 @@ export const getCheckoutUrlForRegistration = createServerFn({ method: "POST" })
     }
     const type = (reg.participant_type ?? "adulto") as "adulto" | "crianca";
     const key = type === "crianca" ? SETTING_CRIANCA : SETTING_ADULTO;
-    const url = await readSettingString(key);
+    const baseUrl = await readSettingString(key);
+
+    let checkoutUrl: string | null = null;
+    if (baseUrl) {
+      try {
+        const url = new URL(baseUrl);
+        if (reg.order_nsu) url.searchParams.set("order_nsu", reg.order_nsu);
+        url.searchParams.set(
+          "redirect_url",
+          `https://corridadasfamilias.lovable.app/pagamento?protocol=${reg.protocol}`,
+        );
+        if (reg.full_name) url.searchParams.set("customer_name", reg.full_name);
+        if (reg.email) url.searchParams.set("customer_email", reg.email);
+        if (reg.whatsapp)
+          url.searchParams.set(
+            "customer_cellphone",
+            reg.whatsapp.replace(/\D/g, ""),
+          );
+        checkoutUrl = url.toString();
+      } catch {
+        checkoutUrl = baseUrl;
+      }
+    }
 
     return {
       ok: true as const,
       participantType: type,
       amountCents: reg.amount_cents,
-      checkoutUrl: url || null,
+      checkoutUrl,
       status: reg.status,
     };
   });
