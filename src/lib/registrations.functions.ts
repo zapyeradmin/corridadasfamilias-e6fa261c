@@ -46,7 +46,7 @@ export const createRegistration = createServerFn({ method: "POST" })
     // Buscar evento ativo + lote vigente (servidor recalcula preço)
     const { data: event } = await supabaseAdmin
       .from("events")
-      .select("id")
+      .select("id, event_date")
       .eq("is_active", true)
       .order("event_date", { ascending: true })
       .limit(1)
@@ -56,7 +56,7 @@ export const createRegistration = createServerFn({ method: "POST" })
     const nowIso = new Date().toISOString();
     const { data: lots } = await supabaseAdmin
       .from("lots")
-      .select("id, price_cents")
+      .select("id, price_cents, child_price_cents")
       .eq("event_id", event.id)
       .eq("is_active", true)
       .lte("starts_at", nowIso)
@@ -65,6 +65,31 @@ export const createRegistration = createServerFn({ method: "POST" })
       .limit(1);
     const lot = lots?.[0];
     if (!lot) throw new Error("Não há lote de inscrições aberto no momento.");
+
+    // Calcula idade na data do evento e preço aplicável (até 9 anos = infantil)
+    const ageAtEvent = yearsBetween(data.birth_date, event.event_date);
+    const isChild = ageAtEvent <= 9;
+    const amountCents = isChild && lot.child_price_cents ? lot.child_price_cents : lot.price_cents;
+
+    // Validações de categoria por idade/gênero
+    const g = GENDER_DB[data.gender]; // M | F | O
+    const cat = data.category;
+    if (cat === "infanto_juvenil_masculino" || cat === "infanto_juvenil_feminino") {
+      if (ageAtEvent < 9 || ageAtEvent > 17) {
+        throw new Error("Categoria Infanto-Juvenil é destinada a participantes de 9 a 17 anos.");
+      }
+    }
+    if (cat === "60_masculino" || cat === "60_feminino") {
+      if (ageAtEvent < 60) {
+        throw new Error("Categoria 60+ é destinada a participantes com 60 anos ou mais.");
+      }
+    }
+    if (cat.endsWith("_masculino") && g === "F") {
+      throw new Error("Categoria masculina não disponível para o gênero informado.");
+    }
+    if (cat.endsWith("_feminino") && g === "M") {
+      throw new Error("Categoria feminina não disponível para o gênero informado.");
+    }
 
     // Checagem de duplicidade por CPF + status ativo
     const cpfNorm = normalizeCpf(data.cpf);
