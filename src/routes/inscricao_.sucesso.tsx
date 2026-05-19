@@ -136,10 +136,12 @@ function Page() {
             <div className="mt-8 flex flex-col items-center gap-3">
               <button
                 type="button"
-                onClick={() => navigate({ to: "/pagamento", search: { protocol } })}
-                className="inline-flex items-center gap-2 rounded-full bg-gradient-orange px-8 py-4 text-sm font-extrabold uppercase tracking-wide text-white shadow-orange"
+                onClick={handleCheckout}
+                disabled={redirecting}
+                className="inline-flex items-center gap-2 rounded-full bg-gradient-orange px-8 py-4 text-sm font-extrabold uppercase tracking-wide text-white shadow-orange disabled:cursor-not-allowed disabled:opacity-70"
               >
-                <CreditCard className="h-5 w-5" /> Realizar pagamento
+                {redirecting ? <Loader2 className="h-5 w-5 animate-spin" /> : <CreditCard className="h-5 w-5" />}
+                {redirecting ? "Abrindo checkout..." : "Realizar pagamento"}
               </button>
               <a
                 href={`https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(
