@@ -133,6 +133,7 @@ export type Database = {
       }
       lots: {
         Row: {
+          child_price_cents: number | null
           created_at: string
           ends_at: string
           event_id: string
@@ -146,6 +147,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          child_price_cents?: number | null
           created_at?: string
           ends_at: string
           event_id: string
@@ -159,6 +161,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          child_price_cents?: number | null
           created_at?: string
           ends_at?: string
           event_id?: string
