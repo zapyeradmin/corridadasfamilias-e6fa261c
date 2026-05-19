@@ -16,6 +16,7 @@ import { Route as PremiacaoRouteImport } from './routes/premiacao'
 import { Route as PoliticaPrivacidadeRouteImport } from './routes/politica-privacidade'
 import { Route as PercursoRouteImport } from './routes/percurso'
 import { Route as PatrocinadoresRouteImport } from './routes/patrocinadores'
+import { Route as PagamentoRouteImport } from './routes/pagamento'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as KitRouteImport } from './routes/kit'
 import { Route as InscricaoRouteImport } from './routes/inscricao'
@@ -69,6 +70,11 @@ const PercursoRoute = PercursoRouteImport.update({
 const PatrocinadoresRoute = PatrocinadoresRouteImport.update({
   id: '/patrocinadores',
   path: '/patrocinadores',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PagamentoRoute = PagamentoRouteImport.update({
+  id: '/pagamento',
+  path: '/pagamento',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -182,6 +188,7 @@ export interface FileRoutesByFullPath {
   '/inscricao': typeof InscricaoRoute
   '/kit': typeof KitRoute
   '/login': typeof LoginRoute
+  '/pagamento': typeof PagamentoRoute
   '/patrocinadores': typeof PatrocinadoresRoute
   '/percurso': typeof PercursoRoute
   '/politica-privacidade': typeof PoliticaPrivacidadeRoute
@@ -209,6 +216,7 @@ export interface FileRoutesByTo {
   '/inscricao': typeof InscricaoRoute
   '/kit': typeof KitRoute
   '/login': typeof LoginRoute
+  '/pagamento': typeof PagamentoRoute
   '/patrocinadores': typeof PatrocinadoresRoute
   '/percurso': typeof PercursoRoute
   '/politica-privacidade': typeof PoliticaPrivacidadeRoute
@@ -238,6 +246,7 @@ export interface FileRoutesById {
   '/inscricao': typeof InscricaoRoute
   '/kit': typeof KitRoute
   '/login': typeof LoginRoute
+  '/pagamento': typeof PagamentoRoute
   '/patrocinadores': typeof PatrocinadoresRoute
   '/percurso': typeof PercursoRoute
   '/politica-privacidade': typeof PoliticaPrivacidadeRoute
@@ -267,6 +276,7 @@ export interface FileRouteTypes {
     | '/inscricao'
     | '/kit'
     | '/login'
+    | '/pagamento'
     | '/patrocinadores'
     | '/percurso'
     | '/politica-privacidade'
@@ -294,6 +304,7 @@ export interface FileRouteTypes {
     | '/inscricao'
     | '/kit'
     | '/login'
+    | '/pagamento'
     | '/patrocinadores'
     | '/percurso'
     | '/politica-privacidade'
@@ -322,6 +333,7 @@ export interface FileRouteTypes {
     | '/inscricao'
     | '/kit'
     | '/login'
+    | '/pagamento'
     | '/patrocinadores'
     | '/percurso'
     | '/politica-privacidade'
@@ -351,6 +363,7 @@ export interface RootRouteChildren {
   InscricaoRoute: typeof InscricaoRoute
   KitRoute: typeof KitRoute
   LoginRoute: typeof LoginRoute
+  PagamentoRoute: typeof PagamentoRoute
   PatrocinadoresRoute: typeof PatrocinadoresRoute
   PercursoRoute: typeof PercursoRoute
   PoliticaPrivacidadeRoute: typeof PoliticaPrivacidadeRoute
@@ -410,6 +423,13 @@ declare module '@tanstack/react-router' {
       path: '/patrocinadores'
       fullPath: '/patrocinadores'
       preLoaderRoute: typeof PatrocinadoresRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pagamento': {
+      id: '/pagamento'
+      path: '/pagamento'
+      fullPath: '/pagamento'
+      preLoaderRoute: typeof PagamentoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -609,6 +629,7 @@ const rootRouteChildren: RootRouteChildren = {
   InscricaoRoute: InscricaoRoute,
   KitRoute: KitRoute,
   LoginRoute: LoginRoute,
+  PagamentoRoute: PagamentoRoute,
   PatrocinadoresRoute: PatrocinadoresRoute,
   PercursoRoute: PercursoRoute,
   PoliticaPrivacidadeRoute: PoliticaPrivacidadeRoute,
