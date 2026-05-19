@@ -1,6 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { MapPin, Flag, Mountain } from "lucide-react";
-import { ContentSection, PageHeader } from "@/components/site/page-shell";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { PageHeader } from "@/components/site/page-shell";
+import { PERCURSO_INFOS, PercursoInfoItem } from "@/components/site/percurso-info";
+import percursoMapa from "@/assets/percurso-mapa.png";
 
 export const Route = createFileRoute("/percurso")({
   head: () => ({
@@ -12,6 +13,13 @@ export const Route = createFileRoute("/percurso")({
           "Percurso oficial de 5km com largada e chegada na Igreja Matriz de Nossa Senhora do Rosário, em Serra Talhada/PE.",
       },
       { property: "og:title", content: "Percurso 5km — II Corrida das Famílias" },
+      {
+        property: "og:description",
+        content:
+          "Trajeto pelas principais ruas do centro de Serra Talhada — largada e chegada na Igreja Matriz de Nossa Senhora do Rosário.",
+      },
+      { property: "og:image", content: percursoMapa },
+      { name: "twitter:image", content: percursoMapa },
     ],
   }),
   component: Page,
@@ -25,37 +33,70 @@ function Page() {
         title="Percurso oficial"
         description="Largada e chegada na Igreja Matriz, com trajeto pelas principais ruas do centro de Serra Talhada."
       />
-      <ContentSection>
-        <div className="grid gap-6 md:grid-cols-3">
-          {[
-            { icon: Flag, title: "Largada", value: "Igreja Matriz de Nossa Senhora do Rosário" },
-            { icon: Mountain, title: "Distância", value: "5km — terreno plano" },
-            { icon: MapPin, title: "Chegada", value: "Igreja Matriz de Nossa Senhora do Rosário" },
-          ].map((c) => (
-            <div key={c.title} className="rounded-3xl border border-border bg-white p-6 shadow-soft">
-              <span className="grid h-11 w-11 place-items-center rounded-full bg-[color:var(--color-brand-purple)]/10 text-[color:var(--color-brand-purple)]">
-                <c.icon className="h-5 w-5" />
-              </span>
-              <p className="mt-4 text-xs font-bold uppercase tracking-[0.25em] text-[color:var(--color-brand-purple-text)]/70">
-                {c.title}
-              </p>
-              <p className="mt-1 text-base font-extrabold text-[color:var(--color-brand-purple-title)]">
-                {c.value}
-              </p>
-            </div>
-          ))}
-        </div>
 
-        <div className="mt-12 overflow-hidden rounded-3xl border border-border shadow-card">
-          <div className="aspect-[16/9] w-full bg-gradient-hero" aria-label="Mapa do percurso (em breve)">
-            <div className="flex h-full items-center justify-center text-white/80">
-              <p className="text-sm font-bold uppercase tracking-[0.3em]">
-                Mapa do percurso em breve
+      <section className="bg-white">
+        <div className="mx-auto max-w-[1200px] px-5 py-20 md:px-8 md:py-28">
+          <div className="text-left">
+            <p className="text-xs font-bold uppercase tracking-[0.35em] text-[color:var(--color-brand-purple-text)]/70">
+              Percurso completo da corrida
+            </p>
+            <h2 className="heading-section mt-3 text-3xl text-[color:var(--color-brand-purple-title)] md:text-5xl">
+              Fique por dentro do percurso, para não errar no dia da corrida
+            </h2>
+            <p className="mt-5 max-w-3xl text-base leading-relaxed text-[color:var(--color-brand-purple-text)]/80 text-justify md:text-lg">
+              Explore um trajeto que celebra a beleza da nossa Serra Talhada,
+              passando por pontos importantes da cidade. Fiquem atentos ao
+              trajeto:
+            </p>
+          </div>
+
+          <div className="mt-12 grid items-center gap-10 md:grid-cols-2 md:gap-12">
+            <div className="aspect-[4/3] w-full">
+              <img
+                src={percursoMapa}
+                alt="Mapa do percurso oficial da II Corrida das Famílias em Serra Talhada"
+                loading="lazy"
+                decoding="async"
+                className="h-full w-full object-contain"
+              />
+            </div>
+
+            <div>
+              <h3 className="text-2xl font-extrabold leading-tight text-[color:var(--color-brand-purple-title)] md:text-3xl">
+                O trajeto passa pelas principais ruas da Cidade
+              </h3>
+              <p className="mt-4 text-base leading-relaxed text-[color:var(--color-brand-purple-text)]/80">
+                O percurso de 5km foi desenhado para ser acessível a todos os
+                níveis de corredores, desde iniciantes até os mais experientes,
+                proporcionando uma experiência inesquecível.
               </p>
+
+              <ul className="mt-8 flex flex-col gap-6">
+                {PERCURSO_INFOS.map((info) => (
+                  <PercursoInfoItem key={info.titulo} {...info} />
+                ))}
+              </ul>
             </div>
           </div>
         </div>
-      </ContentSection>
+      </section>
+
+      <section className="bg-[color:var(--color-brand-purple)]">
+        <div className="mx-auto flex max-w-[1200px] flex-col items-center gap-6 px-5 py-16 text-center md:px-8 md:py-20">
+          <h3 className="heading-section text-2xl text-white md:text-4xl">
+            Pronto para correr com a sua família?
+          </h3>
+          <p className="max-w-xl text-base text-white/80">
+            Garanta sua vaga e venha viver essa experiência única em Serra Talhada/PE.
+          </p>
+          <Link
+            to="/inscricao"
+            className="inline-flex items-center justify-center rounded-full bg-[color:var(--color-brand-orange)] px-8 py-4 text-sm font-extrabold uppercase tracking-[0.18em] text-white shadow-orange transition hover:brightness-110"
+          >
+            Inscreva-se Já!
+          </Link>
+        </div>
+      </section>
     </>
   );
 }
