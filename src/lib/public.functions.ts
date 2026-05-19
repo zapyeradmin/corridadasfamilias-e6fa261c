@@ -35,7 +35,7 @@ export const getActiveEvent = createServerFn({ method: "GET" }).handler(async ()
   const nowIso = new Date().toISOString();
   const { data: lots } = await supabase
     .from("lots")
-    .select("id, name, price_cents, starts_at, ends_at, max_slots")
+    .select("id, name, price_cents, child_price_cents, starts_at, ends_at, max_slots")
     .eq("event_id", event.id)
     .eq("is_active", true)
     .lte("starts_at", nowIso)
