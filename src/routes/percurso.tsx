@@ -35,7 +35,7 @@ function Page() {
       />
 
       <section className="bg-white">
-        <div className="mx-auto max-w-[1200px] px-5 py-20 md:px-8 md:py-28">
+        <div className="mx-auto max-w-[1200px] px-5 pt-6 pb-20 md:px-8 md:pt-8 md:pb-28">
 
           <div className="mt-12 grid items-center gap-10 md:grid-cols-2 md:gap-12 my-[20px] border-0 py-0">
             <div className="aspect-[4/3] w-full">
