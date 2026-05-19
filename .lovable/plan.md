@@ -1,24 +1,48 @@
-## Objetivo
-Atualizar a página `/faq` (`src/routes/faq.tsx`) para reaproveitar o layout da seção "Tire suas dúvidas" da Home, porém com **fundo branco** (em vez de laranja).
+# Página /sucesso — Confirmação de pagamento
 
-## O que muda
+A rota `/sucesso` ainda não existe como arquivo (apenas `/inscricao/sucesso`). Vou criar uma nova página dedicada para o retorno após o pagamento confirmado, mantendo o mesmo design system do site (PageHeader gradiente roxo, tokens de cor da marca, tipografia e botões consistentes). A página NÃO será adicionada ao `NAV_LINKS`, ficando acessível apenas via redirecionamento pós-checkout.
 
-### `src/routes/faq.tsx` (reescrita)
-- Manter `PageHeader` no topo (eyebrow "Tire suas dúvidas", title "Perguntas frequentes").
-- Substituir o `ContentSection` por uma `<section className="bg-white">` no mesmo padrão de espaçamento das outras páginas internas (`max-w-[1200px]`, `px-5 md:px-8`, `pt-6 pb-20 md:pt-8 md:pb-28`).
-- Reutilizar exatamente a **mesma lista de perguntas/respostas** (`FAQ_ITEMS`) usada na Home — perguntas mais completas, com textos longos, quebras de linha preservadas via `whitespace-pre-line`. Substitui o array enxuto atual.
-- Acordeão com o mesmo visual da Home, adaptado ao fundo branco:
-  - `AccordionItem`: cartão roxo `bg-[#431181]`, `rounded-2xl`, `shadow-[0_10px_30px_rgba(22,9,31,0.18)]`, `px-5 md:px-7`.
-  - `AccordionTrigger`: texto branco, `font-extrabold uppercase`, ícone branco.
-  - `AccordionContent`: texto branco, `whitespace-pre-line`, `text-sm md:text-base`.
-- Atualizar `head()`: title "FAQ — II Corrida das Famílias", description focada nas dúvidas frequentes (inscrição, pagamento, kit, percurso, transferência), `og:title` e `og:description`.
+## O que a página vai conter
 
-### O que NÃO muda
-- Home (`src/routes/index.tsx`) permanece igual.
-- Componentes compartilhados (`PageHeader`, `Accordion`) sem alterações.
-- Sem mudanças de backend, dados ou rotas.
+1. **Hero (PageHeader gradiente roxo)**
+   - Eyebrow: "Pagamento confirmado"
+   - Título: "Sua inscrição está garantida!"
+   - Descrição: mensagem de boas-vindas confirmando que a vaga na II Corrida das Famílias está confirmada.
 
-## Resultado visual
-- Cabeçalho roxo padrão das páginas internas.
-- Corpo branco com cartões roxos do acordeão (mesmo estilo da Home).
-- Mesmas 6 perguntas detalhadas da Home, no lugar das versões curtas atuais.
+2. **Bloco principal (fundo branco)**
+   - Ícone grande de check em círculo com cor da marca (laranja/âmbar) e leve animação de entrada.
+   - Card de destaque com o **protocolo da inscrição** (lido via `validateSearch` — `?protocol=XYZ`) caso presente na URL.
+   - Card "Próximos passos" com 3 itens em grid (ícones lucide):
+     - **Confirmação por e-mail** — comprovante enviado para o e-mail cadastrado.
+     - **Retirada do kit** — datas 04, 05 e 06/08/2026, 19h30–21h30, Salão Paroquial.
+     - **Dia da corrida** — 09 de agosto de 2026, Igreja Matriz de Nossa Senhora do Rosário, Serra Talhada/PE.
+   - Aviso solidário: lembrete de levar 1kg de alimento não perecível.
+
+3. **Faixa de ações (CTA)**
+   - Botão WhatsApp (verde `#25D366`) com mensagem pré-preenchida incluindo o protocolo.
+   - Botão "Ver regulamento" → `/regulamento`.
+   - Botão "Voltar ao início" → `/`.
+
+4. **Faixa final roxa (mesma do `/kit`)**
+   - Mensagem de agradecimento: "Obrigado por correr com a gente!"
+   - Compartilhamento social (links para compartilhar a participação — opcional, abrindo WhatsApp).
+
+## Detalhes técnicos
+
+- Novo arquivo: `src/routes/sucesso.tsx` (rota top-level `/sucesso`).
+- `createFileRoute("/sucesso")` com:
+  - `validateSearch` aceitando `protocol?: string` (e opcional `email?: string` para exibir destinatário do comprovante).
+  - `head()` com title "Pagamento confirmado — II Corrida das Famílias", description, og:title/description e `robots: noindex` (página de pós-checkout, não deve ser indexada).
+  - `component: Page`.
+- Reuso de `PageHeader` de `@/components/site/page-shell`.
+- Tokens semânticos: `--color-brand-purple`, `--color-brand-purple-title`, `--color-brand-purple-text`, `--color-brand-orange`, `--color-brand-amber`, `--color-brand-soft`, classe `bg-gradient-hero`, `shadow-orange`, `heading-section`, `heading-display`.
+- Ícones lucide: `CheckCircle2`, `Mail`, `Package`, `CalendarDays`, `MessageCircle`, `Home`, `FileText`, `HandHeart`.
+- Dados de evento via `SITE` de `@/lib/site-config` (whatsapp, eventDateLabel, location, city).
+- Sem alterações em backend, navegação, header ou outras rotas. `NAV_LINKS` permanece inalterado.
+- Sem novas dependências.
+
+## Arquivos afetados
+
+- **Novo**: `src/routes/sucesso.tsx`
+
+Após aprovação, o `routeTree.gen.ts` é regenerado automaticamente pelo plugin do TanStack Router.

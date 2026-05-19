@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SucessoRouteImport } from './routes/sucesso'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RegulamentoRouteImport } from './routes/regulamento'
 import { Route as PremiacaoRouteImport } from './routes/premiacao'
@@ -34,6 +35,11 @@ import { Route as AuthenticatedAdminDashboardRouteImport } from './routes/_authe
 import { Route as AuthenticatedAdminConfiguracoesRouteImport } from './routes/_authenticated/admin.configuracoes'
 import { Route as AuthenticatedAdminInscricoesIdRouteImport } from './routes/_authenticated/admin.inscricoes.$id'
 
+const SucessoRoute = SucessoRouteImport.update({
+  id: '/sucesso',
+  path: '/sucesso',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
@@ -175,6 +181,7 @@ export interface FileRoutesByFullPath {
   '/premiacao': typeof PremiacaoRoute
   '/regulamento': typeof RegulamentoRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/sucesso': typeof SucessoRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/inscricao/sucesso': typeof InscricaoSucessoRoute
   '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
@@ -200,6 +207,7 @@ export interface FileRoutesByTo {
   '/premiacao': typeof PremiacaoRoute
   '/regulamento': typeof RegulamentoRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/sucesso': typeof SucessoRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/inscricao/sucesso': typeof InscricaoSucessoRoute
   '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
@@ -227,6 +235,7 @@ export interface FileRoutesById {
   '/premiacao': typeof PremiacaoRoute
   '/regulamento': typeof RegulamentoRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/sucesso': typeof SucessoRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/inscricao/sucesso': typeof InscricaoSucessoRoute
   '/_authenticated/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
@@ -254,6 +263,7 @@ export interface FileRouteTypes {
     | '/premiacao'
     | '/regulamento'
     | '/reset-password'
+    | '/sucesso'
     | '/admin'
     | '/inscricao/sucesso'
     | '/admin/configuracoes'
@@ -279,6 +289,7 @@ export interface FileRouteTypes {
     | '/premiacao'
     | '/regulamento'
     | '/reset-password'
+    | '/sucesso'
     | '/admin'
     | '/inscricao/sucesso'
     | '/admin/configuracoes'
@@ -305,6 +316,7 @@ export interface FileRouteTypes {
     | '/premiacao'
     | '/regulamento'
     | '/reset-password'
+    | '/sucesso'
     | '/_authenticated/admin'
     | '/inscricao/sucesso'
     | '/_authenticated/admin/configuracoes'
@@ -332,10 +344,18 @@ export interface RootRouteChildren {
   PremiacaoRoute: typeof PremiacaoRoute
   RegulamentoRoute: typeof RegulamentoRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  SucessoRoute: typeof SucessoRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sucesso': {
+      id: '/sucesso'
+      path: '/sucesso'
+      fullPath: '/sucesso'
+      preLoaderRoute: typeof SucessoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/reset-password': {
       id: '/reset-password'
       path: '/reset-password'
@@ -585,6 +605,7 @@ const rootRouteChildren: RootRouteChildren = {
   PremiacaoRoute: PremiacaoRoute,
   RegulamentoRoute: RegulamentoRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  SucessoRoute: SucessoRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
