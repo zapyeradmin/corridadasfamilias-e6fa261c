@@ -30,7 +30,7 @@ export const Route = createFileRoute("/regulamento")({
   component: Page,
 });
 
-type Section = { title: string; items: (string | { type: "table"; render: () => JSX.Element })[] };
+type Section = { title: string; items: (string | { type: "table"; render: () => ReactNode })[] };
 
 const LotesTable = () => (
   <div className="overflow-x-auto">
