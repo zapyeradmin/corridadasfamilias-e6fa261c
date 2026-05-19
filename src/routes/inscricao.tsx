@@ -34,7 +34,17 @@ const formSchema = z.object({
   whatsapp: z.string().refine((v) => v.replace(/\D/g, "").length >= 10, "WhatsApp inválido"),
   birth_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Data inválida"),
   gender: z.enum(["male", "female", "other"], { message: "Selecione" }),
-  category: z.string().min(1, "Selecione a categoria"),
+  category: z.enum(
+    [
+      "geral_masculino",
+      "geral_feminino",
+      "infanto_juvenil_masculino",
+      "infanto_juvenil_feminino",
+      "60_masculino",
+      "60_feminino",
+    ],
+    { message: "Selecione a categoria" },
+  ),
   shirt_size: z.enum(["pp", "p", "m", "g", "gg", "xgg"], { message: "Selecione" }),
   emergency_contact_name: z.string().min(2, "Informe o contato"),
   emergency_contact_phone: z
@@ -46,6 +56,28 @@ const formSchema = z.object({
 });
 
 type FormValues = z.infer<typeof formSchema>;
+
+function ageOn(birthIso: string, refIso: string): number {
+  const b = new Date(birthIso);
+  const r = new Date(refIso);
+  let a = r.getFullYear() - b.getFullYear();
+  const m = r.getMonth() - b.getMonth();
+  if (m < 0 || (m === 0 && r.getDate() < b.getDate())) a--;
+  return a;
+}
+
+function resolvePrice(
+  birth: string | undefined,
+  eventDate: string | undefined,
+  lot: { price_cents: number; child_price_cents: number | null } | null | undefined,
+): number | undefined {
+  if (!lot) return undefined;
+  if (birth && /^\d{4}-\d{2}-\d{2}$/.test(birth) && eventDate) {
+    const a = ageOn(birth, eventDate);
+    if (a <= 9 && lot.child_price_cents) return lot.child_price_cents;
+  }
+  return lot.price_cents;
+}
 
 const STEPS: { title: string; fields: (keyof FormValues)[] }[] = [
   {
@@ -80,7 +112,7 @@ function Page() {
       whatsapp: "",
       birth_date: "",
       gender: undefined as unknown as FormValues["gender"],
-      category: "",
+      category: undefined as unknown as FormValues["category"],
       shirt_size: undefined as unknown as FormValues["shirt_size"],
       emergency_contact_name: "",
       emergency_contact_phone: "",
@@ -132,7 +164,16 @@ function Page() {
 
             {step === 0 && <StepPersonal form={form} />}
             {step === 1 && <StepKit form={form} />}
-            {step === 2 && <StepReview form={form} amount={eventData?.currentLot?.price_cents} />}
+            {step === 2 && (
+              <StepReview
+                form={form}
+                amount={resolvePrice(
+                  form.watch("birth_date"),
+                  eventData?.event?.event_date,
+                  eventData?.currentLot,
+                )}
+              />
+            )}
 
             <div className="mt-10 flex items-center justify-between gap-3">
               <button
@@ -176,14 +217,35 @@ function Page() {
               {eventData?.event?.name ?? "II Corrida das Famílias"}
             </h3>
             {eventData?.currentLot ? (
-              <>
-                <p className="mt-3 text-sm text-[color:var(--color-brand-purple-text)]">
-                  Lote vigente: <strong>{eventData.currentLot.name}</strong>
-                </p>
-                <p className="mt-1 text-3xl font-black text-[color:var(--color-brand-purple-title)]">
-                  {formatBRL(eventData.currentLot.price_cents)}
-                </p>
-              </>
+              (() => {
+                const lot = eventData.currentLot;
+                const birth = form.watch("birth_date");
+                const eventDate = eventData.event?.event_date;
+                const age = birth && eventDate ? ageOn(birth, eventDate) : null;
+                const isChild = age != null && age <= 9;
+                const price = resolvePrice(birth, eventDate, lot);
+                return (
+                  <>
+                    <p className="mt-3 text-sm text-[color:var(--color-brand-purple-text)]">
+                      Lote vigente: <strong>{lot.name}</strong>
+                    </p>
+                    <p className="mt-1 text-3xl font-black text-[color:var(--color-brand-purple-title)]">
+                      {formatBRL(price ?? lot.price_cents)}
+                    </p>
+                    {age != null && (
+                      <p className="mt-1 text-xs font-bold uppercase tracking-wide text-[color:var(--color-brand-orange)]">
+                        {isChild ? "Valor infantil (até 9 anos)" : "Valor adulto"}
+                      </p>
+                    )}
+                    <p className="mt-3 text-xs text-[color:var(--color-brand-purple-text)]/80">
+                      Adulto {formatBRL(lot.price_cents)}
+                      {lot.child_price_cents
+                        ? ` · Criança até 9 anos ${formatBRL(lot.child_price_cents)}`
+                        : ""}
+                    </p>
+                  </>
+                );
+              })()
             ) : (
               <p className="mt-3 text-sm text-[color:var(--color-brand-purple-text)]">
                 Carregando lote vigente...
@@ -298,9 +360,12 @@ function StepPersonal({ form }: { form: ReturnType<typeof useForm<FormValues>> }
       <Field label="Categoria" error={formState.errors.category?.message}>
         <select className={inputClass} {...register("category")} defaultValue="">
           <option value="" disabled>Selecione</option>
-          <option value="5km_geral">5km Geral</option>
-          <option value="5km_familia">5km Família</option>
-          <option value="caminhada">Caminhada</option>
+          <option value="geral_masculino">Geral Masculino (idade livre)</option>
+          <option value="geral_feminino">Geral Feminino (idade livre)</option>
+          <option value="infanto_juvenil_masculino">Infanto-Juvenil Masculino (9–17 anos)</option>
+          <option value="infanto_juvenil_feminino">Infanto-Juvenil Feminino (9–17 anos)</option>
+          <option value="60_masculino">60+ Masculino</option>
+          <option value="60_feminino">60+ Feminino</option>
         </select>
       </Field>
     </div>

@@ -14,13 +14,29 @@ const registrationSchema = z.object({
   birth_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Data inválida"),
   gender: z.enum(["male", "female", "other"]),
   shirt_size: z.enum(["pp", "p", "m", "g", "gg", "xgg"]),
-  category: z.string().min(1).max(40),
+  category: z.enum([
+    "geral_masculino",
+    "geral_feminino",
+    "infanto_juvenil_masculino",
+    "infanto_juvenil_feminino",
+    "60_masculino",
+    "60_feminino",
+  ]),
   emergency_contact_name: z.string().min(2).max(120),
   emergency_contact_phone: z.string().min(10).max(20),
   medical_notes: z.string().max(500).optional().nullable(),
   accepted_terms: z.literal(true),
   accepted_lgpd: z.literal(true),
 });
+
+function yearsBetween(birthIso: string, refIso: string): number {
+  const birth = new Date(birthIso);
+  const ref = new Date(refIso);
+  let age = ref.getFullYear() - birth.getFullYear();
+  const m = ref.getMonth() - birth.getMonth();
+  if (m < 0 || (m === 0 && ref.getDate() < birth.getDate())) age--;
+  return age;
+}
 
 export type RegistrationInput = z.infer<typeof registrationSchema>;
 
@@ -30,7 +46,7 @@ export const createRegistration = createServerFn({ method: "POST" })
     // Buscar evento ativo + lote vigente (servidor recalcula preço)
     const { data: event } = await supabaseAdmin
       .from("events")
-      .select("id")
+      .select("id, event_date")
       .eq("is_active", true)
       .order("event_date", { ascending: true })
       .limit(1)
@@ -40,7 +56,7 @@ export const createRegistration = createServerFn({ method: "POST" })
     const nowIso = new Date().toISOString();
     const { data: lots } = await supabaseAdmin
       .from("lots")
-      .select("id, price_cents")
+      .select("id, price_cents, child_price_cents")
       .eq("event_id", event.id)
       .eq("is_active", true)
       .lte("starts_at", nowIso)
@@ -49,6 +65,31 @@ export const createRegistration = createServerFn({ method: "POST" })
       .limit(1);
     const lot = lots?.[0];
     if (!lot) throw new Error("Não há lote de inscrições aberto no momento.");
+
+    // Calcula idade na data do evento e preço aplicável (até 9 anos = infantil)
+    const ageAtEvent = yearsBetween(data.birth_date, event.event_date);
+    const isChild = ageAtEvent <= 9;
+    const amountCents = isChild && lot.child_price_cents ? lot.child_price_cents : lot.price_cents;
+
+    // Validações de categoria por idade/gênero
+    const g = GENDER_DB[data.gender]; // M | F | O
+    const cat = data.category;
+    if (cat === "infanto_juvenil_masculino" || cat === "infanto_juvenil_feminino") {
+      if (ageAtEvent < 9 || ageAtEvent > 17) {
+        throw new Error("Categoria Infanto-Juvenil é destinada a participantes de 9 a 17 anos.");
+      }
+    }
+    if (cat === "60_masculino" || cat === "60_feminino") {
+      if (ageAtEvent < 60) {
+        throw new Error("Categoria 60+ é destinada a participantes com 60 anos ou mais.");
+      }
+    }
+    if (cat.endsWith("_masculino") && g === "F") {
+      throw new Error("Categoria masculina não disponível para o gênero informado.");
+    }
+    if (cat.endsWith("_feminino") && g === "M") {
+      throw new Error("Categoria feminina não disponível para o gênero informado.");
+    }
 
     // Checagem de duplicidade por CPF + status ativo
     const cpfNorm = normalizeCpf(data.cpf);
@@ -87,7 +128,7 @@ export const createRegistration = createServerFn({ method: "POST" })
         accepted_terms: true,
         accepted_lgpd: true,
         status: "pending",
-        amount_cents: lot.price_cents,
+        amount_cents: amountCents,
       })
       .select("id, protocol, amount_cents")
       .single();
