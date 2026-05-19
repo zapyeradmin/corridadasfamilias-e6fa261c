@@ -128,7 +128,7 @@ export const createRegistration = createServerFn({ method: "POST" })
         accepted_terms: true,
         accepted_lgpd: true,
         status: "pending",
-        amount_cents: lot.price_cents,
+        amount_cents: amountCents,
       })
       .select("id, protocol, amount_cents")
       .single();
