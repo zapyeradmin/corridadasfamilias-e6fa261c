@@ -27,7 +27,7 @@ export const Route = createFileRoute("/patrocinadores")({
   component: Page,
 });
 
-const TIER_ORDER = ["diamond", "gold", "silver", "standard"] as const;
+
 const TIER_LABEL: Record<string, string> = {
   diamond: "Patrocínio Diamante",
   gold: "Patrocínio Ouro",
