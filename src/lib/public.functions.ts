@@ -14,6 +14,7 @@ export type ActiveLot = {
   id: string;
   name: string;
   price_cents: number;
+  child_price_cents: number | null;
   starts_at: string;
   ends_at: string;
   max_slots: number | null;
