@@ -1,42 +1,62 @@
-## Problema
+## Diagnóstico
 
-Os links da InfinitePay salvos em **Admin → Configurações** somem ao recarregar a página.
+O webhook **está chegando** e sendo gravado em `infinitepay_events`, mas como `unmatched`:
 
-**Causa raiz:** A tabela `public.settings` tem RLS habilitada, mas só existe policy de `SELECT`. Não há policy de `UPDATE`, então o `update()` feito pelo `updateSettingAdmin` é silenciosamente bloqueado pelo RLS (0 linhas afetadas, sem erro retornado). As linhas `infinitepay_checkout_adulto_url` e `infinitepay_checkout_crianca_url` existem no banco, mas continuam com `value` vazio.
+```
+notes: "order_nsu sem inscrição correspondente"
+order_nsu: 3e245ee5-22a8-4b65-a31f-ac9bf15a1916   ← UUID gerado pela InfinitePay
+```
+
+**Causa raiz:** o link de checkout da InfinitePay é estático (`https://checkout.infinitepay.io/.../5L9Nn6VwPN`) e nós redirecionamos o usuário direto para ele, **sem anexar nosso `order_nsu`**. Quando o pagamento acontece, a InfinitePay envia um `order_nsu` **gerado por ela** no webhook — que nunca vai casar com o `inscricao_adulto_lote1_<uuid>` salvo em `registrations.order_nsu`.
+
+Resultado: o pagamento é processado na InfinitePay, mas a inscrição nunca é marcada como `paid` e o `/pagamento` fica em polling até dar timeout.
 
 ## Correção
 
-### 1. Migração — adicionar policies de escrita em `settings`
+A InfinitePay aceita query params no link de checkout para passar o pedido e a URL de retorno:
 
-Criar policies de `UPDATE` e `INSERT` restritas a admins:
-
-```sql
-CREATE POLICY "Admins can insert settings"
-  ON public.settings FOR INSERT TO authenticated
-  WITH CHECK (has_role(auth.uid(), 'admin'::app_role));
-
-CREATE POLICY "Admins can update settings"
-  ON public.settings FOR UPDATE TO authenticated
-  USING (has_role(auth.uid(), 'admin'::app_role))
-  WITH CHECK (has_role(auth.uid(), 'admin'::app_role));
+```
+https://checkout.infinitepay.io/<slug>/<id>
+  ?order_nsu=<nosso_order_nsu>
+  &redirect_url=https://corridadasfamilias.lovable.app/pagamento?protocol=<PROTOCOLO>
+  &customer_name=...&customer_email=...&customer_cellphone=...
 ```
 
-### 2. Endurecer `updateSettingAdmin` (defesa em profundidade)
+### 1. `src/lib/infinitepay.functions.ts` — anexar query params
 
-Em `src/lib/admin.functions.ts`:
-- Trocar `.update(...).eq("key", data.key)` por `.upsert(..., { onConflict: "key" })` para que, se a linha não existir, ela seja criada (e marcada `is_public: true` quando for chave de checkout).
-- Adicionar `.select()` ao final e validar que ao menos 1 linha foi retornada; caso contrário, lançar erro explícito (em vez de "ok" silencioso). Isso evita que problemas de RLS futuros voltem a falhar em silêncio.
+Em `getCheckoutUrlForRegistration`, depois de carregar a inscrição, ler também `order_nsu`, `full_name`, `email`, `whatsapp`, e montar a URL final assim:
 
-### 3. Após aprovação da migração
+```ts
+const url = new URL(baseCheckoutUrl);
+url.searchParams.set("order_nsu", reg.order_nsu);
+url.searchParams.set(
+  "redirect_url",
+  `https://corridadasfamilias.lovable.app/pagamento?protocol=${reg.protocol}`,
+);
+url.searchParams.set("customer_name", reg.full_name);
+url.searchParams.set("customer_email", reg.email);
+url.searchParams.set("customer_cellphone", reg.whatsapp.replace(/\D/g, ""));
+return { ok: true, checkoutUrl: url.toString(), ... };
+```
 
-Você poderá salvar novamente os dois links em **Admin → Configurações**:
+Assim o webhook receberá o **nosso** `order_nsu` e o match passa a funcionar.
 
-- Adulto: `https://checkout.infinitepay.io/patricia-luciana-7b3/5L9Nn6VwPN`
-- Criança: `https://checkout.infinitepay.io/patricia-luciana-7b3/gsbcwuLy2N`
+### 2. (Opcional) Reprocessar o evento órfão atual
 
-E eles persistirão. Posso também já gravá-los diretamente via SQL como parte da mesma migração, se preferir — me avise.
+O evento `117a23cf-…` ficou `unmatched` porque foi feito antes da correção. Não tem como recuperar — a InfinitePay não conhece nosso `order_nsu` daquela tentativa. A inscrição correspondente continua `pending`. Posso:
+
+- (a) marcar manualmente a inscrição como `paid` (preciso que você me diga qual protocolo é) **ou**
+- (b) deixar como está e pedir um novo teste depois da correção.
+
+### 3. Validar com novo teste
+
+Após o deploy:
+1. Fazer uma nova inscrição.
+2. Clicar em "Realizar pagamento" e concluir o checkout.
+3. Conferir em `Admin → Pagamentos` que o status mudou para `paid` e que `/pagamento` redireciona para `/sucesso`.
 
 ## Fora do escopo
 
-- Nenhuma alteração no front-end de Configurações (o formulário já está correto).
-- Nenhuma alteração no webhook ou no fluxo `/pagamento`.
+- Mudanças no painel da InfinitePay (Webhook URL e Redirect URL continuam corretas).
+- Estrutura do webhook (já funciona, só falta o `order_nsu` certo chegar).
+- Tela de admin de configurações.
