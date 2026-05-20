@@ -78,6 +78,8 @@ function Page() {
             className="h-24 w-auto md:h-32"
             loading="eager"
             decoding="async"
+            width={1247}
+            height={385}
           />
         </div>
         <form

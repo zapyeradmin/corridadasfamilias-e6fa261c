@@ -22,7 +22,7 @@ function Page() {
         {data?.map((g) => (
           <div key={g.id} className="overflow-hidden rounded-xl border border-border bg-white">
             <div className="aspect-[4/3] bg-muted">
-              <img src={g.image_url} alt={g.title ?? ""} className="h-full w-full object-cover" />
+              <img src={g.image_url} alt={g.title ?? ""} loading="lazy" decoding="async" className="h-full w-full object-cover" />
             </div>
             <div className="p-3">
               <p className="truncate text-sm font-semibold">{g.title ?? "(sem título)"}</p>

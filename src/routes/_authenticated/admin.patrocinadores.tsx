@@ -22,7 +22,7 @@ function Page() {
         {data?.map((s) => (
           <div key={s.id} className="rounded-xl border border-border bg-white p-4">
             <div className="aspect-square overflow-hidden rounded-lg bg-muted">
-              <img src={s.logo_url} alt={s.name} className="h-full w-full object-contain" />
+              <img src={s.logo_url} alt={s.name} loading="lazy" decoding="async" className="h-full w-full object-contain" />
             </div>
             <p className="mt-2 truncate text-sm font-semibold">{s.name}</p>
             <p className="text-xs uppercase text-muted-foreground">{s.tier} · {s.is_published ? "Publicado" : "Oculto"}</p>
