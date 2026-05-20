@@ -417,7 +417,7 @@ function SponsorViewDialog({ id, onClose }: { id: string | null; onClose: () => 
         ) : (
           <div className="space-y-3">
             <div className="aspect-video overflow-hidden rounded-lg border border-border bg-muted">
-              <img src={data.logo_url} alt={data.name} className="h-full w-full object-contain" />
+              <img src={data.logo_url} alt={data.name} className="h-full w-full object-cover" />
             </div>
             <dl className="grid grid-cols-1 gap-2 text-sm">
               <Row label="Nome" value={data.name} />
