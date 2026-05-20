@@ -20,7 +20,6 @@ import { Route as PagamentoRouteImport } from './routes/pagamento'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as KitRouteImport } from './routes/kit'
 import { Route as InscricaoRouteImport } from './routes/inscricao'
-import { Route as GaleriaRouteImport } from './routes/galeria'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as FalhanopagamentoRouteImport } from './routes/falhanopagamento'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
@@ -32,8 +31,6 @@ import { Route as AuthenticatedAdminPatrocinadoresRouteImport } from './routes/_
 import { Route as AuthenticatedAdminPagamentosRouteImport } from './routes/_authenticated/admin.pagamentos'
 import { Route as AuthenticatedAdminLogsRouteImport } from './routes/_authenticated/admin.logs'
 import { Route as AuthenticatedAdminInscricoesRouteImport } from './routes/_authenticated/admin.inscricoes'
-import { Route as AuthenticatedAdminGaleriaRouteImport } from './routes/_authenticated/admin.galeria'
-import { Route as AuthenticatedAdminEventosRouteImport } from './routes/_authenticated/admin.eventos'
 import { Route as AuthenticatedAdminDashboardRouteImport } from './routes/_authenticated/admin.dashboard'
 import { Route as AuthenticatedAdminConfiguracoesRouteImport } from './routes/_authenticated/admin.configuracoes'
 import { Route as AuthenticatedAdminInscricoesIdRouteImport } from './routes/_authenticated/admin.inscricoes.$id'
@@ -93,11 +90,6 @@ const InscricaoRoute = InscricaoRouteImport.update({
   path: '/inscricao',
   getParentRoute: () => rootRouteImport,
 } as any)
-const GaleriaRoute = GaleriaRouteImport.update({
-  id: '/galeria',
-  path: '/galeria',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const FaqRoute = FaqRouteImport.update({
   id: '/faq',
   path: '/faq',
@@ -155,18 +147,6 @@ const AuthenticatedAdminInscricoesRoute =
     path: '/inscricoes',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
-const AuthenticatedAdminGaleriaRoute =
-  AuthenticatedAdminGaleriaRouteImport.update({
-    id: '/galeria',
-    path: '/galeria',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminEventosRoute =
-  AuthenticatedAdminEventosRouteImport.update({
-    id: '/eventos',
-    path: '/eventos',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
 const AuthenticatedAdminDashboardRoute =
   AuthenticatedAdminDashboardRouteImport.update({
     id: '/dashboard',
@@ -190,7 +170,6 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/falhanopagamento': typeof FalhanopagamentoRoute
   '/faq': typeof FaqRoute
-  '/galeria': typeof GaleriaRoute
   '/inscricao': typeof InscricaoRoute
   '/kit': typeof KitRoute
   '/login': typeof LoginRoute
@@ -206,8 +185,6 @@ export interface FileRoutesByFullPath {
   '/inscricao/sucesso': typeof InscricaoSucessoRoute
   '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
-  '/admin/eventos': typeof AuthenticatedAdminEventosRoute
-  '/admin/galeria': typeof AuthenticatedAdminGaleriaRoute
   '/admin/inscricoes': typeof AuthenticatedAdminInscricoesRouteWithChildren
   '/admin/logs': typeof AuthenticatedAdminLogsRoute
   '/admin/pagamentos': typeof AuthenticatedAdminPagamentosRoute
@@ -219,7 +196,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/falhanopagamento': typeof FalhanopagamentoRoute
   '/faq': typeof FaqRoute
-  '/galeria': typeof GaleriaRoute
   '/inscricao': typeof InscricaoRoute
   '/kit': typeof KitRoute
   '/login': typeof LoginRoute
@@ -235,8 +211,6 @@ export interface FileRoutesByTo {
   '/inscricao/sucesso': typeof InscricaoSucessoRoute
   '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
-  '/admin/eventos': typeof AuthenticatedAdminEventosRoute
-  '/admin/galeria': typeof AuthenticatedAdminGaleriaRoute
   '/admin/inscricoes': typeof AuthenticatedAdminInscricoesRouteWithChildren
   '/admin/logs': typeof AuthenticatedAdminLogsRoute
   '/admin/pagamentos': typeof AuthenticatedAdminPagamentosRoute
@@ -250,7 +224,6 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/falhanopagamento': typeof FalhanopagamentoRoute
   '/faq': typeof FaqRoute
-  '/galeria': typeof GaleriaRoute
   '/inscricao': typeof InscricaoRoute
   '/kit': typeof KitRoute
   '/login': typeof LoginRoute
@@ -266,8 +239,6 @@ export interface FileRoutesById {
   '/inscricao_/sucesso': typeof InscricaoSucessoRoute
   '/_authenticated/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/_authenticated/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
-  '/_authenticated/admin/eventos': typeof AuthenticatedAdminEventosRoute
-  '/_authenticated/admin/galeria': typeof AuthenticatedAdminGaleriaRoute
   '/_authenticated/admin/inscricoes': typeof AuthenticatedAdminInscricoesRouteWithChildren
   '/_authenticated/admin/logs': typeof AuthenticatedAdminLogsRoute
   '/_authenticated/admin/pagamentos': typeof AuthenticatedAdminPagamentosRoute
@@ -281,7 +252,6 @@ export interface FileRouteTypes {
     | '/'
     | '/falhanopagamento'
     | '/faq'
-    | '/galeria'
     | '/inscricao'
     | '/kit'
     | '/login'
@@ -297,8 +267,6 @@ export interface FileRouteTypes {
     | '/inscricao/sucesso'
     | '/admin/configuracoes'
     | '/admin/dashboard'
-    | '/admin/eventos'
-    | '/admin/galeria'
     | '/admin/inscricoes'
     | '/admin/logs'
     | '/admin/pagamentos'
@@ -310,7 +278,6 @@ export interface FileRouteTypes {
     | '/'
     | '/falhanopagamento'
     | '/faq'
-    | '/galeria'
     | '/inscricao'
     | '/kit'
     | '/login'
@@ -326,8 +293,6 @@ export interface FileRouteTypes {
     | '/inscricao/sucesso'
     | '/admin/configuracoes'
     | '/admin/dashboard'
-    | '/admin/eventos'
-    | '/admin/galeria'
     | '/admin/inscricoes'
     | '/admin/logs'
     | '/admin/pagamentos'
@@ -340,7 +305,6 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/falhanopagamento'
     | '/faq'
-    | '/galeria'
     | '/inscricao'
     | '/kit'
     | '/login'
@@ -356,8 +320,6 @@ export interface FileRouteTypes {
     | '/inscricao_/sucesso'
     | '/_authenticated/admin/configuracoes'
     | '/_authenticated/admin/dashboard'
-    | '/_authenticated/admin/eventos'
-    | '/_authenticated/admin/galeria'
     | '/_authenticated/admin/inscricoes'
     | '/_authenticated/admin/logs'
     | '/_authenticated/admin/pagamentos'
@@ -371,7 +333,6 @@ export interface RootRouteChildren {
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   FalhanopagamentoRoute: typeof FalhanopagamentoRoute
   FaqRoute: typeof FaqRoute
-  GaleriaRoute: typeof GaleriaRoute
   InscricaoRoute: typeof InscricaoRoute
   KitRoute: typeof KitRoute
   LoginRoute: typeof LoginRoute
@@ -466,13 +427,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InscricaoRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/galeria': {
-      id: '/galeria'
-      path: '/galeria'
-      fullPath: '/galeria'
-      preLoaderRoute: typeof GaleriaRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/faq': {
       id: '/faq'
       path: '/faq'
@@ -550,20 +504,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminInscricoesRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/_authenticated/admin/galeria': {
-      id: '/_authenticated/admin/galeria'
-      path: '/galeria'
-      fullPath: '/admin/galeria'
-      preLoaderRoute: typeof AuthenticatedAdminGaleriaRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/eventos': {
-      id: '/_authenticated/admin/eventos'
-      path: '/eventos'
-      fullPath: '/admin/eventos'
-      preLoaderRoute: typeof AuthenticatedAdminEventosRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
     '/_authenticated/admin/dashboard': {
       id: '/_authenticated/admin/dashboard'
       path: '/dashboard'
@@ -605,8 +545,6 @@ const AuthenticatedAdminInscricoesRouteWithChildren =
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminConfiguracoesRoute: typeof AuthenticatedAdminConfiguracoesRoute
   AuthenticatedAdminDashboardRoute: typeof AuthenticatedAdminDashboardRoute
-  AuthenticatedAdminEventosRoute: typeof AuthenticatedAdminEventosRoute
-  AuthenticatedAdminGaleriaRoute: typeof AuthenticatedAdminGaleriaRoute
   AuthenticatedAdminInscricoesRoute: typeof AuthenticatedAdminInscricoesRouteWithChildren
   AuthenticatedAdminLogsRoute: typeof AuthenticatedAdminLogsRoute
   AuthenticatedAdminPagamentosRoute: typeof AuthenticatedAdminPagamentosRoute
@@ -616,8 +554,6 @@ interface AuthenticatedAdminRouteChildren {
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminConfiguracoesRoute: AuthenticatedAdminConfiguracoesRoute,
   AuthenticatedAdminDashboardRoute: AuthenticatedAdminDashboardRoute,
-  AuthenticatedAdminEventosRoute: AuthenticatedAdminEventosRoute,
-  AuthenticatedAdminGaleriaRoute: AuthenticatedAdminGaleriaRoute,
   AuthenticatedAdminInscricoesRoute:
     AuthenticatedAdminInscricoesRouteWithChildren,
   AuthenticatedAdminLogsRoute: AuthenticatedAdminLogsRoute,
@@ -645,7 +581,6 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   FalhanopagamentoRoute: FalhanopagamentoRoute,
   FaqRoute: FaqRoute,
-  GaleriaRoute: GaleriaRoute,
   InscricaoRoute: InscricaoRoute,
   KitRoute: KitRoute,
   LoginRoute: LoginRoute,
@@ -663,13 +598,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

@@ -56,15 +56,6 @@ export const getPublishedSponsors = createServerFn({ method: "GET" }).handler(as
   return data ?? [];
 });
 
-export const getPublishedGallery = createServerFn({ method: "GET" }).handler(async () => {
-  const supabase = publicClient();
-  const { data } = await supabase
-    .from("gallery_items")
-    .select("id, image_url, title, caption, sort_order")
-    .eq("is_published", true)
-    .order("sort_order", { ascending: true });
-  return data ?? [];
-});
 
 export const getPublicSettings = createServerFn({ method: "GET" }).handler(async () => {
   const supabase = publicClient();

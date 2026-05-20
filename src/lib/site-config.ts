@@ -19,7 +19,7 @@ export const NAV_LINKS = [
   { to: "/percurso", label: "Percurso" },
   { to: "/kit", label: "Kit" },
   { to: "/premiacao", label: "Premiação" },
-  { to: "/galeria", label: "Galeria" },
+  
   { to: "/patrocinadores", label: "Patrocinadores" },
   { to: "/faq", label: "FAQ" },
 ] as const;
