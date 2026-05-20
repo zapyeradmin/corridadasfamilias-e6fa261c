@@ -16,7 +16,7 @@ export function SiteFooter() {
             className="-mt-8 h-32 w-auto md:-mt-12 md:h-40"
           />
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-white/70">
-            Uma Corrida que une a Fé, Esporte em Família, Saúde e Solidariedade. Organizada pelo ECC da Paróquia de N. Sra. do Rosário.
+            Juntos no Rosário, Famílias unidas na Fé. Corrida organizada pelo ECC da Paróquia de N. Sra. do Rosário.
           </p>
         </div>
 
