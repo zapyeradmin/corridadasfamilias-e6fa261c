@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -21,8 +22,13 @@ export function HomePatrocinadores() {
     queryFn: () => fetchSponsors(),
     staleTime: 5 * 60 * 1000,
   });
+  // Garante que SSR e o primeiro render no cliente renderizem o mesmo conteúdo
+  // (apenas placeholders), evitando hydration mismatch.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
-  const all = data ?? [];
+  const all = mounted ? (data ?? []) : [];
+
   const diamondRows = all.filter((s) => s.tier === "diamond");
   const othersRows = all.filter((s) => s.tier !== "diamond");
 
