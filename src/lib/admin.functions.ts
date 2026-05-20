@@ -65,7 +65,7 @@ export const getDashboardKPIs = createServerFn({ method: "GET" })
         .from("registrations")
         .select("id, protocol, full_name, status, amount_cents, created_at")
         .order("created_at", { ascending: false })
-        .limit(10),
+        .limit(50),
       context.supabase.from("lots").select("id, name, price_cents"),
     ]);
 
@@ -75,9 +75,10 @@ export const getDashboardKPIs = createServerFn({ method: "GET" })
     const byStatus: Record<string, number> = {};
     for (const r of regs) byStatus[r.status] = (byStatus[r.status] ?? 0) + 1;
 
-    const revenueCents = payments
-      .filter((p) => p.status === "paid")
-      .reduce((sum, p) => sum + (p.amount_cents ?? 0), 0);
+    // Receita confirmada = soma das INSCRIÇÕES com status = 'paid' (fonte de verdade).
+    const revenueCents = regs
+      .filter((r) => r.status === "paid")
+      .reduce((sum, r) => sum + (r.amount_cents ?? 0), 0);
 
     return {
       totalRegistrations: regs.length,

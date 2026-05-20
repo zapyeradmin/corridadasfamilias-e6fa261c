@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { LogOut, Shield } from "lucide-react";
+import { Shield } from "lucide-react";
 import { NAV_LINKS } from "@/lib/site-config";
 
 interface Props {
@@ -8,7 +8,7 @@ interface Props {
   onLogout: () => void;
 }
 
-export function DesktopNav({ isAdmin, isAuthenticated, onLogout }: Props) {
+export function DesktopNav({ isAdmin }: Props) {
   return (
     <nav className="relative hidden items-center gap-1 lg:flex">
       {NAV_LINKS.map((l) => (
@@ -35,14 +35,6 @@ export function DesktopNav({ isAdmin, isAuthenticated, onLogout }: Props) {
         >
           <Shield className="h-3.5 w-3.5" /> Admin
         </Link>
-      )}
-      {isAuthenticated && (
-        <button
-          onClick={onLogout}
-          className="ml-1 inline-flex items-center gap-1.5 rounded-full border border-white/20 px-3 py-2 text-xs font-bold uppercase tracking-wide text-white/85 hover:bg-white/10"
-        >
-          <LogOut className="h-3.5 w-3.5" /> Sair
-        </button>
       )}
     </nav>
   );
