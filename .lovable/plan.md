@@ -1,58 +1,32 @@
-## Objetivo
+## Página /admin/pagamentos — Reformulação
 
-Na página `/admin/inscricoes`:
-1. Ao alterar o Status da inscrição, refletir em Dashboard, Pagamentos e na tabela `payments` do banco.
-2. "Detalhes" abre um modal com todas as informações cadastradas do inscrito (em vez de navegar para outra rota).
-3. Paginação: 10 inscritos por página, centralizada, com seta esquerda, número da página editável, seta direita.
+### 1. Remover modo de testes
+- Remover o bloco "Modo de testes (Infinity Pay desativado)" + input de protocolo + botão "Simular aprovação" de `src/routes/_authenticated/admin.pagamentos.tsx`.
+- Remover o import e uso de `simulatePaymentApproval`.
+- Manter a função `simulatePaymentApproval` em `src/lib/admin.functions.ts` por enquanto (não referenciada na UI). Opcional: posso remover também — confirme se quer apagar do backend.
 
----
+### 2. Status somente via /admin/inscricoes ou webhook
+- A página de Pagamentos vira **somente leitura**. Sem ações de mutação.
+- O fluxo de atualização de status já está centralizado em `updateRegistrationStatus` (chamado a partir de `/admin/inscricoes`), que sincroniza `payments`. Nenhuma outra rota da UI altera `payments`.
+- O webhook `src/routes/api/webhooks/infinitepay.ts` continua sendo a única outra fonte de escrita (entrada externa de pagamento).
 
-## Mudanças
+### 3. Filtro de status em PT-BR + busca
+- Mapa de labels: `all→Todos`, `pending→Pendente`, `processing→Processando`, `paid→Pago`, `canceled→Cancelado`, `refunded→Reembolsado`. Remover `failed` da lista (não pedido).
+- Adicionar `<Input>` de busca "Nome ou CPF" ao lado do Select de status.
+- Backend `listPayments` em `src/lib/admin.functions.ts`: adicionar parâmetro opcional `search`. Como `payments` não tem `full_name`/`cpf`, fazer JOIN via `select("..., registrations!inner(full_name, cpf, cpf_normalized)")` e usar `.or("full_name.ilike.%x%,cpf_normalized.ilike.%x%", { referencedTable: "registrations" })`. Também trazer `full_name` e `cpf` no retorno.
 
-### 1. Sincronização de Status (backend) — `src/lib/admin.functions.ts`
+### 4. Colunas Nome + CPF na tabela
+- Adicionar colunas "Inscrito" e "CPF" antes de "Status". Formatar CPF com máscara usando helper existente em `src/lib/cpf.ts`.
 
-Atualizar `updateRegistrationStatus` para também atualizar todos os registros em `payments` vinculados à inscrição:
+### 5. Paginação centralizada (10 por página)
+- `pageSize = 10`.
+- Mesmo padrão visual já usado em `/admin/dashboard` e `/admin/inscricoes`: `ChevronLeft` + `<input type="number">` editável (com clamp, Enter e onBlur) + `ChevronRight` + texto "de {totalPages}".
+- Resetar página ao mudar status ou busca.
 
-- Após `UPDATE registrations SET status = X WHERE id = $id`, executar:
-  - `UPDATE payments SET status = mappedStatus, paid_at = (X = 'paid' ? now() : null) WHERE registration_id = $id`
-- Mapeamento `registration_status → payment_status`:
-  - `pending → pending`
-  - `processing → processing`
-  - `paid → paid` (+ `paid_at = now()` se ainda null)
-  - `canceled → canceled`
-  - `refunded → refunded`
-- Invalidar cache no frontend (já existe `qc.invalidateQueries({ queryKey: ["admin"] })` que cobre dashboard, pagamentos e inscrições).
+### Arquivos alterados
+- `src/lib/admin.functions.ts` — `listPayments` ganha `search` e JOIN com `registrations`.
+- `src/routes/_authenticated/admin.pagamentos.tsx` — reescrita: sem modo de testes, filtro PT-BR, busca, colunas Nome/CPF, paginação centralizada.
 
-Isso garante que Dashboard (KPIs e "Pagas/Pendentes/Receita") e a página `/admin/pagamentos` mostrem o status correto e o DB fique consistente.
-
-### 2. Detalhes em Modal — `src/routes/_authenticated/admin.inscricoes.tsx`
-
-- Substituir os `<Link to="/admin/inscricoes/$id">` por um botão "Detalhes" que abre um `<Dialog>` (shadcn).
-- O Dialog usa `useQuery` com `getRegistrationDetail({ id })` quando aberto, e exibe todos os campos: protocolo, nome, e-mail, whatsapp, CPF, nascimento, gênero, categoria, camiseta, contato de emergência, notas médicas, status, valor, criada em, e tabela de pagamentos vinculados.
-- O nome do inscrito na coluna deixa de ser link.
-- A rota `admin.inscricoes.$id.tsx` é mantida (não removida) para acesso direto via URL, mas a UX padrão passa pelo modal.
-
-### 3. Paginação centralizada (10 por página) — `src/routes/_authenticated/admin.inscricoes.tsx`
-
-- Alterar `pageSize` de `25` para `10`.
-- Substituir o rodapé "Anterior / Próxima" por um controle centralizado:
-  - `ChevronLeft` (desabilitado em `page <= 1`)
-  - `<input type="number">` editável mostrando a página atual; ao alterar (onBlur/Enter) faz `setPage(clamp(value, 1, totalPages))`
-  - `ChevronRight` (desabilitado em `page >= totalPages`)
-  - Texto "de {totalPages}" ao lado
-- Mesmo padrão visual já usado no Dashboard, para consistência.
-
----
-
-## Detalhes técnicos
-
-- Usar `Dialog`, `DialogContent`, `DialogHeader`, `DialogTitle` de `@/components/ui/dialog`.
-- Estado: `const [detailId, setDetailId] = useState<string | null>(null)`; modal aberto quando `detailId !== null`.
-- Reusar `getRegistrationDetail` (já existe).
-- Sem migrations de banco — apenas UPDATE via server function existente, ampliado.
-- Sem alteração em RLS (a policy "Admins can update payments" já permite).
-
-## Fora de escopo
-
-- Não tocar em webhook InfinityPay (continua escrevendo seu próprio status quando chega).
-- Não reconciliar pagamentos órfãos históricos.
+### Fora do escopo
+- Mudanças no webhook InfinityPay.
+- Remover `simulatePaymentApproval` do backend (mantido por padrão; confirme se quer apagar).
