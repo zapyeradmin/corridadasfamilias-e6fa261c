@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageHeader } from "@/components/site/page-shell";
 import { PERCURSO_INFOS, PercursoInfoItem } from "@/components/site/percurso-info";
-import percursoMapa from "@/assets/percurso-mapa.png";
+import percursoMapa from "@/assets/percurso-mapa.png?w=1024&quality=82&format=webp";
 
 export const Route = createFileRoute("/percurso")({
   head: () => ({
@@ -44,6 +44,8 @@ function Page() {
                 alt="Mapa do percurso oficial da II Corrida das Famílias em Serra Talhada"
                 loading="lazy"
                 decoding="async"
+                width={1024}
+                height={768}
                 className="h-full w-full object-contain"
               />
             </div>

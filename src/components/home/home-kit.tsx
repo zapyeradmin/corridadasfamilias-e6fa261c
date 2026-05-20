@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { KIT_ITENS, KitItem } from "@/components/site/kit-itens";
-import kitExclusivo from "@/assets/kit-exclusivo.png";
+import kitExclusivo from "@/assets/kit-exclusivo.png?w=1024&quality=82&format=webp";
 
 export function HomeKit() {
   return (

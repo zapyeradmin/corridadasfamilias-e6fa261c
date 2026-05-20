@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Instagram, Mail, MapPin, MessageCircle } from "lucide-react";
 import { NAV_LINKS, SITE } from "@/lib/site-config";
-import logo from "@/assets/logo-corrida.png";
+import logo from "@/assets/logo-corrida.png?w=600&quality=88&format=webp";
 
 export function SiteFooter() {
   return (
@@ -13,6 +13,8 @@ export function SiteFooter() {
             alt="II Corrida das Famílias"
             loading="lazy"
             decoding="async"
+            width={1247}
+            height={385}
             className="-mt-8 h-32 w-auto md:-mt-12 md:h-40"
           />
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-white/70">
