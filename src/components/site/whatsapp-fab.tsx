@@ -1,12 +1,11 @@
 import { MessageCircle } from "lucide-react";
-import { SITE } from "@/lib/site-config";
+import { useSiteContacts } from "@/hooks/use-site-contacts";
 
 export function WhatsAppFab() {
+  const { whatsappHref } = useSiteContacts();
   return (
     <a
-      href={`https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(
-        "Olá! Gostaria de informações sobre a II Corrida das Famílias.",
-      )}`}
+      href={whatsappHref("Olá! Gostaria de informações sobre a II Corrida das Famílias.")}
       target="_blank"
       rel="noreferrer"
       aria-label="Falar no WhatsApp"
