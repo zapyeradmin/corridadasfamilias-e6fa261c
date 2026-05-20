@@ -96,13 +96,16 @@ function PlaceholderCard({ n }: { n: number }) {
 function DiamondCard({
   name,
   slug,
+  logoUrl,
   websiteUrl,
 }: {
   name: string;
   slug: string;
+  logoUrl: string;
   websiteUrl: string | null;
 }) {
-  const src = LOGO_ASSETS[slug];
+  const bundled = LOGO_ASSETS[slug];
+  const src = bundled ?? logoUrl;
   const scale = LOGO_SCALE[slug] ?? "scale-100";
   if (!src) return null;
   const img = (
