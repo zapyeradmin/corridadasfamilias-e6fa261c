@@ -623,7 +623,7 @@ export const updateSiteContacts = createServerFn({ method: "POST" })
 // Gerenciamento de usuários (Supabase Auth + user_roles)
 // ─────────────────────────────────────────────────────────
 
-type AppRole = "admin" | "user";
+type AppRole = "admin" | "staff";
 
 const passwordSchema = z
   .string()
@@ -643,7 +643,7 @@ export const listAdminUsers = createServerFn({ method: "GET" })
       id: u.id,
       email: u.email ?? "",
       full_name: ((u.user_metadata ?? {}) as { full_name?: string }).full_name ?? "",
-      role: (roleByUser.get(u.id) ?? "user") as AppRole,
+      role: (roleByUser.get(u.id) ?? "staff") as AppRole,
       created_at: u.created_at,
     }));
   });
@@ -656,7 +656,7 @@ export const createAdminUser = createServerFn({ method: "POST" })
         full_name: z.string().trim().min(2).max(120),
         email: z.string().trim().email().max(160),
         password: passwordSchema,
-        role: z.enum(["admin", "user"]),
+        role: z.enum(["admin", "staff"]),
       })
       .parse(input),
   )
@@ -693,7 +693,7 @@ export const updateAdminUser = createServerFn({ method: "POST" })
         full_name: z.string().trim().min(2).max(120).optional(),
         email: z.string().trim().email().max(160).optional(),
         password: passwordSchema.optional(),
-        role: z.enum(["admin", "user"]).optional(),
+        role: z.enum(["admin", "staff"]).optional(),
       })
       .parse(input),
   )
