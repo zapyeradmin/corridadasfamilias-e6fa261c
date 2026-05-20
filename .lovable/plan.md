@@ -1,43 +1,58 @@
-## Correções na página /admin/dashboard
+## Objetivo
 
-### 1. Corrigir "Receita confirmada" (bug)
-**Problema:** o cálculo soma todos os registros da tabela `payments` com `status = paid`. No banco existem 2 pagamentos marcados como `paid` (R$ 68 + R$ 68 = R$ 136), mas apenas 1 inscrição está realmente `paid`. O outro pagamento ficou dessincronizado da inscrição correspondente.
+Na página `/admin/inscricoes`:
+1. Ao alterar o Status da inscrição, refletir em Dashboard, Pagamentos e na tabela `payments` do banco.
+2. "Detalhes" abre um modal com todas as informações cadastradas do inscrito (em vez de navegar para outra rota).
+3. Paginação: 10 inscritos por página, centralizada, com seta esquerda, número da página editável, seta direita.
 
-**Correção:** em `src/lib/admin.functions.ts` (server function `getDashboardKPIs`), passar a calcular a receita confirmada somando `amount_cents` das **inscrições** com `status = 'paid'`, e não dos pagamentos. Assim a regra fica: "Receita confirmada = soma das inscrições pagas", exatamente como o usuário pediu.
+---
 
-```text
-revenueCents = sum(registrations.amount_cents WHERE status = 'paid')
-```
+## Mudanças
 
-### 2. Remover botão "SAIR" do header (apenas no header)
-Em `src/components/site/header/desktop-nav.tsx` e `src/components/site/header/mobile-menu.tsx`, remover o botão/ícone "Sair". O botão "Sair" da barra lateral do admin (`src/routes/_authenticated/admin.tsx`) é mantido como única forma de logout para usuários autenticados.
+### 1. Sincronização de Status (backend) — `src/lib/admin.functions.ts`
 
-### 3. Melhorar o design da barra lateral do admin
-Em `src/routes/_authenticated/admin.tsx`:
-- Cartão lateral com gradiente sutil, borda mais refinada e sombra suave
-- Cabeçalho "Administração" com divisor decorativo
-- Ícones lucide-react em cada item (Dashboard, Inscrições, Pagamentos, Eventos, Patrocinadores, Galeria, Configurações, Logs)
-- Item ativo com indicador lateral (barra vertical) + gradiente laranja já existente
-- Hover states mais polidos com transição de cor e leve translate
-- Separador antes do botão "Sair", com ícone alinhado e tipografia consistente
+Atualizar `updateRegistrationStatus` para também atualizar todos os registros em `payments` vinculados à inscrição:
 
-### 4. Lista "Últimas inscrições" com até 10 itens + paginação centralizada
-Em `src/lib/admin.functions.ts` (`getDashboardKPIs`): aumentar o limit do "recent" de 5/10 para suportar paginação por blocos de 10 — manteremos o fetch atual de 10 e a paginação será **client-side** sobre esses 10 itens (1 página) **ou** expandiremos para retornar até 50 itens dividindo em páginas de 10. Proposta: retornar até **50 últimas inscrições** e paginar client-side em páginas de 10.
+- Após `UPDATE registrations SET status = X WHERE id = $id`, executar:
+  - `UPDATE payments SET status = mappedStatus, paid_at = (X = 'paid' ? now() : null) WHERE registration_id = $id`
+- Mapeamento `registration_status → payment_status`:
+  - `pending → pending`
+  - `processing → processing`
+  - `paid → paid` (+ `paid_at = now()` se ainda null)
+  - `canceled → canceled`
+  - `refunded → refunded`
+- Invalidar cache no frontend (já existe `qc.invalidateQueries({ queryKey: ["admin"] })` que cobre dashboard, pagamentos e inscrições).
 
-Em `src/routes/_authenticated/admin.dashboard.tsx`:
-- Renderizar 10 itens por página
-- Paginação **centralizada** abaixo da tabela com:
-  - ícone `ChevronLeft` (desabilitado na página 1)
-  - número da página atual (editável — usuário pode digitar e dar Enter para pular)
-  - ícone `ChevronRight` (desabilitado na última página)
-- Estado local `page` com `useState`
+Isso garante que Dashboard (KPIs e "Pagas/Pendentes/Receita") e a página `/admin/pagamentos` mostrem o status correto e o DB fique consistente.
 
-### Arquivos a editar
-- `src/lib/admin.functions.ts` — corrigir cálculo de receita + aumentar limit de recent para 50
-- `src/components/site/header/desktop-nav.tsx` — remover Sair
-- `src/components/site/header/mobile-menu.tsx` — remover Sair
-- `src/routes/_authenticated/admin.tsx` — redesign da sidebar com ícones
-- `src/routes/_authenticated/admin.dashboard.tsx` — paginação centralizada com input editável
+### 2. Detalhes em Modal — `src/routes/_authenticated/admin.inscricoes.tsx`
 
-### Fora de escopo
-- Não vou reconciliar/limpar os dados existentes na tabela `payments` (o pagamento órfão fica como está; a métrica passa a ser baseada em `registrations`, que é a fonte de verdade pedida pelo usuário).
+- Substituir os `<Link to="/admin/inscricoes/$id">` por um botão "Detalhes" que abre um `<Dialog>` (shadcn).
+- O Dialog usa `useQuery` com `getRegistrationDetail({ id })` quando aberto, e exibe todos os campos: protocolo, nome, e-mail, whatsapp, CPF, nascimento, gênero, categoria, camiseta, contato de emergência, notas médicas, status, valor, criada em, e tabela de pagamentos vinculados.
+- O nome do inscrito na coluna deixa de ser link.
+- A rota `admin.inscricoes.$id.tsx` é mantida (não removida) para acesso direto via URL, mas a UX padrão passa pelo modal.
+
+### 3. Paginação centralizada (10 por página) — `src/routes/_authenticated/admin.inscricoes.tsx`
+
+- Alterar `pageSize` de `25` para `10`.
+- Substituir o rodapé "Anterior / Próxima" por um controle centralizado:
+  - `ChevronLeft` (desabilitado em `page <= 1`)
+  - `<input type="number">` editável mostrando a página atual; ao alterar (onBlur/Enter) faz `setPage(clamp(value, 1, totalPages))`
+  - `ChevronRight` (desabilitado em `page >= totalPages`)
+  - Texto "de {totalPages}" ao lado
+- Mesmo padrão visual já usado no Dashboard, para consistência.
+
+---
+
+## Detalhes técnicos
+
+- Usar `Dialog`, `DialogContent`, `DialogHeader`, `DialogTitle` de `@/components/ui/dialog`.
+- Estado: `const [detailId, setDetailId] = useState<string | null>(null)`; modal aberto quando `detailId !== null`.
+- Reusar `getRegistrationDetail` (já existe).
+- Sem migrations de banco — apenas UPDATE via server function existente, ampliado.
+- Sem alteração em RLS (a policy "Admins can update payments" já permite).
+
+## Fora de escopo
+
+- Não tocar em webhook InfinityPay (continua escrevendo seu próprio status quando chega).
+- Não reconciliar pagamentos órfãos históricos.

@@ -167,6 +167,22 @@ export const updateRegistrationStatus = createServerFn({ method: "POST" })
       .update({ status: data.status })
       .eq("id", data.id);
     if (error) throw new Error(error.message);
+
+    // Sincroniza pagamentos vinculados para refletir o status da inscrição.
+    const paymentPatch: { status: typeof data.status; paid_at?: string | null } = {
+      status: data.status,
+    };
+    if (data.status === "paid") {
+      paymentPatch.paid_at = new Date().toISOString();
+    } else {
+      paymentPatch.paid_at = null;
+    }
+    const { error: payErr } = await context.supabase
+      .from("payments")
+      .update(paymentPatch)
+      .eq("registration_id", data.id);
+    if (payErr) throw new Error(payErr.message);
+
     await logAction(context.supabase, {
       actorId: admin.userId,
       actorEmail: admin.email,
