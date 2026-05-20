@@ -1,10 +1,12 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 
 type RegistrationStatus = "pending" | "processing" | "paid" | "canceled" | "refunded";
+type SponsorTier = "diamond" | "gold" | "silver" | "standard";
 
 async function assertAdmin(supabase: SupabaseClient<Database>, userId: string, claims: { email?: string }) {
   const { data, error } = await supabase
