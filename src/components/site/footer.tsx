@@ -1,16 +1,20 @@
 import { Link } from "@tanstack/react-router";
 import { Instagram, Mail, MapPin, MessageCircle } from "lucide-react";
 import { NAV_LINKS, SITE } from "@/lib/site-config";
+import logo from "@/assets/logo-corrida.png";
 
 export function SiteFooter() {
   return (
     <footer className="bg-[color:var(--color-brand-dark)] text-white">
       <div className="mx-auto grid max-w-[1360px] gap-12 px-5 py-16 md:grid-cols-3 md:px-8">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-white/50">
-            {SITE.organizer}
-          </p>
-          <h3 className="heading-section mt-3 text-2xl text-white">{SITE.name}</h3>
+          <img
+            src={logo}
+            alt="II Corrida das Famílias"
+            loading="lazy"
+            decoding="async"
+            className="h-32 w-auto md:h-40"
+          />
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-white/70">
             {SITE.slogan}. {SITE.shortDescription}
           </p>
