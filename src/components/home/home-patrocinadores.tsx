@@ -14,17 +14,19 @@ export function HomePatrocinadores() {
     staleTime: 5 * 60 * 1000,
   });
 
-  const fromDb = (data ?? [])
-    .filter((s) => s.tier === "diamond")
-    .map((s) => ({
-      id: s.id,
-      name: s.name,
-      slug: slugFromUrl(s.logo_url),
-      website_url: s.website_url,
-    }))
-    .filter((s) => LOGO_ASSETS[s.slug]);
+  const diamondRows = (data ?? []).filter((s) => s.tier === "diamond");
 
-  const diamond = fromDb.length > 0 ? fromDb : FALLBACK_DIAMOND;
+  const diamond =
+    diamondRows.length > 0
+      ? diamondRows.map((s) => ({
+          id: s.id,
+          name: s.name,
+          slug: slugFromUrl(s.logo_url),
+          logo_url: s.logo_url,
+          website_url: s.website_url,
+        }))
+      : FALLBACK_DIAMOND.map((s) => ({ ...s, logo_url: LOGO_ASSETS[s.slug] ?? "" }));
+
   const TOTAL = 24;
   const placeholders = Array.from(
     { length: Math.max(0, TOTAL - diamond.length) },
@@ -53,7 +55,8 @@ export function HomePatrocinadores() {
 
         <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 md:mt-14 md:grid-cols-4 md:gap-6">
           {diamond.map((s) => {
-            const src = LOGO_ASSETS[s.slug];
+            const bundled = LOGO_ASSETS[s.slug];
+            const src = bundled ?? s.logo_url;
             const scale = LOGO_SCALE[s.slug] ?? "scale-100";
             const inner = (
               <img
@@ -76,7 +79,7 @@ export function HomePatrocinadores() {
                     target="_blank"
                     rel="noreferrer"
                     aria-label={s.name}
-                    className="grid h-full w-full place-items-center"
+                    className="grid h-full w-full place-items-center transition hover:scale-[1.02]"
                   >
                     {inner}
                   </a>
