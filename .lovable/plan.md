@@ -1,122 +1,77 @@
-# Plano — /admin/configuracoes com Tabs (Pagamento, Contatos, Usuários)
+# Plano — Página `/admin/logs`
 
-Objetivo: transformar a página em uma área administrativa profissional com 3 abas, persistindo tudo no banco e integrando às páginas públicas. Reaproveitar a tabela `settings` (key/value JSONB) já existente — sem criar novas tabelas — exceto para usuários (Supabase Auth).
-
----
-
-## Arquitetura geral
-
-- UI com `Tabs` do shadcn (já disponível) em `src/routes/_authenticated/admin.configuracoes.tsx`.
-- Cada aba vira um componente em `src/components/admin/configuracoes/`:
-  - `tab-pagamento.tsx`
-  - `tab-contatos.tsx`
-  - `tab-usuarios.tsx`
-- Server functions em `src/lib/admin.functions.ts` (para CRUD admin) e `src/lib/public.functions.ts` (leitura pública dos contatos).
-- Aba ativa controlada por `?tab=pagamento|contatos|usuarios` (URL search param) para deep-link.
+Melhorar a página de Logs de Acesso com paginação centralizada e exportação em PDF.
 
 ---
 
-## Aba 1 — Configuração de Pagamento
+## 1. Paginação (10 itens por página)
 
-### 1.1 URLs do projeto (somente leitura, com botão Copiar)
-- Webhook: `${origin}/api/webhooks/infinitepay`
-- Redirecionamento: `${origin}/pagamento`
-- Redirecionamento de Sucesso: `${origin}/sucesso`  ← **novo campo** (adicionar ao bloco que já existe).
+Arquivo: `src/routes/_authenticated/admin.logs.tsx`
 
-### 1.2 Links dos Checkouts — Adulto e Criança (cards separados)
-Cada card terá: Nome do Produto, Lote (`Lote 1|2|3`), Valor (R$), Link do Checkout, Status (badge "Checkout Ativo" se URL preenchida, senão "Pendente"), Data da última atualização (`DD/MM/AAAA HH:mm` a partir de `settings.updated_at`).
+- Manter o `useQuery` que chama `listAccessLogs` (já retorna todos os registros, ordenados por `created_at desc`).
+- Adicionar estado local `const [page, setPage] = useState(1)` e constante `PAGE_SIZE = 10`.
+- Calcular `totalPages = Math.max(1, Math.ceil(data.length / PAGE_SIZE))` e fatiar `data.slice((page-1)*PAGE_SIZE, page*PAGE_SIZE)` para renderizar a tabela.
+- Resetar `page` para 1 sempre que `data?.length` mudar (via `useEffect`) e fazer clamp se o usuário estiver numa página inexistente após refetch.
 
-Persistência via `settings` (uma única chave por checkout, valor JSON estruturado):
-- `checkout_adulto` → `{ nome_produto, lote, valor_cents, checkout_url, status }`
-- `checkout_crianca` → `{ nome_produto, lote, valor_cents, checkout_url, status }`
+### UI da paginação (centralizada, abaixo da tabela)
 
-Botões `Salvar Checkout Adulto/Criança` chamam `updateSettingAdmin` (já existe). Após salvar, `invalidateQueries` em `["public", "checkout-config"]` para refletir em `/inscricao`.
-
-### 1.3 Integração em /inscricao
-- Nova server fn pública `getCheckoutConfig` em `public.functions.ts` retornando os dois objetos (lê `settings` com `is_public=true`).
-- `/inscricao` consome via `useQuery` e renderiza Nome do Produto, Lote e Valor dinâmicos. Regra de idade (≤9 → criança, >9 → adulto) já existe em `resolvePrice`; ajustar para escolher a `checkout_url` do objeto retornado em vez das chaves antigas. As chaves legadas `infinitepay_checkout_adulto_url` / `_crianca_url` deixam de ser lidas (mantém compatibilidade lendo o nested `checkout_url`).
-
-### 1.4 Pagamento/sucesso/falha
-Sem mudanças funcionais — as rotas `/api/webhooks/infinitepay`, `/pagamento`, `/sucesso`, `/falhanopagamento` já existem. Confirmação continua dependendo do webhook.
-
----
-
-## Aba 2 — Configuração de Contatos
-
-Hoje os contatos estão hardcoded em `src/lib/site-config.ts` (`SITE.whatsapp`, `email`, `location` etc.) e usados em Footer, WhatsAppFab, header e várias páginas. Vamos manter `SITE` como fallback e ler os valores reais de `settings`.
-
-### 2.1 Persistência
-Uma chave em `settings`: `site_contacts` (is_public=true), com JSON:
-```
-{ local, email_oficial, whatsapp_oficial, instagram_url, instagram_usuario }
-```
-- `whatsapp_oficial`: armazenado como dígitos puros (formato wa.me).
-- `instagram_usuario`: normalizado removendo `@` inicial.
-- Validação Zod no server fn `updateSiteContacts` (email válido, URL válida, whatsapp 10–13 dígitos).
-
-### 2.2 Leitura pública
-- Hook `useSiteContacts()` em `src/hooks/use-site-contacts.ts` que usa `useQuery(["public","contacts"], getPublicSettings)` e retorna merge com defaults de `SITE`.
-- Atualizar consumidores: `src/components/site/footer.tsx`, `src/components/site/whatsapp-fab.tsx`, header (links sociais), páginas que mostram local/email, e qualquer `wa.me/...`. Quem renderiza no SSR sem hook continua usando o fallback de `SITE`.
-
-### 2.3 UI
-Form único com campos acima, botão `Salvar Contatos`, toasts de sucesso/erro, validação inline.
-
----
-
-## Aba 3 — Usuários
-
-Gerenciar usuários do Supabase Auth + papéis em `public.user_roles` (enum `app_role` já tem `admin`/`user`). Operações privilegiadas usam `supabaseAdmin` (service role) dentro de server fns gateadas por `assertAdmin`.
-
-### 3.1 Server fns novas (admin.functions.ts)
-- `listAdminUsers()` → usa `supabaseAdmin.auth.admin.listUsers()` + join com `user_roles` por `user_id`. Retorna `{ id, email, full_name (raw_user_meta_data.full_name), role, created_at }`.
-- `createAdminUser({ name, email, password, role })` → `supabaseAdmin.auth.admin.createUser({ email, password, email_confirm: true, user_metadata: { full_name } })` e em seguida `insert` em `user_roles` com role escolhido. Senha validada por Zod (min 8, regra de complexidade leve).
-- `updateAdminUser({ id, name?, email?, role? })` → `supabaseAdmin.auth.admin.updateUserById` + upsert/replace em `user_roles` (delete antigos e insert novo).
-- `deleteAdminUser({ id })` → bloqueia se `id === context.userId` (não excluir a si mesmo) e se for o último admin; depois `supabaseAdmin.auth.admin.deleteUser(id)` (cascata derruba `user_roles` via FK ON DELETE CASCADE — confirmar; se não existir cascade, deletar `user_roles` manualmente antes).
-
-Todas as fns registram em `access_logs`.
-
-### 3.2 UI
-- Tabela com Nome, E-mail, Função (badge), Criado em, Ações (Editar / Excluir com confirmação).
-- Botão `Adicionar Usuário` → `Dialog` com form (Nome, E-mail, Senha com toggle de visibilidade, Select Função `Usuário|Administrador`).
-- Editar abre o mesmo Dialog pré-preenchido (sem senha; campo separado opcional "Nova senha" para reset).
-- Toasts e validação por `react-hook-form` + Zod.
-
-### 3.3 Permissões
-- Frontend: `_authenticated.tsx` já valida sessão; a página `admin.configuracoes` precisa checar role admin (usar `getCurrentUserRoles`) e renderizar a aba Usuários apenas para admins. Para usuário comum logado, mostrar mensagem "Acesso restrito" nas abas sensíveis.
-- Backend: todas as fns admin já chamam `assertAdmin` → mantém a barreira real.
-
----
-
-## Mudanças de arquivo (resumo)
+Reusar `src/components/ui/pagination.tsx` (já no projeto):
 
 ```text
-src/routes/_authenticated/admin.configuracoes.tsx     (refatorar: Tabs + montar 3 sub-componentes)
-src/components/admin/configuracoes/tab-pagamento.tsx  (novo)
-src/components/admin/configuracoes/tab-contatos.tsx   (novo)
-src/components/admin/configuracoes/tab-usuarios.tsx   (novo)
-src/components/admin/configuracoes/user-dialog.tsx    (novo — form criar/editar)
-src/lib/admin.functions.ts                            (+ listAdminUsers, createAdminUser, updateAdminUser, deleteAdminUser, updateSiteContacts, updateCheckoutConfig opcional)
-src/lib/public.functions.ts                           (+ getCheckoutConfig, ampliar getPublicSettings se preciso)
-src/hooks/use-site-contacts.ts                        (novo)
-src/components/site/footer.tsx                        (consumir contatos dinâmicos)
-src/components/site/whatsapp-fab.tsx                  (idem)
-src/components/site/header/*.tsx                      (idem — links sociais)
-src/routes/inscricao.tsx                              (ler checkout config dinâmico)
+[<-]   [ 2 ]   [->]
 ```
 
-Sem novas tabelas. Sem migrações — apenas inserts/upserts em `settings` e operações do Supabase Auth Admin API.
+- Container: `<Pagination>` → `<PaginationContent>` centralizado.
+- Item 1: seta esquerda (`ChevronLeft`) — botão `ghost` icon, `disabled` quando `page === 1`, `onClick={() => setPage(p => Math.max(1, p-1))}`.
+- Item 2: input numérico editável estilizado (campo pequeno `w-16 text-center`) mostrando a página atual; ao alterar (onChange + onBlur/Enter), faz clamp entre 1 e `totalPages` e atualiza `page`. Ao lado, em texto secundário, `"de {totalPages}"`.
+- Item 3: seta direita (`ChevronRight`) — `disabled` quando `page === totalPages`, `onClick={() => setPage(p => Math.min(totalPages, p+1))}`.
+- Esconder a paginação quando `totalPages <= 1`.
 
 ---
 
-## Bonus — corrigir hydration error já presente
-Nas mesmas mexidas, `home-patrocinadores.tsx` está renderizando um `<a>` no client e um `<span>`/`<img>` diferente no SSR para os mesmos slots ("Alexsandro Supermercados", "Zap Chat"). Vou unificar a árvore — sempre renderizar o mesmo wrapper, independente do estado de carga — para parar o erro 418 que aparece no console.
+## 2. Botão "Exportar Logs de Acesso" (PDF)
+
+Posição: canto superior direito do header da página (mesma linha do `<h1>`), usando flex `justify-between`.
+
+### Bibliotecas
+
+Usar `jspdf` + `jspdf-autotable` (puro JS, funciona no browser sem dependência nativa). Instalar via `bun add jspdf jspdf-autotable`.
+
+### Comportamento
+
+- Botão `<Button>` com ícone `Download` (lucide) e label "Exportar Logs de Acesso".
+- Estado `isExporting` para desabilitar e mostrar spinner durante a geração.
+- Ao clicar:
+  1. Usa **todos** os logs já carregados em `data` (não apenas a página atual). Como `listAccessLogs` retorna a lista completa, não precisa nova chamada.
+  2. Cria `new jsPDF({ orientation: "landscape", unit: "pt", format: "a4" })`.
+  3. Cabeçalho: título "Relatório de Logs de Acesso — Corrida das Famílias", data/hora de geração (`formatDateTimeBR(new Date())`), total de registros.
+  4. `autoTable` com colunas: **Quando**, **Ator** (email ou id), **Ação**, **Entidade** (`entity_type · entity_id` truncado), **Detalhes** (JSON stringificado, com quebra de linha, fonte mono pequena 7pt).
+  5. Rodapé com numeração `Página X de Y` em cada página.
+  6. Nome do arquivo: `logs-acesso-YYYY-MM-DD-HHmm.pdf`, salvo via `doc.save(filename)`.
+- Toast de sucesso (`sonner`) ao concluir; toast de erro em `catch`.
+- Desabilitar o botão se `!data || data.length === 0`.
+
+### Helper
+
+Criar `src/lib/export-logs-pdf.ts` exportando `exportAccessLogsToPdf(logs: AccessLog[])` para isolar a lógica de geração e manter o componente enxuto.
 
 ---
 
-## Como testar (depois de implementar)
-1. Abrir `/admin/configuracoes` → ver 3 abas.
-2. Aba Pagamento: editar nome/lote/valor/link do Checkout Adulto → Salvar → recarregar `/inscricao` → ver dados novos; status do card vira "Checkout Ativo".
-3. Mesmo para Criança; testar idade ≤9 e >9 redirecionando para o link certo.
-4. Aba Contatos: trocar whatsapp/email/instagram → Salvar → footer, FAB e header refletem sem rebuild.
-5. Aba Usuários: criar usuário comum (não vê aba Usuários ao logar); criar admin (acesso total); editar role; excluir; bloqueio ao excluir a si mesmo / último admin.
-6. Verificar `access_logs` registrando cada ação.
+## Arquivos afetados
+
+```text
+package.json                                  (+ jspdf, jspdf-autotable)
+src/routes/_authenticated/admin.logs.tsx      (header com botão + paginação + slice)
+src/lib/export-logs-pdf.ts                    (novo — helper de geração de PDF)
+```
+
+Sem mudanças de schema, server functions ou RLS.
+
+---
+
+## Como testar
+
+1. Abrir `/admin/logs` com mais de 10 registros → ver apenas 10 linhas + paginação centralizada com `← [1] de N →`.
+2. Clicar nas setas e digitar número manualmente no campo → tabela atualiza.
+3. Com 0 ou ≤10 registros → paginação some, botão exportar fica desabilitado se 0.
+4. Clicar em "Exportar Logs de Acesso" → download de `logs-acesso-*.pdf` com **todos** os registros, tabela legível em paisagem, numeração de página, JSON dos detalhes preservado.
