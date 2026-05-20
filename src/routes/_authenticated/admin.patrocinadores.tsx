@@ -384,7 +384,7 @@ function SponsorFormDialog({
             </div>
             {preview && (
               <div className="mt-2 aspect-video overflow-hidden rounded-lg border border-border bg-muted">
-                <img src={preview} alt="prévia" className="h-full w-full object-contain" />
+                <img src={preview} alt="prévia" className="h-full w-full object-cover" />
               </div>
             )}
           </div>
