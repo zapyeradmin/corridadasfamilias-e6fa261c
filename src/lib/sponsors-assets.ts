@@ -1,7 +1,7 @@
-import oracleDigital from "@/assets/sponsors/oracle-digital.png";
-import nattivoCafe from "@/assets/sponsors/nattivo-cafe.png";
-import urbanoAlimentos from "@/assets/sponsors/urbano-alimentos.png";
-import prefeituraSerraTalhada from "@/assets/sponsors/prefeitura-serra-talhada.png";
+import oracleDigital from "@/assets/sponsors/oracle-digital.png?w=520&quality=86&format=webp";
+import nattivoCafe from "@/assets/sponsors/nattivo-cafe.png?w=520&quality=86&format=webp";
+import urbanoAlimentos from "@/assets/sponsors/urbano-alimentos.png?w=520&quality=86&format=webp";
+import prefeituraSerraTalhada from "@/assets/sponsors/prefeitura-serra-talhada.png?w=520&quality=86&format=webp";
 
 // Mapa slug -> asset bundlado (URL estável, sem 404/redirect)
 export const LOGO_ASSETS: Record<string, string> = {

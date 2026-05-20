@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageHeader } from "@/components/site/page-shell";
 import { KIT_ITENS_PAGINA, KitItem } from "@/components/site/kit-itens";
-import kitExclusivo from "@/assets/kit-exclusivo.png";
+import kitExclusivo from "@/assets/kit-exclusivo.png?w=1024&quality=82&format=webp";
 
 export const Route = createFileRoute("/kit")({
   head: () => ({

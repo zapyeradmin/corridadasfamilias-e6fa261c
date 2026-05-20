@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { ChevronRight, Play } from "lucide-react";
-import capaVideoLancamento from "@/assets/capa-video-lancamento.jpg";
+import capaVideoLancamento from "@/assets/capa-video-lancamento.jpg?w=1280&quality=75&format=webp";
 
 export function HomeCtaVideo() {
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);

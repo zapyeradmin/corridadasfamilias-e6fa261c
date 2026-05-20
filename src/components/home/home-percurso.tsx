@@ -1,5 +1,5 @@
 import { PERCURSO_INFOS, PercursoInfoItem } from "@/components/site/percurso-info";
-import percursoMapa from "@/assets/percurso-mapa.png";
+import percursoMapa from "@/assets/percurso-mapa.png?w=1024&quality=82&format=webp";
 
 export function HomePercurso() {
   return (

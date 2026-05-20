@@ -58,9 +58,11 @@ export function SponsorsMarquee() {
                 <img
                   src={src}
                   alt={s.name}
-                  loading="eager"
+                  loading="lazy"
                   decoding="async"
                   draggable={false}
+                  width={520}
+                  height={188}
                   className={cn("max-h-full max-w-full object-contain", scale)}
                 />
               );

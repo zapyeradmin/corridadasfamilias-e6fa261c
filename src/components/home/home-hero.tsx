@@ -3,18 +3,21 @@ import { motion } from "framer-motion";
 import { Calendar, ChevronRight, MapPin, Trophy } from "lucide-react";
 import { Countdown } from "@/components/site/countdown";
 import { SITE } from "@/lib/site-config";
-import heroRunner from "@/assets/hero-runner.jpg";
+import heroRunner from "@/assets/hero-runner.jpg?w=800;1280;1920&quality=72&format=webp&as=srcset";
+import heroRunnerFallback from "@/assets/hero-runner.jpg?w=1280&quality=72&format=webp";
 
 export function HomeHero() {
   return (
     <section className="relative isolate overflow-hidden bg-gradient-premium text-white">
       <img
-        src={heroRunner}
+        src={heroRunnerFallback}
+        srcSet={heroRunner}
+        sizes="100vw"
         alt="Corredores na largada da Corrida das Famílias"
         fetchPriority="high"
         decoding="async"
         width={1920}
-        height={1080}
+        height={1201}
         className="pointer-events-none absolute inset-0 h-full w-full object-cover object-[50%_30%] opacity-45 sm:object-center sm:opacity-55"
       />
       <div

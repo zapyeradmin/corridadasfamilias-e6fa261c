@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Calendar, HeartPulse, MapPin, Route as RouteIcon } from "lucide-react";
 import { ContentSection } from "@/components/site/page-shell";
-import informacoesCorrida from "@/assets/informacoes-corrida.jpg";
+import informacoesCorrida from "@/assets/informacoes-corrida.jpg?w=1024&quality=78&format=webp";
 
 const INFOS = [
   {
