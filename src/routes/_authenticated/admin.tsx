@@ -1,5 +1,16 @@
 import { Link, Outlet, createFileRoute, redirect, useNavigate, useRouter, useRouterState } from "@tanstack/react-router";
-import { LogOut } from "lucide-react";
+import {
+  LayoutDashboard,
+  Users,
+  CreditCard,
+  CalendarRange,
+  Handshake,
+  Image as ImageIcon,
+  Settings,
+  ScrollText,
+  LogOut,
+  type LucideIcon,
+} from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
@@ -33,16 +44,16 @@ export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminLayout,
 });
 
-const NAV = [
-  { to: "/admin/dashboard", label: "Dashboard" },
-  { to: "/admin/inscricoes", label: "Inscrições" },
-  { to: "/admin/pagamentos", label: "Pagamentos" },
-  { to: "/admin/eventos", label: "Eventos & Lotes" },
-  { to: "/admin/patrocinadores", label: "Patrocinadores" },
-  { to: "/admin/galeria", label: "Galeria" },
-  { to: "/admin/configuracoes", label: "Configurações" },
-  { to: "/admin/logs", label: "Logs" },
-] as const;
+const NAV: ReadonlyArray<{ to: string; label: string; icon: LucideIcon }> = [
+  { to: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { to: "/admin/inscricoes", label: "Inscrições", icon: Users },
+  { to: "/admin/pagamentos", label: "Pagamentos", icon: CreditCard },
+  { to: "/admin/eventos", label: "Eventos & Lotes", icon: CalendarRange },
+  { to: "/admin/patrocinadores", label: "Patrocinadores", icon: Handshake },
+  { to: "/admin/galeria", label: "Galeria", icon: ImageIcon },
+  { to: "/admin/configuracoes", label: "Configurações", icon: Settings },
+  { to: "/admin/logs", label: "Logs", icon: ScrollText },
+];
 
 function AdminLayout() {
   const router = useRouter();
@@ -58,32 +69,50 @@ function AdminLayout() {
   return (
     <div className="min-h-[calc(100vh-200px)] bg-muted/30">
       <div className="mx-auto flex max-w-[1360px] flex-col gap-6 px-4 py-8 md:flex-row md:px-8">
-        <aside className="md:w-60 md:shrink-0">
-          <div className="rounded-2xl border border-border bg-white p-3 shadow-soft">
-            <p className="px-3 py-2 text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">
-              Administração
-            </p>
+        <aside className="md:w-64 md:shrink-0">
+          <div className="overflow-hidden rounded-2xl border border-border bg-gradient-to-b from-white to-muted/40 p-3 shadow-soft">
+            <div className="px-3 pb-3 pt-2">
+              <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-muted-foreground">
+                Administração
+              </p>
+              <div className="mt-2 h-px bg-gradient-to-r from-primary/40 via-border to-transparent" />
+            </div>
             <nav className="flex flex-col gap-1">
               {NAV.map((item) => {
+                const Icon = item.icon;
                 const active = pathname === item.to || pathname.startsWith(item.to + "/");
                 return (
                   <Link
                     key={item.to}
                     to={item.to}
                     className={cn(
-                      "rounded-xl px-3 py-2 text-sm font-semibold transition",
+                      "group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-all",
                       active
                         ? "bg-gradient-orange text-white shadow-orange"
-                        : "text-foreground hover:bg-muted",
+                        : "text-foreground hover:bg-muted hover:translate-x-0.5",
                     )}
                   >
-                    {item.label}
+                    <span
+                      aria-hidden
+                      className={cn(
+                        "absolute left-0 top-1/2 h-6 w-[3px] -translate-y-1/2 rounded-r-full transition-opacity",
+                        active ? "bg-white/80 opacity-100" : "opacity-0",
+                      )}
+                    />
+                    <Icon
+                      className={cn(
+                        "h-4 w-4 shrink-0",
+                        active ? "text-white" : "text-muted-foreground group-hover:text-foreground",
+                      )}
+                    />
+                    <span>{item.label}</span>
                   </Link>
                 );
               })}
+              <div className="my-2 h-px bg-border" />
               <button
                 onClick={logout}
-                className="mt-2 flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-destructive hover:bg-destructive/10"
+                className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-destructive transition hover:bg-destructive/10"
               >
                 <LogOut className="h-4 w-4" /> Sair
               </button>
