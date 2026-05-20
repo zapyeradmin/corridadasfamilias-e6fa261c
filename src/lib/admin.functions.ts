@@ -280,14 +280,185 @@ export const listEventsAdmin = createServerFn({ method: "GET" })
 
 export const listSponsorsAdmin = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .inputValidator((input: unknown) =>
+    z
+      .object({
+        search: z.string().optional(),
+        tier: z.string().optional(),
+        page: z.number().int().min(1).default(1),
+        pageSize: z.number().int().min(1).max(100).default(8),
+      })
+      .parse(input ?? {}),
+  )
+  .handler(async ({ context, data }) => {
     await assertAdmin(context.supabase, context.userId, context.claims as { email?: string });
-    const { data, error } = await context.supabase
+    const from = (data.page - 1) * data.pageSize;
+    const to = from + data.pageSize - 1;
+    let query = context.supabase
+      .from("sponsors")
+      .select("*", { count: "exact" })
+      .order("sort_order", { ascending: true })
+      .order("created_at", { ascending: false })
+      .range(from, to);
+    if (data.tier && data.tier !== "all") {
+      query = query.eq("tier", data.tier);
+    }
+    if (data.search && data.search.trim()) {
+      query = query.ilike("name", `%${data.search.trim()}%`);
+    }
+    const { data: rows, count, error } = await query;
+    if (error) throw new Error(error.message);
+    return { rows: rows ?? [], total: count ?? 0, page: data.page, pageSize: data.pageSize };
+  });
+
+export const getSponsorAdmin = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
+  .handler(async ({ context, data }) => {
+    await assertAdmin(context.supabase, context.userId, context.claims as { email?: string });
+    const { data: row, error } = await context.supabase
       .from("sponsors")
       .select("*")
-      .order("sort_order", { ascending: true });
+      .eq("id", data.id)
+      .maybeSingle();
     if (error) throw new Error(error.message);
-    return data ?? [];
+    if (!row) throw new Error("Patrocinador não encontrado.");
+    return row;
+  });
+
+const sponsorMutationSchema = z.object({
+  name: z.string().trim().min(1).max(180),
+  tier: z.enum(["diamond", "gold", "silver"]),
+  website_url: z
+    .string()
+    .trim()
+    .max(500)
+    .url("Link inválido. Inclua https://")
+    .nullable()
+    .optional(),
+  logo_url: z.string().trim().url().max(1000),
+});
+
+export const createSponsor = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => sponsorMutationSchema.parse(input))
+  .handler(async ({ context, data }) => {
+    const admin = await assertAdmin(context.supabase, context.userId, context.claims as { email?: string });
+    const { data: row, error } = await context.supabase
+      .from("sponsors")
+      .insert({
+        name: data.name,
+        tier: data.tier as SponsorTier,
+        website_url: data.website_url ?? null,
+        logo_url: data.logo_url,
+        is_published: true,
+      })
+      .select("id")
+      .single();
+    if (error) throw new Error(error.message);
+    await logAction(context.supabase, {
+      actorId: admin.userId,
+      actorEmail: admin.email,
+      action: "sponsor.create",
+      entityType: "sponsor",
+      entityId: row.id,
+      details: { name: data.name, tier: data.tier },
+    });
+    return { ok: true, id: row.id };
+  });
+
+export const updateSponsor = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    sponsorMutationSchema
+      .partial()
+      .extend({ id: z.string().uuid() })
+      .parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    const admin = await assertAdmin(context.supabase, context.userId, context.claims as { email?: string });
+    const { id, ...rest } = data;
+    const patch: Record<string, unknown> = { updated_at: new Date().toISOString() };
+    if (rest.name !== undefined) patch.name = rest.name;
+    if (rest.tier !== undefined) patch.tier = rest.tier;
+    if (rest.website_url !== undefined) patch.website_url = rest.website_url ?? null;
+    if (rest.logo_url !== undefined) patch.logo_url = rest.logo_url;
+    const { error } = await context.supabase.from("sponsors").update(patch).eq("id", id);
+    if (error) throw new Error(error.message);
+    await logAction(context.supabase, {
+      actorId: admin.userId,
+      actorEmail: admin.email,
+      action: "sponsor.update",
+      entityType: "sponsor",
+      entityId: id,
+      details: patch,
+    });
+    return { ok: true };
+  });
+
+export const deleteSponsor = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
+  .handler(async ({ context, data }) => {
+    const admin = await assertAdmin(context.supabase, context.userId, context.claims as { email?: string });
+    const { data: existing } = await context.supabase
+      .from("sponsors")
+      .select("logo_url")
+      .eq("id", data.id)
+      .maybeSingle();
+    const { error } = await context.supabase.from("sponsors").delete().eq("id", data.id);
+    if (error) throw new Error(error.message);
+    // Best-effort cleanup of the storage object if it lives in our bucket.
+    if (existing?.logo_url) {
+      const marker = "/storage/v1/object/public/sponsors/";
+      const idx = existing.logo_url.indexOf(marker);
+      if (idx >= 0) {
+        const path = existing.logo_url.slice(idx + marker.length);
+        await supabaseAdmin.storage.from("sponsors").remove([path]).catch(() => undefined);
+      }
+    }
+    await logAction(context.supabase, {
+      actorId: admin.userId,
+      actorEmail: admin.email,
+      action: "sponsor.delete",
+      entityType: "sponsor",
+      entityId: data.id,
+    });
+    return { ok: true };
+  });
+
+export const uploadSponsorLogo = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z
+      .object({
+        filename: z.string().min(1).max(200),
+        contentType: z.enum(["image/png", "image/webp", "image/jpeg", "image/jpg"]),
+        dataBase64: z.string().min(10),
+      })
+      .parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    await assertAdmin(context.supabase, context.userId, context.claims as { email?: string });
+    const bytes = Buffer.from(data.dataBase64, "base64");
+    if (bytes.byteLength > 2 * 1024 * 1024) {
+      throw new Error("Arquivo excede 2 MB.");
+    }
+    const ext = data.contentType === "image/png" ? "png" : data.contentType === "image/webp" ? "webp" : "jpg";
+    const safeBase = data.filename
+      .replace(/\.[a-zA-Z0-9]+$/, "")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .slice(0, 60) || "sponsor";
+    const path = `${safeBase}-${Date.now()}.${ext}`;
+    const ct = data.contentType === "image/jpg" ? "image/jpeg" : data.contentType;
+    const { error } = await supabaseAdmin.storage
+      .from("sponsors")
+      .upload(path, bytes, { contentType: ct, upsert: false });
+    if (error) throw new Error(error.message);
+    const { data: pub } = supabaseAdmin.storage.from("sponsors").getPublicUrl(path);
+    return { publicUrl: pub.publicUrl, path };
   });
 
 
