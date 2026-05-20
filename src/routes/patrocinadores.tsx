@@ -4,8 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { PageHeader } from "@/components/site/page-shell";
 import { getPublishedSponsors } from "@/lib/public.functions";
 import { SITE } from "@/lib/site-config";
-import { LOGO_ASSETS, LOGO_SCALE, slugFromUrl, FALLBACK_DIAMOND } from "@/lib/sponsors-assets";
-import { cn } from "@/lib/utils";
+import { LOGO_ASSETS, slugFromUrl, FALLBACK_DIAMOND } from "@/lib/sponsors-assets";
 
 export const Route = createFileRoute("/patrocinadores")({
   head: () => ({
@@ -14,7 +13,7 @@ export const Route = createFileRoute("/patrocinadores")({
       {
         name: "description",
         content:
-          "Marcas e instituições que apoiam a II Corrida das Famílias em Serra Talhada/PE — cotas Diamante, Ouro, Prata e Apoiadores.",
+          "Marcas e instituições que apoiam a II Corrida das Famílias em Serra Talhada/PE.",
       },
       { property: "og:title", content: "Patrocinadores — II Corrida das Famílias" },
       {
@@ -27,115 +26,14 @@ export const Route = createFileRoute("/patrocinadores")({
   component: Page,
 });
 
+const TOTAL = 24;
 
-const TIER_LABEL: Record<string, string> = {
-  diamond: "Patrocínio Diamante",
-  gold: "Patrocínio Ouro",
-  silver: "Patrocínio Prata",
-  standard: "Apoiadores",
+type CardItem = {
+  id: string;
+  name: string;
+  src: string;
+  website_url: string | null;
 };
-
-const DIAMOND_TOTAL = 24;
-
-function SponsorCard({
-  name,
-  logoUrl,
-  websiteUrl,
-}: {
-  name: string;
-  logoUrl: string;
-  websiteUrl: string | null;
-}) {
-  const slug = slugFromUrl(logoUrl);
-  const bundled = LOGO_ASSETS[slug];
-  const scale = LOGO_SCALE[slug] ?? "scale-100";
-  const src = bundled ?? logoUrl;
-
-  const img = (
-    <img
-      src={src}
-      alt={name}
-      loading="lazy"
-      decoding="async"
-      draggable={false}
-      className={cn("max-h-[78%] max-w-[82%] object-contain", scale)}
-    />
-  );
-
-  const inner = (
-    <div className="grid aspect-[16/9] place-items-center rounded-2xl border border-border bg-white p-3 shadow-soft transition hover:-translate-y-0.5 hover:shadow-card md:p-4">
-      {img}
-    </div>
-  );
-
-  return websiteUrl ? (
-    <a
-      href={websiteUrl}
-      target="_blank"
-      rel="noreferrer"
-      aria-label={name}
-      className="block"
-    >
-      {inner}
-    </a>
-  ) : (
-    inner
-  );
-}
-
-function PlaceholderCard({ n }: { n: number }) {
-  return (
-    <div className="grid aspect-[16/9] place-items-center rounded-2xl border border-dashed border-[color:var(--color-brand-purple)]/25 bg-white p-3 shadow-soft md:p-4">
-      <span className="text-sm font-extrabold uppercase tracking-wider text-[color:var(--color-brand-orange)] md:text-base">
-        Patrocinador {n}
-      </span>
-    </div>
-  );
-}
-
-function DiamondCard({
-  name,
-  slug,
-  logoUrl,
-  websiteUrl,
-}: {
-  name: string;
-  slug: string;
-  logoUrl: string;
-  websiteUrl: string | null;
-}) {
-  const bundled = LOGO_ASSETS[slug];
-  const src = bundled ?? logoUrl;
-  const scale = LOGO_SCALE[slug] ?? "scale-100";
-  if (!src) return null;
-  const img = (
-    <img
-      src={src}
-      alt={name}
-      loading="lazy"
-      decoding="async"
-      draggable={false}
-      className={cn("max-h-[78%] max-w-[82%] object-contain", scale)}
-    />
-  );
-  return (
-    <div className="grid aspect-[16/9] place-items-center rounded-2xl border border-border bg-white p-3 shadow-soft transition hover:-translate-y-0.5 hover:shadow-card md:p-4">
-      {websiteUrl ? (
-        <a
-          href={websiteUrl}
-          target="_blank"
-          rel="noreferrer"
-          aria-label={name}
-          className="grid h-full w-full place-items-center"
-        >
-          {img}
-        </a>
-      ) : (
-        img
-      )}
-    </div>
-  );
-}
 
 function Page() {
   const fetchSponsors = useServerFn(getPublishedSponsors);
@@ -146,31 +44,36 @@ function Page() {
   });
 
   const all = sponsors ?? [];
+  const diamondRows = all.filter((s) => s.tier === "diamond");
+  const othersRows = all.filter((s) => s.tier !== "diamond");
 
-  // Diamond: usa logos do DB; fallback para bundled quando DB vazio.
-  const diamondFromDb = all
-    .filter((s) => s.tier === "diamond")
-    .map((s) => ({
-      id: s.id,
-      name: s.name,
-      slug: slugFromUrl(s.logo_url),
-      logo_url: s.logo_url,
-      website_url: s.website_url,
-    }));
-  const diamond =
-    diamondFromDb.length > 0
-      ? diamondFromDb
-      : FALLBACK_DIAMOND.map((s) => ({ ...s, logo_url: LOGO_ASSETS[s.slug] ?? "" }));
-  const diamondPlaceholders = Array.from(
-    { length: Math.max(0, DIAMOND_TOTAL - diamond.length) },
-    (_, i) => i + diamond.length + 1,
-  );
+  const diamondCards: CardItem[] =
+    diamondRows.length > 0
+      ? diamondRows.map((s) => ({
+          id: s.id,
+          name: s.name,
+          src: LOGO_ASSETS[slugFromUrl(s.logo_url)] ?? s.logo_url,
+          website_url: s.website_url,
+        }))
+      : FALLBACK_DIAMOND.map((s) => ({
+          id: s.id,
+          name: s.name,
+          src: LOGO_ASSETS[s.slug] ?? "",
+          website_url: s.website_url,
+        }));
 
-  // Outros tiers vêm do DB
-  const otherTiers = (["gold", "silver", "standard"] as const).map((tier) => ({
-    tier,
-    items: all.filter((s) => s.tier === tier),
+  const otherCards: CardItem[] = othersRows.map((s) => ({
+    id: s.id,
+    name: s.name,
+    src: LOGO_ASSETS[slugFromUrl(s.logo_url)] ?? s.logo_url,
+    website_url: s.website_url,
   }));
+
+  const cards = [...diamondCards, ...otherCards].slice(0, TOTAL);
+  const placeholders = Array.from(
+    { length: Math.max(0, TOTAL - cards.length) },
+    (_, i) => i + cards.length + 1,
+  );
 
   const waHref = `https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(
     "Olá! Tenho interesse em patrocinar a II Corrida das Famílias.",
@@ -186,46 +89,50 @@ function Page() {
 
       <section className="bg-white">
         <div className="mx-auto max-w-[1200px] px-5 pt-6 pb-20 md:px-8 md:pt-8 md:pb-28">
-          <section className="mt-10 first:mt-10 md:mt-14 md:first:mt-14">
-            <p className="text-xs font-bold uppercase tracking-[0.35em] text-[color:var(--color-brand-orange)]">
-              {TIER_LABEL.diamond}
-            </p>
-            <div className="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 md:grid-cols-4 md:gap-6">
-              {diamond.map((s) => (
-                <DiamondCard
-                  key={s.id}
-                  name={s.name}
-                  slug={s.slug}
-                  logoUrl={s.logo_url}
-                  websiteUrl={s.website_url}
+          <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 md:grid-cols-4 md:gap-6">
+            {cards.map((s) => {
+              const img = (
+                <img
+                  src={s.src}
+                  alt={s.name}
+                  loading="lazy"
+                  decoding="async"
+                  draggable={false}
+                  className="h-full w-full rounded-2xl object-cover"
                 />
-              ))}
-              {diamondPlaceholders.map((n) => (
-                <PlaceholderCard key={`ph-${n}`} n={n} />
-              ))}
-            </div>
-          </section>
-
-          {otherTiers
-            .filter((t) => t.items.length > 0)
-            .map(({ tier, items }) => (
-              <section key={tier} className="mt-12">
-                <p className="text-xs font-bold uppercase tracking-[0.35em] text-[color:var(--color-brand-orange)]">
-                  {TIER_LABEL[tier]}
-                </p>
-                <div className="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 md:grid-cols-4 md:gap-6">
-                  {items.map((s) => (
-                    <SponsorCard
-                      key={s.id}
-                      name={s.name}
-                      logoUrl={s.logo_url}
-                      websiteUrl={s.website_url}
-                    />
-                  ))}
+              );
+              return (
+                <div
+                  key={s.id}
+                  className="aspect-[16/9] overflow-hidden rounded-2xl border border-border bg-white shadow-soft transition hover:-translate-y-0.5 hover:shadow-card"
+                >
+                  {s.website_url ? (
+                    <a
+                      href={s.website_url}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label={s.name}
+                      className="block h-full w-full"
+                    >
+                      {img}
+                    </a>
+                  ) : (
+                    img
+                  )}
                 </div>
-              </section>
+              );
+            })}
+            {placeholders.map((n) => (
+              <div
+                key={`ph-${n}`}
+                className="grid aspect-[16/9] place-items-center rounded-2xl border border-dashed border-[color:var(--color-brand-purple)]/25 bg-white p-3 shadow-soft md:p-4"
+              >
+                <span className="text-sm font-extrabold uppercase tracking-wider text-[color:var(--color-brand-orange)] md:text-base">
+                  Patrocinador {n}
+                </span>
+              </div>
             ))}
-
+          </div>
 
           <p className="mt-10 text-center text-base text-[color:var(--color-brand-purple-text)] md:mt-14 md:text-lg">
             Quer apoiar o evento?{" "}

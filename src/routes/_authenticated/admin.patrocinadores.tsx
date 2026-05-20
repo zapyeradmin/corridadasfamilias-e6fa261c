@@ -155,7 +155,7 @@ function Page() {
                 alt={s.name}
                 loading="lazy"
                 decoding="async"
-                className="h-full w-full object-contain"
+                className="h-full w-full object-cover"
               />
             </div>
             <p className="mt-3 truncate text-sm font-bold">{s.name}</p>
@@ -384,7 +384,7 @@ function SponsorFormDialog({
             </div>
             {preview && (
               <div className="mt-2 aspect-video overflow-hidden rounded-lg border border-border bg-muted">
-                <img src={preview} alt="prévia" className="h-full w-full object-contain" />
+                <img src={preview} alt="prévia" className="h-full w-full object-cover" />
               </div>
             )}
           </div>
@@ -417,7 +417,7 @@ function SponsorViewDialog({ id, onClose }: { id: string | null; onClose: () => 
         ) : (
           <div className="space-y-3">
             <div className="aspect-video overflow-hidden rounded-lg border border-border bg-muted">
-              <img src={data.logo_url} alt={data.name} className="h-full w-full object-contain" />
+              <img src={data.logo_url} alt={data.name} className="h-full w-full object-cover" />
             </div>
             <dl className="grid grid-cols-1 gap-2 text-sm">
               <Row label="Nome" value={data.name} />

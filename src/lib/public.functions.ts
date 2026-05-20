@@ -50,9 +50,10 @@ export const getPublishedSponsors = createServerFn({ method: "GET" }).handler(as
   const supabase = publicClient();
   const { data } = await supabase
     .from("sponsors")
-    .select("id, name, logo_url, website_url, tier, sort_order")
+    .select("id, name, logo_url, website_url, tier, sort_order, created_at")
     .eq("is_published", true)
-    .order("sort_order", { ascending: true });
+    .order("sort_order", { ascending: true })
+    .order("created_at", { ascending: true });
   return data ?? [];
 });
 

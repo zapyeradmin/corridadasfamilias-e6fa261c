@@ -2,9 +2,17 @@ import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getPublishedSponsors } from "@/lib/public.functions";
-import { LOGO_ASSETS, LOGO_SCALE, slugFromUrl, FALLBACK_DIAMOND } from "@/lib/sponsors-assets";
+import { LOGO_ASSETS, slugFromUrl, FALLBACK_DIAMOND } from "@/lib/sponsors-assets";
 import { SITE } from "@/lib/site-config";
-import { cn } from "@/lib/utils";
+
+const TOTAL = 24;
+
+type CardItem = {
+  id: string;
+  name: string;
+  src: string;
+  website_url: string | null;
+};
 
 export function HomePatrocinadores() {
   const fetchSponsors = useServerFn(getPublishedSponsors);
@@ -14,23 +22,36 @@ export function HomePatrocinadores() {
     staleTime: 5 * 60 * 1000,
   });
 
-  const diamondRows = (data ?? []).filter((s) => s.tier === "diamond");
+  const all = data ?? [];
+  const diamondRows = all.filter((s) => s.tier === "diamond");
+  const othersRows = all.filter((s) => s.tier !== "diamond");
 
-  const diamond =
+  const diamondCards: CardItem[] =
     diamondRows.length > 0
       ? diamondRows.map((s) => ({
           id: s.id,
           name: s.name,
-          slug: slugFromUrl(s.logo_url),
-          logo_url: s.logo_url,
+          src: LOGO_ASSETS[slugFromUrl(s.logo_url)] ?? s.logo_url,
           website_url: s.website_url,
         }))
-      : FALLBACK_DIAMOND.map((s) => ({ ...s, logo_url: LOGO_ASSETS[s.slug] ?? "" }));
+      : FALLBACK_DIAMOND.map((s) => ({
+          id: s.id,
+          name: s.name,
+          src: LOGO_ASSETS[s.slug] ?? "",
+          website_url: s.website_url,
+        }));
 
-  const TOTAL = 24;
+  const otherCards: CardItem[] = othersRows.map((s) => ({
+    id: s.id,
+    name: s.name,
+    src: LOGO_ASSETS[slugFromUrl(s.logo_url)] ?? s.logo_url,
+    website_url: s.website_url,
+  }));
+
+  const cards = [...diamondCards, ...otherCards].slice(0, TOTAL);
   const placeholders = Array.from(
-    { length: Math.max(0, TOTAL - diamond.length) },
-    (_, i) => i + diamond.length + 1,
+    { length: Math.max(0, TOTAL - cards.length) },
+    (_, i) => i + cards.length + 1,
   );
 
   const waMsg = encodeURIComponent(
@@ -54,24 +75,21 @@ export function HomePatrocinadores() {
         </div>
 
         <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 md:mt-14 md:grid-cols-4 md:gap-6">
-          {diamond.map((s) => {
-            const bundled = LOGO_ASSETS[s.slug];
-            const src = bundled ?? s.logo_url;
-            const scale = LOGO_SCALE[s.slug] ?? "scale-100";
+          {cards.map((s) => {
             const inner = (
               <img
-                src={src}
+                src={s.src}
                 alt={s.name}
                 loading="lazy"
                 decoding="async"
                 draggable={false}
-                className={cn("max-h-[78%] max-w-[82%] object-contain", scale)}
+                className="h-full w-full rounded-2xl object-cover"
               />
             );
             return (
               <div
                 key={s.id}
-                className="grid aspect-[16/9] place-items-center rounded-2xl border border-white/40 bg-white p-3 shadow-[0_8px_24px_rgba(22,9,31,0.12)] ring-1 ring-black/5 md:p-4"
+                className="aspect-[16/9] overflow-hidden rounded-2xl border border-white/40 bg-white shadow-[0_8px_24px_rgba(22,9,31,0.12)] ring-1 ring-black/5"
               >
                 {s.website_url ? (
                   <a
@@ -79,7 +97,7 @@ export function HomePatrocinadores() {
                     target="_blank"
                     rel="noreferrer"
                     aria-label={s.name}
-                    className="grid h-full w-full place-items-center transition hover:scale-[1.02]"
+                    className="block h-full w-full transition hover:scale-[1.02]"
                   >
                     {inner}
                   </a>
