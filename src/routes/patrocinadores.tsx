@@ -96,13 +96,16 @@ function PlaceholderCard({ n }: { n: number }) {
 function DiamondCard({
   name,
   slug,
+  logoUrl,
   websiteUrl,
 }: {
   name: string;
   slug: string;
+  logoUrl: string;
   websiteUrl: string | null;
 }) {
-  const src = LOGO_ASSETS[slug];
+  const bundled = LOGO_ASSETS[slug];
+  const src = bundled ?? logoUrl;
   const scale = LOGO_SCALE[slug] ?? "scale-100";
   if (!src) return null;
   const img = (
@@ -144,17 +147,20 @@ function Page() {
 
   const all = sponsors ?? [];
 
-  // Diamond: mesma lógica da Home (fallback quando DB vazio ou logos não bundled)
+  // Diamond: usa logos do DB; fallback para bundled quando DB vazio.
   const diamondFromDb = all
     .filter((s) => s.tier === "diamond")
     .map((s) => ({
       id: s.id,
       name: s.name,
       slug: slugFromUrl(s.logo_url),
+      logo_url: s.logo_url,
       website_url: s.website_url,
-    }))
-    .filter((s) => LOGO_ASSETS[s.slug]);
-  const diamond = diamondFromDb.length > 0 ? diamondFromDb : FALLBACK_DIAMOND;
+    }));
+  const diamond =
+    diamondFromDb.length > 0
+      ? diamondFromDb
+      : FALLBACK_DIAMOND.map((s) => ({ ...s, logo_url: LOGO_ASSETS[s.slug] ?? "" }));
   const diamondPlaceholders = Array.from(
     { length: Math.max(0, DIAMOND_TOTAL - diamond.length) },
     (_, i) => i + diamond.length + 1,
@@ -190,6 +196,7 @@ function Page() {
                   key={s.id}
                   name={s.name}
                   slug={s.slug}
+                  logoUrl={s.logo_url}
                   websiteUrl={s.website_url}
                 />
               ))}
