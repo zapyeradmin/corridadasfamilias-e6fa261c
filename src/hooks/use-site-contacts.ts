@@ -25,6 +25,8 @@ export function useSiteContacts() {
     queryKey: ["public", "site-contacts"],
     queryFn: () => fetchContacts(),
     staleTime: 60 * 1000,
+    initialData: FALLBACK,
+    placeholderData: FALLBACK,
   });
   const merged: SiteContacts = {
     local: data?.local || FALLBACK.local,
