@@ -71,6 +71,15 @@ function Page() {
     <>
       <PageHeader eyebrow="Acesso restrito" title="Entrar" description="Painel da equipe organizadora." />
       <ContentSection>
+        <div className="mx-auto mb-8 flex w-full max-w-md justify-center">
+          <img
+            src={logoLogin}
+            alt="II Corrida das Famílias"
+            className="h-24 w-auto md:h-32"
+            loading="eager"
+            decoding="async"
+          />
+        </div>
         <form
           onSubmit={onSubmit}
           className="mx-auto w-full max-w-md space-y-5 rounded-3xl border border-border bg-white p-8 shadow-soft"
