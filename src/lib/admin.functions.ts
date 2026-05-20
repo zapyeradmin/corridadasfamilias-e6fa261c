@@ -527,3 +527,240 @@ export const listAccessLogs = createServerFn({ method: "GET" })
     if (error) throw new Error(error.message);
     return data ?? [];
   });
+
+// ─────────────────────────────────────────────────────────
+// Checkout config (Adulto / Criança) — persisted in `settings`
+// ─────────────────────────────────────────────────────────
+
+const checkoutSchema = z.object({
+  tipo: z.enum(["adulto", "crianca"]),
+  nome_produto: z.string().trim().min(1).max(160),
+  lote: z.enum(["Lote 1", "Lote 2", "Lote 3"]),
+  valor_cents: z.number().int().min(0).max(10_000_000),
+  checkout_url: z.string().trim().max(1000).url().or(z.literal("")),
+});
+
+export const updateCheckoutConfig = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => checkoutSchema.parse(input))
+  .handler(async ({ context, data }) => {
+    const admin = await assertAdmin(context.supabase, context.userId, context.claims as { email?: string });
+    const key = data.tipo === "crianca" ? "checkout_crianca" : "checkout_adulto";
+    const value = {
+      nome_produto: data.nome_produto,
+      lote: data.lote,
+      valor_cents: data.valor_cents,
+      checkout_url: data.checkout_url,
+      status: data.checkout_url ? "ativo" : "pendente_configuracao",
+    };
+    const { error } = await context.supabase.from("settings").upsert(
+      { key, value: value as never, is_public: true, updated_at: new Date().toISOString() },
+      { onConflict: "key" },
+    );
+    if (error) throw new Error(error.message);
+    // Mirror to legacy keys so existing infinitepay.functions readers continue working.
+    const legacyKey = data.tipo === "crianca" ? "infinitepay_checkout_crianca_url" : "infinitepay_checkout_adulto_url";
+    await context.supabase.from("settings").upsert(
+      { key: legacyKey, value: data.checkout_url as never, is_public: true, updated_at: new Date().toISOString() },
+      { onConflict: "key" },
+    );
+    await logAction(context.supabase, {
+      actorId: admin.userId,
+      actorEmail: admin.email,
+      action: "checkout.update",
+      entityType: "settings",
+      entityId: key,
+      details: value,
+    });
+    return { ok: true };
+  });
+
+// ─────────────────────────────────────────────────────────
+// Contatos oficiais do site — `site_contacts` setting
+// ─────────────────────────────────────────────────────────
+
+const contactsSchema = z.object({
+  local: z.string().trim().max(200).default(""),
+  email_oficial: z.string().trim().email("E-mail inválido").max(160),
+  whatsapp_oficial: z
+    .string()
+    .trim()
+    .max(20)
+    .refine((v) => v.replace(/\D/g, "").length >= 10 && v.replace(/\D/g, "").length <= 13, "WhatsApp inválido"),
+  instagram_url: z.string().trim().url("URL inválida").max(300).or(z.literal("")),
+  instagram_usuario: z.string().trim().max(60).default(""),
+});
+
+export const updateSiteContacts = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => contactsSchema.parse(input))
+  .handler(async ({ context, data }) => {
+    const admin = await assertAdmin(context.supabase, context.userId, context.claims as { email?: string });
+    const value = {
+      local: data.local,
+      email_oficial: data.email_oficial,
+      whatsapp_oficial: data.whatsapp_oficial.replace(/\D/g, ""),
+      instagram_url: data.instagram_url,
+      instagram_usuario: data.instagram_usuario.replace(/^@+/, ""),
+    };
+    const { error } = await context.supabase.from("settings").upsert(
+      { key: "site_contacts", value: value as never, is_public: true, updated_at: new Date().toISOString() },
+      { onConflict: "key" },
+    );
+    if (error) throw new Error(error.message);
+    await logAction(context.supabase, {
+      actorId: admin.userId,
+      actorEmail: admin.email,
+      action: "contacts.update",
+      entityType: "settings",
+      entityId: "site_contacts",
+      details: value,
+    });
+    return { ok: true };
+  });
+
+// ─────────────────────────────────────────────────────────
+// Gerenciamento de usuários (Supabase Auth + user_roles)
+// ─────────────────────────────────────────────────────────
+
+type AppRole = "admin" | "user";
+
+const passwordSchema = z
+  .string()
+  .min(8, "Senha deve ter no mínimo 8 caracteres")
+  .max(72);
+
+export const listAdminUsers = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context.supabase, context.userId, context.claims as { email?: string });
+    const { data: list, error } = await supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 200 });
+    if (error) throw new Error(error.message);
+    const { data: roles } = await context.supabase.from("user_roles").select("user_id, role");
+    const roleByUser = new Map<string, AppRole>();
+    for (const r of roles ?? []) roleByUser.set(r.user_id, r.role as AppRole);
+    return list.users.map((u) => ({
+      id: u.id,
+      email: u.email ?? "",
+      full_name: ((u.user_metadata ?? {}) as { full_name?: string }).full_name ?? "",
+      role: (roleByUser.get(u.id) ?? "user") as AppRole,
+      created_at: u.created_at,
+    }));
+  });
+
+export const createAdminUser = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z
+      .object({
+        full_name: z.string().trim().min(2).max(120),
+        email: z.string().trim().email().max(160),
+        password: passwordSchema,
+        role: z.enum(["admin", "user"]),
+      })
+      .parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    const admin = await assertAdmin(context.supabase, context.userId, context.claims as { email?: string });
+    const { data: created, error } = await supabaseAdmin.auth.admin.createUser({
+      email: data.email,
+      password: data.password,
+      email_confirm: true,
+      user_metadata: { full_name: data.full_name },
+    });
+    if (error || !created.user) throw new Error(error?.message ?? "Falha ao criar usuário.");
+    const { error: roleErr } = await supabaseAdmin
+      .from("user_roles")
+      .insert({ user_id: created.user.id, role: data.role });
+    if (roleErr) throw new Error(roleErr.message);
+    await logAction(context.supabase, {
+      actorId: admin.userId,
+      actorEmail: admin.email,
+      action: "user.create",
+      entityType: "user",
+      entityId: created.user.id,
+      details: { email: data.email, role: data.role },
+    });
+    return { ok: true, id: created.user.id };
+  });
+
+export const updateAdminUser = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z
+      .object({
+        id: z.string().uuid(),
+        full_name: z.string().trim().min(2).max(120).optional(),
+        email: z.string().trim().email().max(160).optional(),
+        password: passwordSchema.optional(),
+        role: z.enum(["admin", "user"]).optional(),
+      })
+      .parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    const admin = await assertAdmin(context.supabase, context.userId, context.claims as { email?: string });
+    const patch: { email?: string; password?: string; user_metadata?: Record<string, unknown> } = {};
+    if (data.email) patch.email = data.email;
+    if (data.password) patch.password = data.password;
+    if (data.full_name) patch.user_metadata = { full_name: data.full_name };
+    if (Object.keys(patch).length > 0) {
+      const { error } = await supabaseAdmin.auth.admin.updateUserById(data.id, patch);
+      if (error) throw new Error(error.message);
+    }
+    if (data.role) {
+      // Bloqueia rebaixar-se a si próprio se for o último admin
+      if (data.id === admin.userId && data.role !== "admin") {
+        const { count } = await supabaseAdmin
+          .from("user_roles")
+          .select("user_id", { count: "exact", head: true })
+          .eq("role", "admin");
+        if ((count ?? 0) <= 1) throw new Error("Você é o último administrador. Promova outro usuário antes.");
+      }
+      await supabaseAdmin.from("user_roles").delete().eq("user_id", data.id);
+      const { error: insErr } = await supabaseAdmin
+        .from("user_roles")
+        .insert({ user_id: data.id, role: data.role });
+      if (insErr) throw new Error(insErr.message);
+    }
+    await logAction(context.supabase, {
+      actorId: admin.userId,
+      actorEmail: admin.email,
+      action: "user.update",
+      entityType: "user",
+      entityId: data.id,
+      details: { fields: Object.keys(data).filter((k) => k !== "id") },
+    });
+    return { ok: true };
+  });
+
+export const deleteAdminUser = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
+  .handler(async ({ context, data }) => {
+    const admin = await assertAdmin(context.supabase, context.userId, context.claims as { email?: string });
+    if (data.id === admin.userId) throw new Error("Você não pode excluir a si mesmo.");
+    // Não permitir excluir o último admin
+    const { data: targetRoles } = await supabaseAdmin
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", data.id);
+    const isAdminTarget = (targetRoles ?? []).some((r) => r.role === "admin");
+    if (isAdminTarget) {
+      const { count } = await supabaseAdmin
+        .from("user_roles")
+        .select("user_id", { count: "exact", head: true })
+        .eq("role", "admin");
+      if ((count ?? 0) <= 1) throw new Error("Não é possível excluir o último administrador.");
+    }
+    await supabaseAdmin.from("user_roles").delete().eq("user_id", data.id);
+    const { error } = await supabaseAdmin.auth.admin.deleteUser(data.id);
+    if (error) throw new Error(error.message);
+    await logAction(context.supabase, {
+      actorId: admin.userId,
+      actorEmail: admin.email,
+      action: "user.delete",
+      entityType: "user",
+      entityId: data.id,
+    });
+    return { ok: true };
+  });
