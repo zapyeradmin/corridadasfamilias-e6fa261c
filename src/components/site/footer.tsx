@@ -13,7 +13,7 @@ export function SiteFooter() {
             alt="II Corrida das Famílias"
             loading="lazy"
             decoding="async"
-            className="h-32 w-auto md:h-40"
+            className="-mt-8 h-32 w-auto md:-mt-12 md:h-40"
           />
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-white/70">
             {SITE.slogan}. {SITE.shortDescription}
