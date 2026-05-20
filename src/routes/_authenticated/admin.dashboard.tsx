@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import { useMemo, useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { getDashboardKPIs } from "@/lib/admin.functions";
 import { formatCents, formatDateTimeBR } from "@/lib/format";
 
@@ -17,9 +19,28 @@ const STATUS_LABEL: Record<string, string> = {
   refunded: "Reembolsado",
 };
 
+const PAGE_SIZE = 10;
+
 function Page() {
   const fetchKpis = useServerFn(getDashboardKPIs);
   const { data, error, isError, isLoading } = useQuery({ queryKey: ["admin", "kpis"], queryFn: () => fetchKpis() });
+
+  const recent = data?.recent ?? [];
+  const totalPages = Math.max(1, Math.ceil(recent.length / PAGE_SIZE));
+  const [page, setPage] = useState(1);
+  const [pageInput, setPageInput] = useState("1");
+
+  const safePage = Math.min(Math.max(1, page), totalPages);
+  const pageRows = useMemo(
+    () => recent.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE),
+    [recent, safePage],
+  );
+
+  function goTo(p: number) {
+    const next = Math.min(Math.max(1, p), totalPages);
+    setPage(next);
+    setPageInput(String(next));
+  }
 
   return (
     <div className="space-y-8">
@@ -64,7 +85,7 @@ function Page() {
                   </tr>
                 </thead>
                 <tbody>
-                  {data.recent.map((r) => (
+                  {pageRows.map((r) => (
                     <tr key={r.id} className="border-t border-border">
                       <td className="px-4 py-3 font-mono text-xs">{r.protocol}</td>
                       <td className="px-4 py-3">
@@ -77,7 +98,7 @@ function Page() {
                       <td className="px-4 py-3 text-xs text-muted-foreground">{formatDateTimeBR(r.created_at)}</td>
                     </tr>
                   ))}
-                  {data.recent.length === 0 && (
+                  {pageRows.length === 0 && (
                     <tr>
                       <td colSpan={5} className="px-4 py-6 text-center text-sm text-muted-foreground">
                         Nenhuma inscrição ainda.
@@ -87,6 +108,54 @@ function Page() {
                 </tbody>
               </table>
             </div>
+
+            {recent.length > 0 && (
+              <div className="mt-4 flex items-center justify-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => goTo(safePage - 1)}
+                  disabled={safePage <= 1}
+                  aria-label="Página anterior"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-white text-foreground transition hover:bg-muted disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </button>
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const n = Number(pageInput);
+                    if (Number.isFinite(n)) goTo(Math.floor(n));
+                    else setPageInput(String(safePage));
+                  }}
+                  className="flex items-center gap-1.5 text-sm font-semibold"
+                >
+                  <input
+                    type="number"
+                    min={1}
+                    max={totalPages}
+                    value={pageInput}
+                    onChange={(e) => setPageInput(e.target.value)}
+                    onBlur={() => {
+                      const n = Number(pageInput);
+                      if (Number.isFinite(n)) goTo(Math.floor(n));
+                      else setPageInput(String(safePage));
+                    }}
+                    className="h-9 w-14 rounded-lg border border-border bg-white text-center font-bold tabular-nums outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                    aria-label="Página atual"
+                  />
+                  <span className="text-muted-foreground">/ {totalPages}</span>
+                </form>
+                <button
+                  type="button"
+                  onClick={() => goTo(safePage + 1)}
+                  disabled={safePage >= totalPages}
+                  aria-label="Próxima página"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-white text-foreground transition hover:bg-muted disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </button>
+              </div>
+            )}
           </section>
         </>
       )}
