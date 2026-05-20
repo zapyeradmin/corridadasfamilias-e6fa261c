@@ -9,7 +9,7 @@ export function HeaderLogo() {
         alt="II Corrida das Famílias"
         loading="eager"
         decoding="async"
-        className="h-12 w-auto md:h-14"
+        className="h-[4.5rem] w-auto md:h-[5.25rem]"
       />
     </Link>
   );
