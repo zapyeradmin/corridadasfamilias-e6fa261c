@@ -196,6 +196,7 @@ function Page() {
                   key={s.id}
                   name={s.name}
                   slug={s.slug}
+                  logoUrl={s.logo_url}
                   websiteUrl={s.website_url}
                 />
               ))}
