@@ -52,7 +52,13 @@ export function UserDialog({
   const mutation = useMutation({
     mutationFn: async () => {
       if (user) {
-        const patch: Parameters<typeof update>[0]["data"] = { id: user.id };
+        const patch: {
+          id: string;
+          full_name?: string;
+          email?: string;
+          password?: string;
+          role?: "admin" | "staff";
+        } = { id: user.id };
         if (name.trim() && name !== user.full_name) patch.full_name = name.trim();
         if (email.trim() && email !== user.email) patch.email = email.trim();
         if (password.trim()) patch.password = password;
