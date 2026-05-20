@@ -1,5 +1,4 @@
 import { Link } from "@tanstack/react-router";
-import { LogOut } from "lucide-react";
 import { NAV_LINKS } from "@/lib/site-config";
 import { cn } from "@/lib/utils";
 
@@ -10,7 +9,7 @@ interface Props {
   onLogout: () => void;
 }
 
-export function MobileMenu({ open, isAuthenticated, onClose, onLogout }: Props) {
+export function MobileMenu({ open, onClose }: Props) {
   return (
     <div
       className={cn(
@@ -38,14 +37,6 @@ export function MobileMenu({ open, isAuthenticated, onClose, onLogout }: Props) 
         >
           Inscreva-se
         </Link>
-        {isAuthenticated && (
-          <button
-            onClick={onLogout}
-            className="mt-2 flex items-center justify-center gap-2 rounded-xl border border-white/20 px-4 py-3 text-sm font-bold uppercase tracking-wide text-white/85 hover:bg-white/10"
-          >
-            <LogOut className="h-4 w-4" /> Sair
-          </button>
-        )}
       </nav>
     </div>
   );
