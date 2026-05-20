@@ -155,3 +155,18 @@ export const getSiteContacts = createServerFn({ method: "GET" }).handler(async (
   return contacts;
 });
 
+/**
+ * Devolve a URL pública canônica do site, resolvida no servidor.
+ * Lê de PUBLIC_SITE_URL (Node/Hostinger) ou VITE_PUBLIC_SITE_URL (build).
+ * Fallback: https://www.corridadasfamilias.com.br
+ */
+export const getPublicSiteUrl = createServerFn({ method: "GET" }).handler(async () => {
+  const fromEnv =
+    process.env.PUBLIC_SITE_URL ||
+    process.env.VITE_PUBLIC_SITE_URL ||
+    "";
+  const url = (fromEnv || "https://www.corridadasfamilias.com.br").replace(/\/+$/, "");
+  return { publicSiteUrl: url };
+});
+
+
