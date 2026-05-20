@@ -378,7 +378,9 @@ export const updateSponsor = createServerFn({ method: "POST" })
   .handler(async ({ context, data }) => {
     const admin = await assertAdmin(context.supabase, context.userId, context.claims as { email?: string });
     const { id, ...rest } = data;
-    const patch: Record<string, unknown> = { updated_at: new Date().toISOString() };
+    const patch: Database["public"]["Tables"]["sponsors"]["Update"] = {
+      updated_at: new Date().toISOString(),
+    };
     if (rest.name !== undefined) patch.name = rest.name;
     if (rest.tier !== undefined) patch.tier = rest.tier;
     if (rest.website_url !== undefined) patch.website_url = rest.website_url ?? null;
