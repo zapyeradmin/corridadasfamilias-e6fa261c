@@ -155,7 +155,7 @@ function Page() {
                 alt={s.name}
                 loading="lazy"
                 decoding="async"
-                className="h-full w-full object-contain"
+                className="h-full w-full object-cover"
               />
             </div>
             <p className="mt-3 truncate text-sm font-bold">{s.name}</p>
