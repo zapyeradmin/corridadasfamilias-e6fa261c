@@ -3,8 +3,8 @@ import { motion } from "framer-motion";
 import { Calendar, ChevronRight, MapPin, Trophy } from "lucide-react";
 import { Countdown } from "@/components/site/countdown";
 import { SITE } from "@/lib/site-config";
-import heroRunner from "@/assets/hero-runner.jpg?w=800;1280;1920&format=webp&quality=72&as=srcset";
-import heroRunnerFallback from "@/assets/hero-runner.jpg?w=1280&format=webp&quality=72";
+import heroRunner from "@/assets/hero-runner.jpg?w=800;1280;1920&quality=72&format=webp&as=srcset";
+import heroRunnerFallback from "@/assets/hero-runner.jpg?w=1280&quality=72&format=webp";
 
 export function HomeHero() {
   return (
