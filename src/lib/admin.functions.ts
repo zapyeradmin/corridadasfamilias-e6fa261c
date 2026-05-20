@@ -228,6 +228,7 @@ export const listPayments = createServerFn({ method: "GET" })
     z
       .object({
         status: z.string().optional(),
+        search: z.string().optional(),
         page: z.number().int().min(1).default(1),
         pageSize: z.number().int().min(1).max(100).default(25),
       })
@@ -240,13 +241,20 @@ export const listPayments = createServerFn({ method: "GET" })
     let query = context.supabase
       .from("payments")
       .select(
-        "id, status, amount_cents, provider, external_reference, paid_at, created_at, registration_id",
+        "id, status, amount_cents, provider, external_reference, paid_at, created_at, registration_id, registrations!inner(full_name, cpf, cpf_normalized)",
         { count: "exact" },
       )
       .order("created_at", { ascending: false })
       .range(from, to);
     if (data.status && data.status !== "all") {
       query = query.eq("status", data.status as never);
+    }
+    if (data.search && data.search.trim()) {
+      const raw = data.search.trim();
+      const orParts = [`full_name.ilike.%${raw}%`];
+      const digits = raw.replace(/\D/g, "");
+      if (digits) orParts.push(`cpf_normalized.ilike.%${digits}%`);
+      query = query.or(orParts.join(","), { referencedTable: "registrations" });
     }
     const { data: rows, count, error } = await query;
     if (error) throw new Error(error.message);
