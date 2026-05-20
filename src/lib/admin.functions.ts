@@ -288,17 +288,6 @@ export const listSponsorsAdmin = createServerFn({ method: "GET" })
     return data ?? [];
   });
 
-export const listGalleryAdmin = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
-    await assertAdmin(context.supabase, context.userId, context.claims as { email?: string });
-    const { data, error } = await context.supabase
-      .from("gallery_items")
-      .select("*")
-      .order("sort_order", { ascending: true });
-    if (error) throw new Error(error.message);
-    return data ?? [];
-  });
 
 export const listSettingsAdmin = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
