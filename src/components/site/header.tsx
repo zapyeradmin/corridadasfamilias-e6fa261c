@@ -31,7 +31,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-40 isolate bg-[#2a0f4a]/70 backdrop-blur-xl backdrop-saturate-150 supports-[backdrop-filter]:bg-[#2a0f4a]/55">
       <div className="relative w-full">
         <HeaderDecorations />
-        <div className="relative mx-auto flex max-w-[1360px] items-center justify-between px-5 py-4 md:px-8">
+        <div className="relative mx-auto flex max-w-[1360px] items-center justify-between px-5 py-0 md:px-8">
           <HeaderLogo />
           <DesktopNav
             isAdmin={isAdmin}
