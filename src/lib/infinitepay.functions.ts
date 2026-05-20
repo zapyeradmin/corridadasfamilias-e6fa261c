@@ -39,10 +39,16 @@ export const getCheckoutUrlForRegistration = createServerFn({ method: "POST" })
       try {
         const url = new URL(baseUrl);
         if (reg.order_nsu) url.searchParams.set("order_nsu", reg.order_nsu);
+        const publicSiteUrl = (
+          process.env.PUBLIC_SITE_URL ||
+          process.env.VITE_PUBLIC_SITE_URL ||
+          "https://www.corridadasfamilias.com.br"
+        ).replace(/\/+$/, "");
         url.searchParams.set(
           "redirect_url",
-          `https://corridadasfamilias.lovable.app/pagamento?protocol=${reg.protocol}`,
+          `${publicSiteUrl}/pagamento?protocol=${reg.protocol}`,
         );
+
         if (reg.full_name) url.searchParams.set("customer_name", reg.full_name);
         if (reg.email) url.searchParams.set("customer_email", reg.email);
         if (reg.whatsapp)
