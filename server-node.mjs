@@ -3,6 +3,29 @@
 // Este script cria um servidor HTTP Node que converte req/res ↔ Request/Response.
 import { createServer } from "node:http";
 import { Readable } from "node:stream";
+import { readFileSync } from "node:fs";
+import { resolve, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+
+// Carrega .env do diretório do projeto ANTES de importar o handler SSR,
+// pois start.ts roda verifyServerEnv() no top-level do módulo.
+try {
+  const __dirname = dirname(fileURLToPath(import.meta.url));
+  const envPath = resolve(__dirname, ".env");
+  const raw = readFileSync(envPath, "utf8");
+  for (const line of raw.split("\n")) {
+    const m = line.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*)\s*$/i);
+    if (!m) continue;
+    let val = m[2];
+    if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+      val = val.slice(1, -1);
+    }
+    if (process.env[m[1]] === undefined) process.env[m[1]] = val;
+  }
+  console.log("[server-node] .env carregado de", envPath);
+} catch (e) {
+  console.warn("[server-node] não foi possível carregar .env:", e.message);
+}
 
 const PORT = Number(process.env.PORT) || 3000;
 const HOST = process.env.HOST || "0.0.0.0";
