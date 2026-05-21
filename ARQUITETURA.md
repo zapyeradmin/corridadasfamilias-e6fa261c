@@ -9,10 +9,10 @@ backend vivem no mesmo codebase**. Leia antes de fazer deploy em VPS.
 
 - Stack: **TanStack Start** (React 19 + Vite + SSR Node) — framework
   isomórfico. Não existe `frontend/` e `backend/` separados.
-- O build gera **dois bundles** dentro de `.output/`:
-  - `.output/server/index.mjs` → servidor Node (SSR + APIs + server functions)
-  - `.output/public/`         → assets estáticos (JS, CSS, imagens) servidos pelo Node
-- **PM2** roda `.output/server/index.mjs` em cluster (2 workers).
+- O build gera **dois bundles** dentro de `dist/`:
+  - `dist/server/server.js` → servidor Node (SSR + APIs + server functions)
+  - `dist/client/`         → assets estáticos (JS, CSS, imagens) servidos pelo Node
+- **PM2** roda `dist/server/server.js` em cluster (2 workers).
 - **Nginx** faz reverse proxy do `:80/:443` para `127.0.0.1:3000`.
 
 ---
@@ -115,7 +115,7 @@ backend vivem no mesmo codebase**. Leia antes de fazer deploy em VPS.
 ## Variáveis de ambiente
 
 Ficam no arquivo `.env` **na raiz do projeto** (não em subpastas). O Node lê
-automaticamente quando o PM2 starta `.output/server/index.mjs`.
+automaticamente quando o PM2 starta `dist/server/server.js`.
 
 | Variável                       | Quem usa            | Onde fica          |
 |--------------------------------|---------------------|--------------------|
@@ -138,7 +138,7 @@ Olhe `pm2 logs corridadasfamilias` se a app não subir.
 
 ```bash
 # Build de produção
-npm run build:node                 # gera .output/
+npm run build:node                 # gera dist/
 
 # Rodar
 pm2 start ecosystem.config.cjs     # primeira vez

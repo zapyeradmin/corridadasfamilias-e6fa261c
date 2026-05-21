@@ -80,7 +80,7 @@ Preencha:
 npm run build:node
 ```
 
-Saída: `.output/server/index.mjs` (entry SSR) + assets estáticos.
+Saída: `dist/server/server.js` (entry SSR) + assets estáticos.
 
 ---
 
