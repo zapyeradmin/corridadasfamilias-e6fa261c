@@ -1,133 +1,134 @@
-# Deploy do projeto na Hostinger Web App Node.js
 
-## Por que o erro 403 acontece hoje
+# Deploy do projeto em VPS Hetzner (SSR Node + Nginx + PM2)
 
-O domínio `corridadasfamilias.com.br` já está apontando o DNS para a Hostinger, mas a Web App Node.js ainda **não tem nenhum app rodando** (ou o `public_html` está vazio). O servidor da Hostinger responde **403 Forbidden** porque não encontra nada para servir. A solução é concluir o deploy.
+Objetivo: rodar este projeto TanStack Start em modo SSR Node em uma VPS Hetzner CX33 (Ubuntu), atrás do Nginx com SSL Let's Encrypt, com deploy por `git pull` + `pm2 reload`.
 
-## Limitação técnica importante (decisão do plano)
+## 1. Ajustes no projeto (commits que farei após aprovação)
 
-O build atual gera bundle para **Cloudflare Workers** (`wrangler.jsonc` + `@cloudflare/vite-plugin`). Hostinger Node.js roda **Node.js tradicional**, que é incompatível. Mudar o adapter do TanStack Start para Node quebra o preview do Lovable.
+Hoje o projeto está configurado para Cloudflare Workers (`@cloudflare/vite-plugin` + `src/server.ts` em formato Worker). Para rodar SSR em Node, preciso:
 
-**Estratégia:** rodar na Hostinger como **SPA (Single Page App) servida por `vite preview`**, que é compatível com Node.js puro e já está configurada (`npm start`). Como SPA não executa server functions nem server routes, o **webhook da InfinitePay precisa migrar** para uma **Supabase Edge Function** (URL fixa e pública, ideal para webhooks).
+1. **`vite.config.ts`** — desativar o plugin Cloudflare quando `TARGET=node`, mantendo o build atual quando `TARGET` não estiver setado (preview Lovable continua funcionando).
+2. **`src/server.node.ts`** — novo entry Node usando `@tanstack/react-start/server-entry` exposto via `http.createServer`, ouvindo em `process.env.PORT` (default 3000). Mantém o `src/server.ts` Cloudflare atual intacto.
+3. **`package.json`** — scripts:
+   - `build:node`: `TARGET=node vite build`
+   - `start:node`: `node .output/server/index.mjs` (ou o arquivo gerado conforme adapter)
+   - Mantém `dev`, `build`, `start` atuais.
+4. **`ecosystem.config.cjs`** (PM2) — `name: corridadasfamilias`, `script: npm`, `args: run start:node`, `instances: 2` (cluster), `env: NODE_ENV=production, PORT=3000`.
+5. **`.env.production.example`** — lista de variáveis exigidas pelo SSR (não commitar valores reais).
+6. **`DEPLOY-VPS.md`** — passo a passo completo (abaixo).
 
-O resto da lógica do app (consultas, login, admin) continua funcionando porque já usa Supabase diretamente do cliente via RLS, ou via server functions que serão substituídas por chamadas diretas ao Supabase no modo SPA.
+Não vou tocar em código de produto (rotas, componentes, server functions). Apenas configuração de build/runtime.
 
-> ⚠️ **Alerta:** rodar como SPA significa **perder SSR**. As páginas continuam funcionando, mas o SEO/og:image dinâmico do TanStack Start não roda. As metas estáticas (title, description) seguem normalmente.
+## 2. Webhook InfinitePay
 
-## Etapas
+O webhook `src/routes/api/webhooks/infinitepay.ts` continua funcionando normalmente em SSR Node — não precisa migrar para Edge Function. URL final: `https://www.corridadasfamilias.com.br/api/webhooks/infinitepay`. A Edge Function `infinitepay-webhook` que já está deployada pode ser removida ou mantida como fallback (sua escolha).
 
-### 1. Migrar webhook InfinitePay para Supabase Edge Function
-- Criar `supabase/functions/infinitepay-webhook/index.ts` replicando a lógica de `src/routes/api/webhooks/infinitepay.ts` (validação de assinatura, update em `payments` e `registrations`, log em `access_logs`).
-- Configurar `verify_jwt = false` no `supabase/config.toml` (webhook público).
-- Nova URL pública: `https://ljquyrrprrwqpmaomwsh.supabase.co/functions/v1/infinitepay-webhook` — usuário precisa cadastrar essa URL no painel da InfinitePay.
+## 3. Preparação da VPS Hetzner
 
-### 2. Ajustar URLs em `src/lib/infinitepay.functions.ts`
-- O `redirect_url` continua usando `PUBLIC_SITE_URL`, agora apontando para `https://www.corridadasfamilias.com.br`.
-- Como SPA não roda server functions, refatorar `getCheckoutUrlForRegistration` e `checkPaymentStatus` para chamadas **diretas ao Supabase** (RLS já protege as tabelas `registrations` e `payments`). Hooks e rotas que usam `useServerFn(...)` passam a chamar funções `async` normais.
+SSH como root e:
 
-### 3. Refatorar todos os `createServerFn` para chamadas Supabase diretas
-Arquivos afetados:
-- `src/lib/admin.functions.ts` → mover para `src/lib/admin.client.ts` usando `supabase` autenticado
-- `src/lib/registrations.functions.ts` → idem
-- `src/lib/public.functions.ts` → idem (settings, contatos)
-- `src/lib/infinitepay.functions.ts` → idem
-- Atualizar todos os `useServerFn(...)` nos componentes para chamar diretamente as novas funções
-
-> Operações que exigem service role (bypass RLS) **não podem** rodar no cliente — precisam estar na Edge Function. Identificar quais funções precisam disso e migrá-las.
-
-### 4. Build script Hostinger-friendly
-- Garantir que `npm run build` gera saída SPA em `dist/`.
-- Remover/condicional `@cloudflare/vite-plugin` quando `TARGET=node` (variável de ambiente do build).
-- `package.json`:
-  - `build`: comando atual (mantém preview Lovable)
-  - `build:hostinger`: `TARGET=node vite build` (SPA puro, sem worker)
-  - `start`: `vite preview --host 0.0.0.0 --port ${PORT:-3000}` (já existe)
-
-### 5. Subir código no GitHub
-- Lovable → **Plus (+) → GitHub → Connect project** → criar repo `corridadasfamilias`.
-- Sync automático bidirecional já fica ativo.
-
-### 6. Configurar Web App Node.js na Hostinger
-1. Painel Hostinger → **Avançado → Node.js** → criar aplicação:
-   - **Node version:** 20.x
-   - **Application root:** `corridadasfamilias`
-   - **Application URL:** `www.corridadasfamilias.com.br`
-   - **Startup file:** vazio (usar `npm start`)
-2. **Git Version Control** → conectar repositório GitHub criado no passo 5.
-3. **Environment Variables** (painel Node.js):
-   ```
-   NODE_ENV=production
-   PORT=3000
-   PUBLIC_SITE_URL=https://www.corridadasfamilias.com.br
-   VITE_PUBLIC_SITE_URL=https://www.corridadasfamilias.com.br
-   VITE_SUPABASE_URL=https://ljquyrrprrwqpmaomwsh.supabase.co
-   VITE_SUPABASE_PUBLISHABLE_KEY=<valor do .env>
-   VITE_SUPABASE_PROJECT_ID=ljquyrrprrwqpmaomwsh
-   ```
-4. **Build command:** `npm install && npm run build:hostinger`
-5. **Start command:** `npm start`
-6. Clicar **Deploy / Restart**.
-
-### 7. DNS
-Confirmar no registrador (Registro.br) que os registros A do domínio apontam para o IP indicado pelo painel Node.js da Hostinger. Aguardar propagação (~15min a algumas horas).
-
-### 8. SSL
-Painel Hostinger → **SSL** → **Install Free SSL** para `www.corridadasfamilias.com.br` e raiz `corridadasfamilias.com.br`.
-
-### 9. Webhook InfinitePay
-No painel da InfinitePay, atualizar URL do webhook para:
-```
-https://ljquyrrprrwqpmaomwsh.supabase.co/functions/v1/infinitepay-webhook
+```bash
+apt update && apt upgrade -y
+apt install -y curl git build-essential nginx ufw
+curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+apt install -y nodejs
+npm install -g pm2
+ufw allow OpenSSH && ufw allow 'Nginx Full' && ufw --force enable
 ```
 
-### 10. Como testar após deploy
-1. Acessar `https://www.corridadasfamilias.com.br` → home carrega
-2. Acessar `/admin/dashboard` → login funciona, dados carregam
-3. Fazer uma inscrição de teste com valor mínimo → confirmar checkout abre
-4. Após pagamento, verificar:
-   - Edge Function logs no Supabase
-   - Registro atualizou para `paid` na tabela `registrations`
-   - Página `/sucesso?protocol=...` exibe confirmação
-
-## Pontos que exigem ação manual do usuário
-
-| Ação | Onde |
-|------|------|
-| Conectar projeto ao GitHub | Lovable (Plus → GitHub) |
-| Criar Web App Node.js | Painel Hostinger |
-| Definir env vars de produção | Painel Hostinger → Node.js |
-| Apontar DNS (A records) | Registrador do domínio |
-| Ativar SSL Let's Encrypt | Painel Hostinger → SSL |
-| Trocar URL do webhook | Painel InfinitePay |
-
-## Arquivos que serão criados/modificados
-
-**Criados**
-- `supabase/functions/infinitepay-webhook/index.ts`
-- `src/lib/admin.client.ts`, `src/lib/registrations.client.ts`, `src/lib/public.client.ts`, `src/lib/infinitepay.client.ts` (versões cliente)
-- `DEPLOY-HOSTINGER.md` (passo a passo detalhado)
-
-**Modificados**
-- `package.json` — adicionar `build:hostinger`
-- `vite.config.ts` — condicional cloudflare plugin via `TARGET`
-- `supabase/config.toml` — registrar nova function
-- `README.md` — instruções finais
-- Todos os arquivos que importam `*.functions.ts` (componentes admin, pagamento, inscrição) — trocar `useServerFn` por chamadas diretas
-
-**Removidos do bundle de produção SPA**
-- `src/routes/api/webhooks/infinitepay.ts` (substituído pela Edge Function — mantém arquivo no repo para Lovable preview)
-- `src/server.ts` (não usado no modo SPA)
-
-## Resumo do que muda na arquitetura
-
-```text
-ANTES                                      DEPOIS (Hostinger SPA)
-─────────────────────────────────         ─────────────────────────────────
-Cloudflare Workers                        Node.js + vite preview (Hostinger)
-SSR + Server Functions                    SPA + Supabase client direto
-Webhook em /api/webhooks/infinitepay  →   Webhook em Supabase Edge Function
+Criar usuário não-root para a app:
+```bash
+adduser --disabled-password --gecos "" deploy
+usermod -aG sudo deploy
+mkdir -p /home/deploy/.ssh && cp ~/.ssh/authorized_keys /home/deploy/.ssh/
+chown -R deploy:deploy /home/deploy/.ssh && chmod 700 /home/deploy/.ssh
 ```
 
-> ⚠️ **Última chance de reconsiderar:** se SSR/SEO dinâmico for crítico, ou se a quantidade de refatoração para tirar `useServerFn` de toda a base assustar, a **Opção A (Lovable + domínio próprio)** resolve o 403 em ~10 minutos sem mexer no código. Posso preparar esse plano alternativo se preferir.
+## 4. Clonar e configurar o app
 
-Diga **"implementar"** para eu executar este plano, ou **"alterar para Lovable"** para fazer o caminho mais rápido.
+Como `deploy`:
+```bash
+cd ~
+git clone https://github.com/<seu-usuario>/corridadasfamilias.git app
+cd app
+npm ci
+cp .env.production.example .env
+nano .env   # preencher VITE_SUPABASE_URL, VITE_SUPABASE_PUBLISHABLE_KEY,
+            # SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, INFINITEPAY_*, PUBLIC_SITE_URL etc.
+npm run build:node
+pm2 start ecosystem.config.cjs
+pm2 save
+sudo pm2 startup systemd -u deploy --hp /home/deploy
+```
+
+## 5. Nginx (reverse proxy + SSL)
+
+`/etc/nginx/sites-available/corridadasfamilias`:
+```
+server {
+  listen 80;
+  server_name corridadasfamilias.com.br www.corridadasfamilias.com.br;
+
+  client_max_body_size 20m;
+
+  location / {
+    proxy_pass http://127.0.0.1:3000;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+  }
+}
+```
+```bash
+sudo ln -s /etc/nginx/sites-available/corridadasfamilias /etc/nginx/sites-enabled/
+sudo nginx -t && sudo systemctl reload nginx
+```
+
+## 6. DNS + SSL
+
+1. No painel do registrador, criar registros A:
+   - `corridadasfamilias.com.br` → IP da VPS
+   - `www.corridadasfamilias.com.br` → IP da VPS
+2. Aguardar propagação (5–30 min).
+3. Emitir SSL:
+```bash
+sudo apt install -y certbot python3-certbot-nginx
+sudo certbot --nginx -d corridadasfamilias.com.br -d www.corridadasfamilias.com.br
+```
+Renovação automática já vem configurada via systemd timer.
+
+## 7. Atualizações futuras (deploy manual)
+
+```bash
+ssh deploy@<ip>
+cd ~/app
+git pull
+npm ci
+npm run build:node
+pm2 reload corridadasfamilias
+```
+
+## 8. Variáveis de ambiente necessárias
+
+- `NODE_ENV=production`
+- `PORT=3000`
+- `PUBLIC_SITE_URL=https://www.corridadasfamilias.com.br`
+- `VITE_PUBLIC_SITE_URL=https://www.corridadasfamilias.com.br`
+- `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`, `VITE_SUPABASE_PROJECT_ID`
+- `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SERVICE_ROLE_KEY`
+- `INFINITEPAY_HANDLE`, `INFINITEPAY_WEBHOOK_SECRET` (se aplicável)
+- `LOVABLE_API_KEY` (se usar Lovable AI)
+
+## 9. Riscos e observações
+
+- **Adapter Node do TanStack Start:** o template foi gerado para Worker. O entry Node (`src/server.node.ts`) precisa ser validado após o primeiro build — se o `vite-tanstack-config` não emitir bundle Node, troco para `vite preview` (ainda Node, sem Worker) como fallback de start.
+- **Preview Lovable:** todas as mudanças preservam o build padrão. O preview continua usando Cloudflare.
+- **Edge Function `infinitepay-webhook`:** posso removê-la após confirmar que o webhook em `/api/webhooks/infinitepay` funciona em produção.
+- **Backup do `.env`:** guarde fora da VPS — ele contém o `SUPABASE_SERVICE_ROLE_KEY`.
+- **Recursos:** CX33 (4 vCPU / 8 GB) é folgado; PM2 cluster com 2 instâncias deixa CPU sobrando para picos.
+
+Após aprovação, implemento os ajustes em código (vite.config, server.node.ts, package.json, ecosystem, .env example, DEPLOY-VPS.md) em uma única iteração e te entrego o repositório pronto para `git push` → `git pull` na VPS.
