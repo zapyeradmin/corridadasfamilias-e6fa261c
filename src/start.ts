@@ -2,6 +2,11 @@ import { createStart, createMiddleware } from "@tanstack/react-start";
 
 import { attachSupabaseAuth } from "@/integrations/supabase/auth-attacher";
 import { renderErrorPage } from "./lib/error-page";
+import { verifyServerEnv } from "./lib/env-check.server";
+
+// Verifica variáveis de ambiente obrigatórias no boot do servidor.
+// Em produção (NODE_ENV=production), derruba o processo se algo crítico faltar.
+verifyServerEnv();
 
 const errorMiddleware = createMiddleware().server(async ({ next }) => {
   try {
