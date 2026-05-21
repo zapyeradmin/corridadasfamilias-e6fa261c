@@ -3,8 +3,8 @@
 // Este script cria um servidor HTTP Node que converte req/res ↔ Request/Response.
 import { createServer } from "node:http";
 import { Readable } from "node:stream";
-import { readFileSync } from "node:fs";
-import { resolve, dirname } from "node:path";
+import { createReadStream, existsSync, readFileSync, statSync } from "node:fs";
+import { resolve, dirname, extname, normalize, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
 // Carrega .env do diretório do projeto ANTES de importar o handler SSR,
@@ -29,6 +29,23 @@ try {
 
 const PORT = Number(process.env.PORT) || 3000;
 const HOST = process.env.HOST || "0.0.0.0";
+const ROOT_DIR = dirname(fileURLToPath(import.meta.url));
+const STATIC_DIRS = [resolve(ROOT_DIR, "dist/client"), resolve(ROOT_DIR, ".output/public")];
+
+const MIME_TYPES = {
+  ".css": "text/css; charset=utf-8",
+  ".js": "text/javascript; charset=utf-8",
+  ".mjs": "text/javascript; charset=utf-8",
+  ".json": "application/json; charset=utf-8",
+  ".ico": "image/x-icon",
+  ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".webp": "image/webp",
+  ".svg": "image/svg+xml",
+  ".woff": "font/woff",
+  ".woff2": "font/woff2",
+};
 
 const mod = await import("./dist/server/server.js");
 const handler = mod.default ?? mod;
@@ -69,8 +86,50 @@ async function webResponseToNodeRes(response, res) {
   res.end();
 }
 
+function tryServeStatic(req, res) {
+  if (req.method !== "GET" && req.method !== "HEAD") return false;
+
+  const { pathname } = new URL(req.url || "/", `http://${req.headers.host || "localhost"}`);
+  if (!pathname.startsWith("/assets/") && pathname !== "/favicon.ico") return false;
+
+  let decodedPath;
+  try {
+    decodedPath = decodeURIComponent(pathname);
+  } catch {
+    res.statusCode = 400;
+    res.end("Bad Request");
+    return true;
+  }
+
+  const relativePath = normalize(decodedPath.replace(/^\/+/, ""));
+  if (relativePath.startsWith("..") || relativePath.includes(`${sep}..${sep}`)) {
+    res.statusCode = 403;
+    res.end("Forbidden");
+    return true;
+  }
+
+  for (const dir of STATIC_DIRS) {
+    const filePath = resolve(dir, relativePath);
+    if (!filePath.startsWith(dir + sep) || !existsSync(filePath)) continue;
+    const stat = statSync(filePath);
+    if (!stat.isFile()) continue;
+
+    res.statusCode = 200;
+    res.setHeader("Content-Type", MIME_TYPES[extname(filePath)] || "application/octet-stream");
+    res.setHeader("Content-Length", stat.size);
+    res.setHeader("Cache-Control", pathname.startsWith("/assets/") ? "public, max-age=31536000, immutable" : "public, max-age=3600");
+    if (req.method === "HEAD") return res.end(), true;
+    createReadStream(filePath).pipe(res);
+    return true;
+  }
+
+  return false;
+}
+
 const server = createServer(async (req, res) => {
   try {
+    if (tryServeStatic(req, res)) return;
+
     const request = nodeReqToWebRequest(req);
     const response = await handler.fetch(request, process.env, {});
     await webResponseToNodeRes(response, res);
