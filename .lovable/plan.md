@@ -1,134 +1,53 @@
+# Plano — Preparar deploy VPS (4 ajustes + nota Cloudflare)
 
-# Deploy do projeto em VPS Hetzner (SSR Node + Nginx + PM2)
+## 1. Limpar arquivos obsoletos
 
-Objetivo: rodar este projeto TanStack Start em modo SSR Node em uma VPS Hetzner CX33 (Ubuntu), atrás do Nginx com SSL Let's Encrypt, com deploy por `git pull` + `pm2 reload`.
+- Remover `DEPLOY-HOSTINGER.md` (substituído por `DEPLOY-VPS.md`).
+- Remover `supabase/functions/infinitepay-webhook/` (webhook agora roda nativamente em `src/routes/api/webhooks/infinitepay.ts`).
+- Remover a entrada `[functions.infinitepay-webhook]` de `supabase/config.toml`.
 
-## 1. Ajustes no projeto (commits que farei após aprovação)
+## 2. Criar `ARQUITETURA.md`
 
-Hoje o projeto está configurado para Cloudflare Workers (`@cloudflare/vite-plugin` + `src/server.ts` em formato Worker). Para rodar SSR em Node, preciso:
+Documento na raiz explicando, para quem for fazer o deploy:
 
-1. **`vite.config.ts`** — desativar o plugin Cloudflare quando `TARGET=node`, mantendo o build atual quando `TARGET` não estiver setado (preview Lovable continua funcionando).
-2. **`src/server.node.ts`** — novo entry Node usando `@tanstack/react-start/server-entry` exposto via `http.createServer`, ouvindo em `process.env.PORT` (default 3000). Mantém o `src/server.ts` Cloudflare atual intacto.
-3. **`package.json`** — scripts:
-   - `build:node`: `TARGET=node vite build`
-   - `start:node`: `node .output/server/index.mjs` (ou o arquivo gerado conforme adapter)
-   - Mantém `dev`, `build`, `start` atuais.
-4. **`ecosystem.config.cjs`** (PM2) — `name: corridadasfamilias`, `script: npm`, `args: run start:node`, `instances: 2` (cluster), `env: NODE_ENV=production, PORT=3000`.
-5. **`.env.production.example`** — lista de variáveis exigidas pelo SSR (não commitar valores reais).
-6. **`DEPLOY-VPS.md`** — passo a passo completo (abaixo).
+- Por que **não existe** pasta `frontend/` e `backend/` separadas (TanStack Start é isomórfico — separar quebra o build/SSR).
+- Tabela mostrando o que vira **só servidor** vs **só client** vs **ambos** (`*.functions.ts`, `*.server.ts`, `client.server.ts`, `routes/api/**`, componentes React).
+- Mapa de pastas comentado (`src/routes/`, `src/lib/`, `src/integrations/supabase/`, `.output/`).
+- Fluxo de uma requisição em produção: `Browser → Nginx :443 → Node PM2 :3000 → (SSR | server route | server fn)`.
+- Tabela de variáveis de ambiente (quais vão para o browser, quais são secretas).
+- Comandos PM2 essenciais (`start`, `reload`, `logs`, `restart`).
+- Toggle dual-build: `npm run build` (Cloudflare/preview Lovable) vs `npm run build:node` (VPS).
 
-Não vou tocar em código de produto (rotas, componentes, server functions). Apenas configuração de build/runtime.
+## 3. Garantir `.env` no `.gitignore`
 
-## 2. Webhook InfinitePay
+`.gitignore` atual **não tem** `.env` listado. Adicionar bloco:
 
-O webhook `src/routes/api/webhooks/infinitepay.ts` continua funcionando normalmente em SSR Node — não precisa migrar para Edge Function. URL final: `https://www.corridadasfamilias.com.br/api/webhooks/infinitepay`. A Edge Function `infinitepay-webhook` que já está deployada pode ser removida ou mantida como fallback (sua escolha).
-
-## 3. Preparação da VPS Hetzner
-
-SSH como root e:
-
-```bash
-apt update && apt upgrade -y
-apt install -y curl git build-essential nginx ufw
-curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
-apt install -y nodejs
-npm install -g pm2
-ufw allow OpenSSH && ufw allow 'Nginx Full' && ufw --force enable
+```
+# Environment variables (secrets — NEVER commit)
+.env
+.env.local
+.env.production
+.env.*.local
 ```
 
-Criar usuário não-root para a app:
-```bash
-adduser --disabled-password --gecos "" deploy
-usermod -aG sudo deploy
-mkdir -p /home/deploy/.ssh && cp ~/.ssh/authorized_keys /home/deploy/.ssh/
-chown -R deploy:deploy /home/deploy/.ssh && chmod 700 /home/deploy/.ssh
-```
+## 4. Verificação de env vars no boot
 
-## 4. Clonar e configurar o app
+Criar `src/lib/env-check.server.ts` com função `verifyServerEnv()` que:
 
-Como `deploy`:
-```bash
-cd ~
-git clone https://github.com/<seu-usuario>/corridadasfamilias.git app
-cd app
-npm ci
-cp .env.production.example .env
-nano .env   # preencher VITE_SUPABASE_URL, VITE_SUPABASE_PUBLISHABLE_KEY,
-            # SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, INFINITEPAY_*, PUBLIC_SITE_URL etc.
-npm run build:node
-pm2 start ecosystem.config.cjs
-pm2 save
-sudo pm2 startup systemd -u deploy --hp /home/deploy
-```
+- Lista as vars **obrigatórias**: `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_PUBLISHABLE_KEY`, `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`, `PUBLIC_SITE_URL`.
+- Lista **opcionais** (warning, não falha): `INFINITEPAY_WEBHOOK_SECRET`, `LOVABLE_API_KEY`.
+- Em `NODE_ENV=production` → `throw` (PM2 reinicia e o erro fica visível em `pm2 logs`).
+- Em dev → só warning no console, não derruba.
 
-## 5. Nginx (reverse proxy + SSL)
+Invocar uma única vez em `src/start.ts` (entry global do servidor).
 
-`/etc/nginx/sites-available/corridadasfamilias`:
-```
-server {
-  listen 80;
-  server_name corridadasfamilias.com.br www.corridadasfamilias.com.br;
+## Nota sobre Cloudflare + SSL na VPS
 
-  client_max_body_size 20m;
+O domínio já está atrás da Cloudflare. No passo do Let's Encrypt do `DEPLOY-VPS.md`, **desligue o proxy (nuvem cinza)** temporariamente para o `certbot --nginx` validar via HTTP-01, depois religue se quiser cache/WAF — nesse caso ajuste **SSL/TLS = Full (strict)** no painel da Cloudflare. Alternativa: usar o plugin DNS-01 do certbot com token de API da Cloudflare (sem precisar desligar proxy). Vou adicionar essa seção curta ao `DEPLOY-VPS.md` junto com o IP `178.104.101.145` nos exemplos de DNS.
 
-  location / {
-    proxy_pass http://127.0.0.1:3000;
-    proxy_http_version 1.1;
-    proxy_set_header Host $host;
-    proxy_set_header X-Real-IP $remote_addr;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header X-Forwarded-Proto $scheme;
-    proxy_set_header Upgrade $http_upgrade;
-    proxy_set_header Connection "upgrade";
-  }
-}
-```
-```bash
-sudo ln -s /etc/nginx/sites-available/corridadasfamilias /etc/nginx/sites-enabled/
-sudo nginx -t && sudo systemctl reload nginx
-```
+## Detalhes técnicos
 
-## 6. DNS + SSL
-
-1. No painel do registrador, criar registros A:
-   - `corridadasfamilias.com.br` → IP da VPS
-   - `www.corridadasfamilias.com.br` → IP da VPS
-2. Aguardar propagação (5–30 min).
-3. Emitir SSL:
-```bash
-sudo apt install -y certbot python3-certbot-nginx
-sudo certbot --nginx -d corridadasfamilias.com.br -d www.corridadasfamilias.com.br
-```
-Renovação automática já vem configurada via systemd timer.
-
-## 7. Atualizações futuras (deploy manual)
-
-```bash
-ssh deploy@<ip>
-cd ~/app
-git pull
-npm ci
-npm run build:node
-pm2 reload corridadasfamilias
-```
-
-## 8. Variáveis de ambiente necessárias
-
-- `NODE_ENV=production`
-- `PORT=3000`
-- `PUBLIC_SITE_URL=https://www.corridadasfamilias.com.br`
-- `VITE_PUBLIC_SITE_URL=https://www.corridadasfamilias.com.br`
-- `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`, `VITE_SUPABASE_PROJECT_ID`
-- `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SERVICE_ROLE_KEY`
-- `INFINITEPAY_HANDLE`, `INFINITEPAY_WEBHOOK_SECRET` (se aplicável)
-- `LOVABLE_API_KEY` (se usar Lovable AI)
-
-## 9. Riscos e observações
-
-- **Adapter Node do TanStack Start:** o template foi gerado para Worker. O entry Node (`src/server.node.ts`) precisa ser validado após o primeiro build — se o `vite-tanstack-config` não emitir bundle Node, troco para `vite preview` (ainda Node, sem Worker) como fallback de start.
-- **Preview Lovable:** todas as mudanças preservam o build padrão. O preview continua usando Cloudflare.
-- **Edge Function `infinitepay-webhook`:** posso removê-la após confirmar que o webhook em `/api/webhooks/infinitepay` funciona em produção.
-- **Backup do `.env`:** guarde fora da VPS — ele contém o `SUPABASE_SERVICE_ROLE_KEY`.
-- **Recursos:** CX33 (4 vCPU / 8 GB) é folgado; PM2 cluster com 2 instâncias deixa CPU sobrando para picos.
-
-Após aprovação, implemento os ajustes em código (vite.config, server.node.ts, package.json, ecosystem, .env example, DEPLOY-VPS.md) em uma única iteração e te entrego o repositório pronto para `git push` → `git pull` na VPS.
+- Nenhuma alteração de build/runtime (apenas docs, gitignore e um check de boot).
+- Sem nova dependência npm.
+- `src/lib/env-check.server.ts` segue a convenção `*.server.ts` (excluído do bundle do client automaticamente).
+- `src/start.ts` já é server-only e roda antes de qualquer request.
