@@ -113,17 +113,22 @@ server {
     listen 80;
     server_name corridadasfamilias.com.br www.corridadasfamilias.com.br;
 
+    root /home/deploy/app/dist/client;
+
     client_max_body_size 20m;
 
     # Cache agressivo para assets versionados
-    location /_build/ {
-        proxy_pass http://127.0.0.1:3000;
-        proxy_set_header Host $host;
+    location /assets/ {
+        try_files $uri @ssr;
         expires 1y;
         add_header Cache-Control "public, immutable";
     }
 
     location / {
+        try_files $uri @ssr;
+    }
+
+    location @ssr {
         proxy_pass http://127.0.0.1:3000;
         proxy_http_version 1.1;
         proxy_set_header Host $host;
