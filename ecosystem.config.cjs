@@ -7,7 +7,7 @@ module.exports = {
   apps: [
     {
       name: "corridadasfamilias",
-      script: "./dist/server/server.js",
+      script: "./server-node.mjs",
       instances: 2, // cluster mode, 2 workers (CX33 has 4 vCPU)
       exec_mode: "cluster",
       max_memory_restart: "1G",
