@@ -150,12 +150,14 @@ sudo systemctl reload nginx
 
 ## 7. DNS
 
-No painel do registrador (Registro.br, GoDaddy, etc.), crie registros A:
+> Este projeto usa **Cloudflare** como DNS. IP da VPS: **`178.104.101.145`**.
 
-| Tipo | Nome | Valor          |
-|------|------|----------------|
-| A    | @    | `<IP-da-VPS>`  |
-| A    | www  | `<IP-da-VPS>`  |
+No painel da Cloudflare → DNS → Records, crie/edite:
+
+| Tipo | Nome | Valor              | Proxy            |
+|------|------|--------------------|--------------------|
+| A    | @    | `178.104.101.145`  | 🟠 ver passo 8     |
+| A    | www  | `178.104.101.145`  | 🟠 ver passo 8     |
 
 Aguarde propagação (5–30 min). Confirme com:
 
@@ -166,17 +168,54 @@ dig +short www.corridadasfamilias.com.br
 
 ---
 
-## 8. SSL com Let's Encrypt
+## 8. SSL com Let's Encrypt (atrás da Cloudflare)
 
-```bash
-sudo apt install -y certbot python3-certbot-nginx
-sudo certbot --nginx \
-  -d corridadasfamilias.com.br \
-  -d www.corridadasfamilias.com.br
-```
+Como o domínio está atrás da Cloudflare, o certbot HTTP-01 só consegue validar
+se o **proxy estiver desligado** (nuvem cinza) durante a emissão.
 
-Aceite redirecionamento HTTP→HTTPS quando perguntado. A renovação automática
-já vem configurada via timer systemd (`systemctl list-timers | grep certbot`).
+**Opção A — recomendada (HTTP-01, simples):**
+
+1. Na Cloudflare, **desligue o proxy** dos dois A records (clique na nuvem
+   laranja → fica cinza / "DNS only"). Aguarde ~1 min para o DNS atualizar.
+2. Emita o certificado na VPS:
+   ```bash
+   sudo apt install -y certbot python3-certbot-nginx
+   sudo certbot --nginx \
+     -d corridadasfamilias.com.br \
+     -d www.corridadasfamilias.com.br
+   ```
+   Aceite redirecionamento HTTP→HTTPS quando perguntado.
+3. (Opcional) Religue o proxy da Cloudflare (nuvem laranja) para ganhar
+   cache/CDN/WAF. Se religar, vá em **SSL/TLS → Overview** no painel da
+   Cloudflare e selecione **Full (strict)** — qualquer outro modo causa loop
+   de redirect ou erro de certificado.
+4. Renovação automática já vem configurada via timer systemd
+   (`systemctl list-timers | grep certbot`). Para a renovação funcionar com
+   proxy ligado, ative o desafio HTTP-01 via `.well-known` na Cloudflare
+   (Rules → Page Rules: `*.corridadasfamilias.com.br/.well-known/*` → Cache
+   Level: Bypass) **ou** use a Opção B abaixo.
+
+**Opção B — DNS-01 via API da Cloudflare (sem desligar proxy):**
+
+1. No painel Cloudflare → My Profile → API Tokens → "Create Token", template
+   **Edit zone DNS**, escopo apenas `corridadasfamilias.com.br`.
+2. Na VPS:
+   ```bash
+   sudo apt install -y certbot python3-certbot-dns-cloudflare
+   sudo mkdir -p /etc/letsencrypt
+   echo "dns_cloudflare_api_token = SEU_TOKEN_AQUI" | \
+     sudo tee /etc/letsencrypt/cloudflare.ini
+   sudo chmod 600 /etc/letsencrypt/cloudflare.ini
+   sudo certbot certonly --dns-cloudflare \
+     --dns-cloudflare-credentials /etc/letsencrypt/cloudflare.ini \
+     -d corridadasfamilias.com.br -d www.corridadasfamilias.com.br
+   ```
+3. Depois ajuste seu site Nginx para apontar `ssl_certificate` /
+   `ssl_certificate_key` para `/etc/letsencrypt/live/corridadasfamilias.com.br/`
+   e adicione `listen 443 ssl;` (o `certbot --nginx` da Opção A faz isso
+   automaticamente; aqui é manual).
+
+
 
 ---
 
