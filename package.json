@@ -8,7 +8,7 @@
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "build:node": "TARGET=node vite build",
-    "start:node": "node .output/server/index.mjs",
+    "start:node": "node dist/server/server.js",
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write ."
