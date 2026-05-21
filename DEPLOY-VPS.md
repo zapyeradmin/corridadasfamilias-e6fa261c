@@ -47,7 +47,7 @@ A partir daqui faça SSH como `deploy@<ip>`.
 
 ```bash
 cd ~
-git clone https://github.com/<seu-usuario>/corridadasfamilias.git app
+git clone https://github.com/zapyeradmin/corridadasfamilias-e6fa261c.git app
 cd app
 npm ci
 ```
