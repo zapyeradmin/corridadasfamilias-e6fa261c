@@ -57,14 +57,14 @@ export function verifyServerEnv(): void {
 
   if (missingRequired.length > 0) {
     const message =
-      "[env-check] FALHA — variáveis de ambiente obrigatórias ausentes:\n" +
+      "[env-check] AVISO — variáveis de ambiente obrigatórias ausentes no boot:\n" +
       missingRequired.map((s) => `  - ${s.name}  (${s.usedFor})`).join("\n") +
-      "\n\nPreencha o arquivo .env (use .env.production.example como referência) e reinicie a app.";
+      "\n\nO erro real aparecerá no ponto de uso (ex.: Supabase client). " +
+      "Em deploy self-hosted, preencha .env e reinicie.";
     console.error(message);
-    // NODE_ENV=production na VPS → derruba o processo para PM2 reiniciar e o erro virar visível.
-    if (process.env.NODE_ENV === "production") {
-      throw new Error("Missing required environment variables. See logs above.");
-    }
+    // NÃO derrubar o processo: em runtimes serverless (Cloudflare Worker / Lovable Cloud)
+    // process.env só é populado dentro do fetch handler, e um throw aqui mata o módulo
+    // antes do error handler ser registrado, mascarando o erro real.
   } else {
     console.log("[env-check] OK — todas as variáveis de ambiente obrigatórias estão presentes.");
   }
