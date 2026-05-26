@@ -78,9 +78,9 @@ function Page() {
     (_, i) => i + cards.length + 1,
   );
 
-  const waHref = `https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(
+  const waHref = whatsappHref(
     "Olá! Tenho interesse em patrocinar a II Corrida das Famílias.",
-  )}`;
+  );
 
   return (
     <>
