@@ -1,40 +1,58 @@
-## Diagnóstico
+## Objetivo
 
-O site publicado (`corridadasfamilias.lovable.app`) está retornando 500 no SSR. Logs do Worker mostram dois estágios:
+1. Mostrar 28 espaços (em vez de 24) na seção "Quem apoia a corrida" da home (`/`) e na página `/patrocinadores`, adicionando os placeholders **Patrocinador 25, 26, 27 e 28**.
+2. Garantir que ambas as páginas sejam atualizadas **em tempo real** quando um patrocinador for criado, editado, despublicado ou removido em `/admin/patrocinadores`.
 
-1. Até 13:17 → `Error: Missing required environment variables` (env-check derrubava o processo).
-2. Após 13:17 → `Error: h3 swallowed SSR error` (sem stack trace). Ou seja: o env-check parou de falhar, mas algo dentro do render SSR ainda lança.
+## Situação atual (já mapeada no código)
 
-A causa raiz mais provável é o **`verifyServerEnv()` em `src/start.ts`**, que roda no top-level do módulo e faz `throw new Error(...)` quando `NODE_ENV=production` e qualquer variável "obrigatória" estiver ausente. No Worker da Lovable Cloud, variáveis como `SUPABASE_SERVICE_ROLE_KEY` não ficam em `process.env` no momento da inicialização do módulo — só ficam disponíveis dentro do `fetch()`. Isso faz o módulo do servidor falhar antes mesmo do error handler ser registrado, e o h3 engole sem stack útil.
+- `src/components/home/home-patrocinadores.tsx` e `src/routes/patrocinadores.tsx` **já consomem a mesma fonte de dados** (`getPublishedSponsors`) com a mesma `queryKey: ["sponsors"]`. Ou seja, qualquer invalidação propaga para os dois lugares automaticamente.
+- Ambos os arquivos têm uma constante `const TOTAL = 24` que controla quantos cards/placeholders aparecem.
+- Hoje a atualização só acontece após `staleTime` (5 min) ou refetch manual — não é "em tempo real".
 
-A mesma checagem está correta para a VPS (Node + PM2 + `.env` no disco), onde as variáveis existem no boot. Só na Lovable Cloud é que isso é tóxico.
+## Mudanças propostas
 
-## Plano
+### 1. Aumentar para 28 espaços
 
-### 1. Tornar `verifyServerEnv()` não-fatal
+- Em `src/components/home/home-patrocinadores.tsx`: trocar `const TOTAL = 24` por `const TOTAL = 28`.
+- Em `src/routes/patrocinadores.tsx`: trocar `const TOTAL = 24` por `const TOTAL = 28`.
 
-`src/lib/env-check.server.ts`:
-- Trocar o `throw` em produção por apenas `console.error`. Variáveis ausentes vão aparecer no log; quando o código realmente precisar delas (por ex. supabase admin client), o erro vai estourar no ponto de uso, com stack útil.
-- Manter a listagem de obrigatórias x opcionais só para fins de log.
+Os placeholders "Patrocinador 25/26/27/28" aparecem automaticamente porque a lógica `placeholders` já preenche todo espaço vazio até `TOTAL`. Quando o admin cadastrar novos patrocinadores reais, eles ocuparão esses espaços e os placeholders recuam.
 
-### 2. Blindar o loader da home
+### 2. Sincronização em tempo real (Supabase Realtime)
 
-`src/routes/index.tsx`:
-- O loader já usa `prefetchQuery` (não bloqueia render se falhar), então provavelmente não é a causa direta. Manter.
+Criar um hook compartilhado `src/hooks/use-sponsors-realtime.ts` que:
 
-### 3. Validar
+- Abre um channel Supabase em `postgres_changes` na tabela `public.sponsors` (eventos `INSERT`, `UPDATE`, `DELETE`).
+- A cada evento chama `queryClient.invalidateQueries({ queryKey: ["sponsors"] })`.
+- Faz cleanup do channel no `unmount`.
 
-Após a mudança:
-- Esperar o auto-deploy do backend (mudanças server-side fazem deploy automático).
-- Abrir `https://corridadasfamilias.lovable.app` e confirmar 200.
-- Se ainda 500, ler os logs novamente — agora qualquer erro real vai trazer stack trace (via error-capture + normalizer já instalados em `src/server.ts`).
+Usar esse hook nos três pontos que renderizam patrocinadores para o público:
+
+- `src/components/home/home-patrocinadores.tsx`
+- `src/routes/patrocinadores.tsx`
+- `src/components/site/sponsors-marquee.tsx` (carrossel diamante na home — também se beneficia)
+
+Como todos compartilham `queryKey: ["sponsors"]`, uma única invalidação atualiza os três componentes simultaneamente.
+
+### 3. Habilitar Realtime na tabela `sponsors` (migration)
+
+Por padrão, a tabela `sponsors` não está na publication do Realtime. É preciso uma migration que:
+
+```sql
+ALTER TABLE public.sponsors REPLICA IDENTITY FULL;
+ALTER PUBLICATION supabase_realtime ADD TABLE public.sponsors;
+```
+
+Sem isso, o channel conecta mas nunca recebe eventos. As RLS atuais (`Anyone can view published sponsors`) já permitem que o cliente anônimo receba apenas linhas publicadas — nenhuma mudança de política é necessária.
 
 ## Detalhes técnicos
 
-- O wrapper em `src/server.ts` já tem `consumeLastCapturedError()` + listeners globais (`error`, `unhandledrejection`). Erros agora capturáveis vão imprimir stack.
-- Na VPS, a verificação continua válida: como `.env` é carregado pelo `server-node.mjs` antes de importar o handler, todas as vars estão em `process.env` no boot e o log "OK" aparece.
-- Nenhuma mudança no comportamento de runtime das server functions — elas continuam lendo `process.env.SUPABASE_URL` etc. dentro dos handlers, onde o Worker injeta corretamente.
+- Não há mudança de schema da tabela `sponsors`, apenas configuração de replicação.
+- O hook usa `supabase` do cliente browser (`@/integrations/supabase/client`) — seguro no browser, sem secrets.
+- Mantém o `staleTime` atual como fallback de cache; Realtime só dispara invalidações pontuais.
+- Sem mudanças na UI/estilo dos cards — apenas o número de espaços passa de 24 para 28.
 
-## Arquivos afetados
+## Fora de escopo
 
-- `src/lib/env-check.server.ts` — remover `throw` em produção; manter logs.
+- Não vamos mexer no formulário de admin (`/admin/patrocinadores`) — ele já insere/atualiza via Supabase normalmente, e o Realtime fará o resto.
+- Não vamos alterar tier "diamond" / marquee logic.
