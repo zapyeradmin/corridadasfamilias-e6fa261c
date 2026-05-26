@@ -8,8 +8,8 @@ export const SITE = {
   city: "Serra Talhada/PE",
   location: "Igreja Matriz de Nossa Senhora do Rosário",
   organizer: "ECC — Encontro de Casais com Cristo",
-  whatsapp: "5587981149806",
-  whatsappLabel: "(87) 98114-9806",
+  whatsapp: "5587996289326",
+  whatsappLabel: "(87) 99628-9326",
   email: "corridadasfamiliaseccdorosario@gmail.com",
 } as const;
 
