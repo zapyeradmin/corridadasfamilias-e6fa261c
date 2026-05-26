@@ -1,0 +1,32 @@
+name: Deploy to Hetzner VPS
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: # permite rodar manualmente pelo painel do GitHub
+
+concurrency:
+  group: deploy-vps
+  cancel-in-progress: false # nunca cancela um deploy em andamento
+
+jobs:
+  deploy:
+    name: SSH + deploy.sh
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: 22
+          script_stop: true
+          script: |
+            set -euo pipefail
+            cd ~/app
+            chmod +x deploy.sh
+            ./deploy.sh
