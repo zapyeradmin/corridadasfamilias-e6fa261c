@@ -3,9 +3,9 @@ import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { PageHeader } from "@/components/site/page-shell";
 import { getPublishedSponsors } from "@/lib/public.functions";
-import { SITE } from "@/lib/site-config";
 import { LOGO_ASSETS, slugFromUrl, FALLBACK_DIAMOND } from "@/lib/sponsors-assets";
 import { useSponsorsRealtime } from "@/hooks/use-sponsors-realtime";
+import { useSiteContacts } from "@/hooks/use-site-contacts";
 
 export const Route = createFileRoute("/patrocinadores")({
   head: () => ({
