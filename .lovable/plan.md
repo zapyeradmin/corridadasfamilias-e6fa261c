@@ -1,58 +1,52 @@
 ## Objetivo
 
-1. Mostrar 28 espaços (em vez de 24) na seção "Quem apoia a corrida" da home (`/`) e na página `/patrocinadores`, adicionando os placeholders **Patrocinador 25, 26, 27 e 28**.
-2. Garantir que ambas as páginas sejam atualizadas **em tempo real** quando um patrocinador for criado, editado, despublicado ou removido em `/admin/patrocinadores`.
+Permitir que o admin gerencie o vídeo de lançamento da seção "Inscrições abertas" da home (`/`) pela aba "Configurações de Contatos" em `/admin/configuracoes` — URL do YouTube + capa (jpg/png/webp ≤3MB) — persistindo no Supabase e refletindo automaticamente no frontend.
 
-## Situação atual (já mapeada no código)
+## Banco de dados (migration)
 
-- `src/components/home/home-patrocinadores.tsx` e `src/routes/patrocinadores.tsx` **já consomem a mesma fonte de dados** (`getPublishedSponsors`) com a mesma `queryKey: ["sponsors"]`. Ou seja, qualquer invalidação propaga para os dois lugares automaticamente.
-- Ambos os arquivos têm uma constante `const TOTAL = 24` que controla quantos cards/placeholders aparecem.
-- Hoje a atualização só acontece após `staleTime` (5 min) ou refetch manual — não é "em tempo real".
+1. Novo bucket público `home-video` no Supabase Storage com policies (leitura pública, upload/update/delete só para admins via `has_role`).
+2. Nova chave `home_video` em `public.settings` (jsonb), `is_public = true`, com formato:
+   ```json
+   { "youtube_url": "https://www.youtube.com/watch?v=...", "cover_url": "https://.../home-video/...webp" }
+   ```
+   (Sem alteração de schema da tabela `settings` — só um upsert.)
 
-## Mudanças propostas
+## Server functions (`src/lib/`)
 
-### 1. Aumentar para 28 espaços
+- `public.functions.ts`
+  - `getHomeVideo()` — lê `settings` onde `key = 'home_video'`, retorna `{ youtube_url, cover_url }` (strings, podem ser vazias).
+- `admin.functions.ts`
+  - `updateHomeVideo({ youtube_url, cover_url })` — admin only; valida URL do YouTube (regex aceita `youtube.com/watch?v=`, `youtu.be/`, `youtube.com/embed/`, `shorts/`); upsert em `settings` com `is_public = true`; grava em `access_logs`.
+  - `uploadHomeVideoCover({ filename, contentType, dataBase64 })` — admin only; aceita `image/jpeg|png|webp`; rejeita >3MB; envia para bucket `home-video`; retorna `publicUrl`.
 
-- Em `src/components/home/home-patrocinadores.tsx`: trocar `const TOTAL = 24` por `const TOTAL = 28`.
-- Em `src/routes/patrocinadores.tsx`: trocar `const TOTAL = 24` por `const TOTAL = 28`.
+## Frontend
 
-Os placeholders "Patrocinador 25/26/27/28" aparecem automaticamente porque a lógica `placeholders` já preenche todo espaço vazio até `TOTAL`. Quando o admin cadastrar novos patrocinadores reais, eles ocuparão esses espaços e os placeholders recuam.
+- `src/lib/youtube.ts` (novo) — `parseYoutubeId(url): string | null` cobrindo watch, youtu.be, embed, shorts.
+- `src/components/admin/configuracoes/tab-contatos.tsx`
+  - Nova seção "Vídeo de Lançamento (Home)" abaixo dos contatos, com:
+    - Campo "Adicionar URL do YouTube" (texto, com preview do ID detectado).
+    - Campo "Capa do Vídeo (JPG, PNG ou WEBP, até 3MB)" — `<input type="file">` que faz upload via `uploadHomeVideoCover` e mostra preview.
+    - Botão "Salvar Vídeo" chamando `updateHomeVideo`, invalida `["public","home-video"]`.
+  - Hook `useQuery(["public","home-video"], getHomeVideo)` para popular os campos.
+- `src/components/home/home-cta-video.tsx`
+  - Consome `getHomeVideo` via `useQuery(["public","home-video"], …, { staleTime: 60_000 })`.
+  - URL do iframe = `https://www.youtube.com/embed/{parseYoutubeId(youtube_url) || "TE_hIXiN544"}?autoplay=1&rel=0`.
+  - Imagem da capa = `cover_url` quando preenchida; senão fallback `@/assets/capa-video-lancamento.jpg` atual.
+  - Mantém o comportamento de play on-click (sem mudar UI).
 
-### 2. Sincronização em tempo real (Supabase Realtime)
+## Sincronização
 
-Criar um hook compartilhado `src/hooks/use-sponsors-realtime.ts` que:
+- Tanto a home quanto a tab Contatos usam a mesma queryKey `["public","home-video"]`. O `onSuccess` do save invalida a query → home atualiza sem reload (e em outras abas/dispositivos quando a query revalida, igual ao padrão já usado para `site_contacts`).
 
-- Abre um channel Supabase em `postgres_changes` na tabela `public.sponsors` (eventos `INSERT`, `UPDATE`, `DELETE`).
-- A cada evento chama `queryClient.invalidateQueries({ queryKey: ["sponsors"] })`.
-- Faz cleanup do channel no `unmount`.
+## Validações / segurança
 
-Usar esse hook nos três pontos que renderizam patrocinadores para o público:
-
-- `src/components/home/home-patrocinadores.tsx`
-- `src/routes/patrocinadores.tsx`
-- `src/components/site/sponsors-marquee.tsx` (carrossel diamante na home — também se beneficia)
-
-Como todos compartilham `queryKey: ["sponsors"]`, uma única invalidação atualiza os três componentes simultaneamente.
-
-### 3. Habilitar Realtime na tabela `sponsors` (migration)
-
-Por padrão, a tabela `sponsors` não está na publication do Realtime. É preciso uma migration que:
-
-```sql
-ALTER TABLE public.sponsors REPLICA IDENTITY FULL;
-ALTER PUBLICATION supabase_realtime ADD TABLE public.sponsors;
-```
-
-Sem isso, o channel conecta mas nunca recebe eventos. As RLS atuais (`Anyone can view published sponsors`) já permitem que o cliente anônimo receba apenas linhas publicadas — nenhuma mudança de política é necessária.
-
-## Detalhes técnicos
-
-- Não há mudança de schema da tabela `sponsors`, apenas configuração de replicação.
-- O hook usa `supabase` do cliente browser (`@/integrations/supabase/client`) — seguro no browser, sem secrets.
-- Mantém o `staleTime` atual como fallback de cache; Realtime só dispara invalidações pontuais.
-- Sem mudanças na UI/estilo dos cards — apenas o número de espaços passa de 24 para 28.
+- YouTube URL: regex no servidor; rejeita string vazia com mensagem clara (admin pode limpar enviando `youtube_url: ""` para voltar ao fallback).
+- Upload: limite 3MB (`bytes.byteLength > 3 * 1024 * 1024`), contentType allowlist, nome de arquivo saneado (mesmo padrão de `uploadSponsorLogo`).
+- RLS já cobre `settings` (admin update, public read quando `is_public`). Bucket novo recebe policies equivalentes.
 
 ## Fora de escopo
 
-- Não vamos mexer no formulário de admin (`/admin/patrocinadores`) — ele já insere/atualiza via Supabase normalmente, e o Realtime fará o resto.
-- Não vamos alterar tier "diamond" / marquee logic.
+- Não muda o layout/copy da seção "Inscrições abertas".
+- Não adiciona realtime na tabela `settings` — a invalidação de query no save já cobre o cenário pedido.
+
+Confirma para implementar?
