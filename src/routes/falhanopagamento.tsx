@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { PageHeader } from "@/components/site/page-shell";
 import { SITE } from "@/lib/site-config";
+import { useSiteContacts } from "@/hooks/use-site-contacts";
 
 export const Route = createFileRoute("/falhanopagamento")({
   validateSearch: (s: Record<string, unknown>) => ({
@@ -66,12 +67,12 @@ const PASSOS = [
 
 function Page() {
   const { protocol, reason } = Route.useSearch();
+  const { whatsappHref, whatsappLabel } = useSiteContacts();
 
-  const whatsappMsg = encodeURIComponent(
-    protocol
-      ? `Olá! Tive um problema ao concluir o pagamento da minha inscrição na II Corrida das Famílias. Protocolo: ${protocol}`
-      : "Olá! Tive um problema ao concluir o pagamento da minha inscrição na II Corrida das Famílias.",
-  );
+  const waText = protocol
+    ? `Olá! Tive um problema ao concluir o pagamento da minha inscrição na II Corrida das Famílias. Protocolo: ${protocol}`
+    : "Olá! Tive um problema ao concluir o pagamento da minha inscrição na II Corrida das Famílias.";
+  const waUrl = whatsappHref(waText);
 
   return (
     <>
@@ -177,7 +178,7 @@ function Page() {
               <RefreshCw className="h-4 w-4" /> Tentar novamente
             </Link>
             <a
-              href={`https://wa.me/${SITE.whatsapp}?text=${whatsappMsg}`}
+              href={waUrl}
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center gap-2 rounded-full bg-[#25D366] px-6 py-3 text-sm font-extrabold uppercase tracking-wide text-white transition hover:brightness-110"
@@ -205,12 +206,12 @@ function Page() {
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3">
             <a
-              href={`https://wa.me/${SITE.whatsapp}?text=${whatsappMsg}`}
+              href={waUrl}
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center gap-2 rounded-full bg-white/10 px-5 py-2.5 text-sm font-semibold text-white ring-1 ring-white/20 backdrop-blur transition hover:bg-white/15"
             >
-              <MessageCircle className="h-4 w-4" /> WhatsApp {SITE.whatsappLabel}
+              <MessageCircle className="h-4 w-4" /> WhatsApp {whatsappLabel}
             </a>
             <a
               href={`mailto:${SITE.email}`}

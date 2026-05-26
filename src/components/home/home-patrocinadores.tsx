@@ -4,8 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getPublishedSponsors } from "@/lib/public.functions";
 import { LOGO_ASSETS, slugFromUrl, FALLBACK_DIAMOND } from "@/lib/sponsors-assets";
-import { SITE } from "@/lib/site-config";
 import { useSponsorsRealtime } from "@/hooks/use-sponsors-realtime";
+import { useSiteContacts } from "@/hooks/use-site-contacts";
 
 const TOTAL = 28;
 
@@ -18,6 +18,7 @@ type CardItem = {
 
 export function HomePatrocinadores() {
   useSponsorsRealtime();
+  const { whatsappHref } = useSiteContacts();
   const fetchSponsors = useServerFn(getPublishedSponsors);
   const { data } = useQuery({
     queryKey: ["sponsors"],
@@ -62,10 +63,9 @@ export function HomePatrocinadores() {
     (_, i) => i + cards.length + 1,
   );
 
-  const waMsg = encodeURIComponent(
+  const waHref = whatsappHref(
     "Olá! Tenho interesse em patrocinar a II Corrida das Famílias.",
   );
-  const waHref = `https://wa.me/${SITE.whatsapp}?text=${waMsg}`;
 
   return (
     <section className="bg-[color:var(--color-brand-orange)]">

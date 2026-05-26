@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { PageHeader } from "@/components/site/page-shell";
 import { SITE } from "@/lib/site-config";
+import { useSiteContacts } from "@/hooks/use-site-contacts";
 
 export const Route = createFileRoute("/sucesso")({
   validateSearch: (s: Record<string, unknown>) => ({
@@ -60,12 +61,11 @@ const PROXIMOS_PASSOS = [
 
 function Page() {
   const { protocol, email } = Route.useSearch();
+  const { whatsappHref } = useSiteContacts();
 
-  const whatsappMsg = encodeURIComponent(
-    protocol
-      ? `Olá! Acabei de confirmar o pagamento da minha inscrição na II Corrida das Famílias. Protocolo: ${protocol}`
-      : "Olá! Acabei de confirmar o pagamento da minha inscrição na II Corrida das Famílias.",
-  );
+  const waText = protocol
+    ? `Olá! Acabei de confirmar o pagamento da minha inscrição na II Corrida das Famílias. Protocolo: ${protocol}`
+    : "Olá! Acabei de confirmar o pagamento da minha inscrição na II Corrida das Famílias.";
 
   return (
     <>
@@ -161,7 +161,7 @@ function Page() {
 
           <div className="mt-12 flex flex-wrap justify-center gap-3">
             <a
-              href={`https://wa.me/${SITE.whatsapp}?text=${whatsappMsg}`}
+              href={whatsappHref(waText)}
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center gap-2 rounded-full bg-[#25D366] px-6 py-3 text-sm font-extrabold uppercase tracking-wide text-white shadow-orange transition hover:brightness-110"

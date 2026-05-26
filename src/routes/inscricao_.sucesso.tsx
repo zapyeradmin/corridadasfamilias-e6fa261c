@@ -5,7 +5,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { CheckCircle2, CreditCard, Loader2, MessageCircle, QrCode } from "lucide-react";
 import { ContentSection, PageHeader } from "@/components/site/page-shell";
-import { SITE } from "@/lib/site-config";
+import { useSiteContacts } from "@/hooks/use-site-contacts";
 import { getRegistrationByProtocol } from "@/lib/registrations.functions";
 import { getCheckoutUrlForRegistration } from "@/lib/infinitepay.functions";
 import { formatBRL } from "@/lib/cpf";
@@ -29,6 +29,7 @@ export const Route = createFileRoute("/inscricao_/sucesso")({
 
 function Page() {
   const { protocol } = Route.useSearch();
+  const { whatsappHref } = useSiteContacts();
   const fetchReg = useServerFn(getRegistrationByProtocol);
   const fetchCheckout = useServerFn(getCheckoutUrlForRegistration);
   const [redirecting, setRedirecting] = useState(false);
@@ -144,9 +145,9 @@ function Page() {
                 {redirecting ? "Abrindo checkout..." : "Realizar pagamento"}
               </button>
               <a
-                href={`https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(
+                href={whatsappHref(
                   `Olá! Preciso de ajuda com o pagamento da minha inscrição. Protocolo: ${protocol}`,
-                )}`}
+                )}
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-[color:var(--color-brand-purple-text)] underline-offset-4 hover:underline"
