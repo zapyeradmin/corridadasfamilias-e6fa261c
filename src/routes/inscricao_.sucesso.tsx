@@ -145,9 +145,9 @@ function Page() {
                 {redirecting ? "Abrindo checkout..." : "Realizar pagamento"}
               </button>
               <a
-                href={`https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(
+                href={whatsappHref(
                   `Olá! Preciso de ajuda com o pagamento da minha inscrição. Protocolo: ${protocol}`,
-                )}`}
+                )}
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-[color:var(--color-brand-purple-text)] underline-offset-4 hover:underline"
