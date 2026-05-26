@@ -155,6 +155,23 @@ export const getSiteContacts = createServerFn({ method: "GET" }).handler(async (
   return contacts;
 });
 
+export type HomeVideo = { youtube_url: string; cover_url: string };
+
+export const getHomeVideo = createServerFn({ method: "GET" }).handler(async () => {
+  const supabase = publicClient();
+  const { data } = await supabase
+    .from("settings")
+    .select("value")
+    .eq("key", "home_video")
+    .maybeSingle();
+  const v = (data?.value ?? null) as Record<string, unknown> | null;
+  const out: HomeVideo = {
+    youtube_url: typeof v?.youtube_url === "string" ? v.youtube_url : "",
+    cover_url: typeof v?.cover_url === "string" ? v.cover_url : "",
+  };
+  return out;
+});
+
 /**
  * Devolve a URL pública canônica do site, resolvida no servidor.
  * Lê de PUBLIC_SITE_URL (Node/Hostinger) ou VITE_PUBLIC_SITE_URL (build).

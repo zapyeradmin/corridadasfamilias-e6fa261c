@@ -620,6 +620,80 @@ export const updateSiteContacts = createServerFn({ method: "POST" })
   });
 
 // ─────────────────────────────────────────────────────────
+// Vídeo de Lançamento (Home) — `home_video` setting
+// ─────────────────────────────────────────────────────────
+
+const homeVideoSchema = z.object({
+  youtube_url: z
+    .string()
+    .trim()
+    .max(500)
+    .refine(
+      (v) => v === "" || /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be|youtube-nocookie\.com)\//i.test(v),
+      "Informe uma URL válida do YouTube",
+    ),
+  cover_url: z.string().trim().max(1000).url("URL inválida").or(z.literal("")),
+});
+
+export const updateHomeVideo = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => homeVideoSchema.parse(input))
+  .handler(async ({ context, data }) => {
+    const admin = await assertAdmin(context.supabase, context.userId, context.claims as { email?: string });
+    const value = { youtube_url: data.youtube_url, cover_url: data.cover_url };
+    const { error } = await context.supabase.from("settings").upsert(
+      { key: "home_video", value: value as never, is_public: true, updated_at: new Date().toISOString() },
+      { onConflict: "key" },
+    );
+    if (error) throw new Error(error.message);
+    await logAction(context.supabase, {
+      actorId: admin.userId,
+      actorEmail: admin.email,
+      action: "home_video.update",
+      entityType: "settings",
+      entityId: "home_video",
+      details: value,
+    });
+    return { ok: true };
+  });
+
+export const uploadHomeVideoCover = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z
+      .object({
+        filename: z.string().min(1).max(200),
+        contentType: z.enum(["image/png", "image/webp", "image/jpeg", "image/jpg"]),
+        dataBase64: z.string().min(10),
+      })
+      .parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    await assertAdmin(context.supabase, context.userId, context.claims as { email?: string });
+    const bytes = Buffer.from(data.dataBase64, "base64");
+    if (bytes.byteLength > 3 * 1024 * 1024) {
+      throw new Error("Arquivo excede 3 MB.");
+    }
+    const ext = data.contentType === "image/png" ? "png" : data.contentType === "image/webp" ? "webp" : "jpg";
+    const safeBase = data.filename
+      .replace(/\.[a-zA-Z0-9]+$/, "")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .slice(0, 60) || "capa";
+    const path = `${safeBase}-${Date.now()}.${ext}`;
+    const ct = data.contentType === "image/jpg" ? "image/jpeg" : data.contentType;
+    const { error } = await supabaseAdmin.storage
+      .from("home-video")
+      .upload(path, bytes, { contentType: ct, upsert: false });
+    if (error) throw new Error(error.message);
+    const { data: pub } = supabaseAdmin.storage.from("home-video").getPublicUrl(path);
+    return { publicUrl: pub.publicUrl, path };
+  });
+
+
+
+// ─────────────────────────────────────────────────────────
 // Gerenciamento de usuários (Supabase Auth + user_roles)
 // ─────────────────────────────────────────────────────────
 
