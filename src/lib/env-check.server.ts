@@ -20,7 +20,9 @@ const SPEC: EnvSpec[] = [
   { name: "VITE_SUPABASE_PUBLISHABLE_KEY", required: true, usedFor: "Supabase client (browser)" },
 
   // URL pública — usada para montar redirect_url do checkout InfinitePay.
-  { name: "PUBLIC_SITE_URL", required: true, usedFor: "Redirect/webhook callbacks (InfinitePay)" },
+  // Opcional: em runtimes serverless (Lovable Cloud / Cloudflare Worker) podemos
+  // derivar do request. Obrigatória apenas em deploys self-hosted (VPS).
+  { name: "PUBLIC_SITE_URL", required: false, usedFor: "Redirect/webhook callbacks (InfinitePay)" },
 
   // Opcionais, mas avisamos se faltarem.
   { name: "INFINITEPAY_WEBHOOK_SECRET", required: false, usedFor: "Verificação da assinatura do webhook InfinitePay" },
