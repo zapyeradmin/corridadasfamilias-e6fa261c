@@ -63,10 +63,9 @@ export function HomePatrocinadores() {
     (_, i) => i + cards.length + 1,
   );
 
-  const waMsg = encodeURIComponent(
+  const waHref = whatsappHref(
     "Olá! Tenho interesse em patrocinar a II Corrida das Famílias.",
   );
-  const waHref = `https://wa.me/${SITE.whatsapp}?text=${waMsg}`;
 
   return (
     <section className="bg-[color:var(--color-brand-orange)]">
