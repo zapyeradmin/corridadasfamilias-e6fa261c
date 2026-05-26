@@ -61,12 +61,11 @@ const PROXIMOS_PASSOS = [
 
 function Page() {
   const { protocol, email } = Route.useSearch();
+  const { whatsappHref } = useSiteContacts();
 
-  const whatsappMsg = encodeURIComponent(
-    protocol
-      ? `Olá! Acabei de confirmar o pagamento da minha inscrição na II Corrida das Famílias. Protocolo: ${protocol}`
-      : "Olá! Acabei de confirmar o pagamento da minha inscrição na II Corrida das Famílias.",
-  );
+  const waText = protocol
+    ? `Olá! Acabei de confirmar o pagamento da minha inscrição na II Corrida das Famílias. Protocolo: ${protocol}`
+    : "Olá! Acabei de confirmar o pagamento da minha inscrição na II Corrida das Famílias.";
 
   return (
     <>
