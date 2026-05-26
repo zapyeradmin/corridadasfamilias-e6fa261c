@@ -178,7 +178,7 @@ function Page() {
               <RefreshCw className="h-4 w-4" /> Tentar novamente
             </Link>
             <a
-              href={`https://wa.me/${SITE.whatsapp}?text=${whatsappMsg}`}
+              href={waUrl}
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center gap-2 rounded-full bg-[#25D366] px-6 py-3 text-sm font-extrabold uppercase tracking-wide text-white transition hover:brightness-110"
