@@ -5,7 +5,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { CheckCircle2, CreditCard, Loader2, MessageCircle, QrCode } from "lucide-react";
 import { ContentSection, PageHeader } from "@/components/site/page-shell";
-import { SITE } from "@/lib/site-config";
+import { useSiteContacts } from "@/hooks/use-site-contacts";
 import { getRegistrationByProtocol } from "@/lib/registrations.functions";
 import { getCheckoutUrlForRegistration } from "@/lib/infinitepay.functions";
 import { formatBRL } from "@/lib/cpf";
