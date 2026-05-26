@@ -4,8 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getPublishedSponsors } from "@/lib/public.functions";
 import { LOGO_ASSETS, slugFromUrl, FALLBACK_DIAMOND } from "@/lib/sponsors-assets";
-import { SITE } from "@/lib/site-config";
 import { useSponsorsRealtime } from "@/hooks/use-sponsors-realtime";
+import { useSiteContacts } from "@/hooks/use-site-contacts";
 
 const TOTAL = 28;
 
