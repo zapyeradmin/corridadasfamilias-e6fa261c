@@ -12,8 +12,9 @@ export function useSponsorsRealtime() {
   const queryClient = useQueryClient();
 
   useEffect(() => {
+    const channelName = `sponsors-changes-${Math.random().toString(36).slice(2)}`;
     const channel = supabase
-      .channel("public:sponsors")
+      .channel(channelName)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "sponsors" },
