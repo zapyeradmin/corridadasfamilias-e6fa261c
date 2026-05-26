@@ -29,6 +29,7 @@ export const Route = createFileRoute("/inscricao_/sucesso")({
 
 function Page() {
   const { protocol } = Route.useSearch();
+  const { whatsappHref } = useSiteContacts();
   const fetchReg = useServerFn(getRegistrationByProtocol);
   const fetchCheckout = useServerFn(getCheckoutUrlForRegistration);
   const [redirecting, setRedirecting] = useState(false);
