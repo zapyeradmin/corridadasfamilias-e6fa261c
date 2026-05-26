@@ -161,7 +161,7 @@ function Page() {
 
           <div className="mt-12 flex flex-wrap justify-center gap-3">
             <a
-              href={`https://wa.me/${SITE.whatsapp}?text=${whatsappMsg}`}
+              href={whatsappHref(waText)}
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center gap-2 rounded-full bg-[#25D366] px-6 py-3 text-sm font-extrabold uppercase tracking-wide text-white shadow-orange transition hover:brightness-110"
