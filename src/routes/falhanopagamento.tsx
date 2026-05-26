@@ -67,12 +67,12 @@ const PASSOS = [
 
 function Page() {
   const { protocol, reason } = Route.useSearch();
+  const { whatsappHref, whatsappLabel } = useSiteContacts();
 
-  const whatsappMsg = encodeURIComponent(
-    protocol
-      ? `Olá! Tive um problema ao concluir o pagamento da minha inscrição na II Corrida das Famílias. Protocolo: ${protocol}`
-      : "Olá! Tive um problema ao concluir o pagamento da minha inscrição na II Corrida das Famílias.",
-  );
+  const waText = protocol
+    ? `Olá! Tive um problema ao concluir o pagamento da minha inscrição na II Corrida das Famílias. Protocolo: ${protocol}`
+    : "Olá! Tive um problema ao concluir o pagamento da minha inscrição na II Corrida das Famílias.";
+  const waUrl = whatsappHref(waText);
 
   return (
     <>
