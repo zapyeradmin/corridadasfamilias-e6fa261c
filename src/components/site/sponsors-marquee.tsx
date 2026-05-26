@@ -8,10 +8,12 @@ import {
   slugFromUrl,
   FALLBACK_DIAMOND,
 } from "@/lib/sponsors-assets";
+import { useSponsorsRealtime } from "@/hooks/use-sponsors-realtime";
 
 const FALLBACK = FALLBACK_DIAMOND;
 
 export function SponsorsMarquee() {
+  useSponsorsRealtime();
   const fetchSponsors = useServerFn(getPublishedSponsors);
   const { data } = useQuery({
     queryKey: ["sponsors"],

@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/site/page-shell";
 import { getPublishedSponsors } from "@/lib/public.functions";
 import { SITE } from "@/lib/site-config";
 import { LOGO_ASSETS, slugFromUrl, FALLBACK_DIAMOND } from "@/lib/sponsors-assets";
+import { useSponsorsRealtime } from "@/hooks/use-sponsors-realtime";
 
 export const Route = createFileRoute("/patrocinadores")({
   head: () => ({
@@ -26,7 +27,7 @@ export const Route = createFileRoute("/patrocinadores")({
   component: Page,
 });
 
-const TOTAL = 24;
+const TOTAL = 28;
 
 type CardItem = {
   id: string;
@@ -36,6 +37,7 @@ type CardItem = {
 };
 
 function Page() {
+  useSponsorsRealtime();
   const fetchSponsors = useServerFn(getPublishedSponsors);
   const { data: sponsors } = useQuery({
     queryKey: ["sponsors"],
