@@ -18,6 +18,7 @@ type CardItem = {
 
 export function HomePatrocinadores() {
   useSponsorsRealtime();
+  const { whatsappHref } = useSiteContacts();
   const fetchSponsors = useServerFn(getPublishedSponsors);
   const { data } = useQuery({
     queryKey: ["sponsors"],
