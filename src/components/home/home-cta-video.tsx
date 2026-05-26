@@ -1,10 +1,25 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { ChevronRight, Play } from "lucide-react";
 import capaVideoLancamento from "@/assets/capa-video-lancamento.jpg?w=1280&quality=75&format=webp";
+import { getHomeVideo } from "@/lib/public.functions";
+import { parseYoutubeId } from "@/lib/youtube";
+
+const FALLBACK_VIDEO_ID = "TE_hIXiN544";
 
 export function HomeCtaVideo() {
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+  const fetchHomeVideo = useServerFn(getHomeVideo);
+  const { data } = useQuery({
+    queryKey: ["public", "home-video"],
+    queryFn: () => fetchHomeVideo(),
+    staleTime: 60 * 1000,
+  });
+
+  const videoId = parseYoutubeId(data?.youtube_url) ?? FALLBACK_VIDEO_ID;
+  const coverUrl = data?.cover_url && data.cover_url.length > 0 ? data.cover_url : capaVideoLancamento;
 
   return (
     <section className="bg-gradient-orange text-white">
@@ -21,7 +36,7 @@ export function HomeCtaVideo() {
         <div className="relative w-full max-w-[900px] overflow-hidden rounded-3xl border border-white/20 shadow-premium aspect-video bg-black">
           {isVideoPlaying ? (
             <iframe
-              src="https://www.youtube.com/embed/TE_hIXiN544?autoplay=1&rel=0"
+              src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`}
               title="II Corrida das Famílias — Vídeo de Lançamento"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
@@ -35,7 +50,7 @@ export function HomeCtaVideo() {
               className="group absolute inset-0 h-full w-full"
             >
               <img
-                src={capaVideoLancamento}
+                src={coverUrl}
                 alt="Capa do vídeo de lançamento da II Corrida das Famílias"
                 loading="lazy"
                 decoding="async"
