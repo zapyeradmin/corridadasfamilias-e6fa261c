@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { PageHeader } from "@/components/site/page-shell";
 import { SITE } from "@/lib/site-config";
+import { useSiteContacts } from "@/hooks/use-site-contacts";
 
 export const Route = createFileRoute("/falhanopagamento")({
   validateSearch: (s: Record<string, unknown>) => ({
