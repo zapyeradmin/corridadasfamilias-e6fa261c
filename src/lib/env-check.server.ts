@@ -35,8 +35,16 @@ export function verifyServerEnv(): void {
   if (didRun) return;
   didRun = true;
 
-  // Só faz sentido em runtime de servidor Node. Pula em build/SSR-de-prerender.
-  if (typeof process === "undefined" || !process.env) return;
+  // Só faz sentido em runtime de servidor Node. Pula no browser (client) e em build/SSR-de-prerender.
+  if (typeof window !== "undefined" || typeof process === "undefined" || !process.env) return;
+
+  if (typeof process.loadEnvFile === "function") {
+    try {
+      process.loadEnvFile();
+    } catch {
+      // Ignora se o arquivo .env já foi lido ou não existe
+    }
+  }
 
   const missingRequired: EnvSpec[] = [];
   const missingOptional: EnvSpec[] = [];
