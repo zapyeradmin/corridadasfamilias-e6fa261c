@@ -1,41 +1,62 @@
-# Correção: "Nenhum lote de inscrições aberto no momento"
+# Migração para o Supabase próprio (2corridanatalina)
 
-## Diagnóstico
+Objetivo: entregar um pacote SQL completo que recria todo o backend (schema, enums, funções, triggers, RLS, grants, storage, dados) no seu projeto `2corridanatalina`, e apontar o app para ele.
 
-Consultei o banco. A causa **não** é o InfinitePay — os links e o handle `ii-corrida-das-familias` já estão salvos corretamente em `settings` (`checkout_adulto`, `checkout_crianca`, `infinitepay_checkout_adulto_url`, `infinitepay_checkout_crianca_url`) desde a atualização anterior.
+## O que existe hoje no backend atual
 
-O problema real: o único lote ativo tem `ends_at = 2026-07-01 02:59:59+00` e hoje é **2026-07-02**. Como `createRegistration` exige `ends_at >= now()`, nenhum lote é encontrado e a inscrição falha antes mesmo de chegar ao checkout.
+Levantamento feito agora no banco em uso:
 
-```
-Lote 1: is_active=true, starts_at=2026-05-15, ends_at=2026-07-01 ← expirado
-        price_cents=6800 (adulto), child_price_cents=4800 (criança)
-```
+| Tabela | Linhas |
+|---|---|
+| events | 1 |
+| lots | 1 |
+| sponsors | 4 |
+| settings | 5 |
+| registrations / payments / access_logs / infinitepay_events / gallery_items / user_roles | 0 |
 
-## Alteração (apenas dados, nenhum arquivo do repo muda)
+Storage: buckets `gallery`, `sponsors`, `home-video` existem, porém **sem nenhum arquivo** (0 objetos). As logos hoje exibidas no site vêm de arquivos do repositório (`src/assets/sponsors/*`), não do Storage.
 
-Um `UPDATE` em `public.lots` estendendo a validade do Lote 1 até a véspera do evento:
+Consequência prática: a migração de dados é pequena e não há arquivos de Storage para copiar deste backend. Se existirem arquivos no projeto Supabase antigo (`ljquyrrprrwqpmaomwsh`), preciso das credenciais dele para copiar — ver "O que preciso de você".
 
-```sql
-UPDATE public.lots
-SET ends_at = '2026-11-30 23:59:59+00'
-WHERE id = '07842ff0-709d-4b3c-b671-6433522b1ba5';
-```
+## Entrega
 
-(Se preferir outra data de encerramento — por exemplo, uma semana antes do evento — me diga o dia e eu ajusto.)
+### 1. Arquivo `supabase/export/2corridanatalina.sql`
 
-## Commit / Push no GitHub
+Um único script idempotente, para colar no SQL Editor do seu projeto, na ordem:
 
-Como a correção é 100% em dados (linha da tabela `lots`), **não haverá commit no repositório** — o GitHub espelha o código, não o banco. Os links do InfinitePay já foram atualizados anteriormente também via dados, então o repo já está sincronizado com o estado atual.
+1. Enums: `app_role`, `registration_status`, `payment_status`, `gender`, `shirt_size`
+2. Funções: `has_role`, `normalize_cpf`, `set_registration_cpf_normalized`, `update_updated_at_column`
+3. Tabelas: `events`, `lots`, `registrations`, `payments`, `sponsors`, `gallery_items`, `settings`, `access_logs`, `infinitepay_events`, `user_roles` (com defaults, FKs e índices)
+4. GRANTs para `anon`, `authenticated`, `service_role` conforme as policies
+5. `ENABLE ROW LEVEL SECURITY` + todas as policies atuais
+6. Triggers de `updated_at` e de normalização de CPF
+7. Realtime: `sponsors` na publicação `supabase_realtime`
+8. Policies de `storage.objects` para `gallery`, `sponsors`, `home-video`
+9. `INSERT` com todos os dados atuais (evento, lote, 4 patrocinadores, 5 settings incluindo os links InfinitePay da conta `ii-corrida-das-familias`), usando `ON CONFLICT DO NOTHING`
 
-Se quiser forçar um commit vazio só para marcar a data da correção em produção via VPS, me avise que crio.
+### 2. Arquivo `supabase/export/README-migracao.md`
 
-## Validação pós-execução
+Passo a passo: criar os 3 buckets no painel do seu projeto (`gallery`, `sponsors`, `home-video`), rodar o SQL, criar o usuário admin e inserir a linha em `user_roles` com o UUID desse usuário, e conferir a checklist.
 
-1. `SELECT ends_at FROM lots WHERE id = '07842ff0-...'` → nova data.
-2. Abrir `/inscricao`, preencher e enviar → deve redirecionar para `/inscricao/sucesso?protocol=...`.
-3. Clicar em "Realizar pagamento" → abre `https://checkout.infinitepay.io/ii-corrida-das-familias/kr7CYkVtI9` (adulto) ou `.../REUPP20zRX` (criança ≤ 9 anos).
+### 3. Apontar o app para o seu Supabase
 
-## Fora de escopo
+O app passa a ler as credenciais de variáveis de ambiente, com fallback para os valores atuais:
 
-- Nenhuma alteração em `infinitepay.functions.ts`, `registrations.functions.ts` ou em qualquer arquivo do repositório.
-- Não estou tocando em preços, categorias ou regras de idade.
+- Cliente do navegador: `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`
+- Servidor / server functions: `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SERVICE_ROLE_KEY`
+
+Atualizo `.env.example`, `.env.production.example` e `DEPLOY-VPS.md` com as chaves do seu projeto, para você preencher o `.env` da VPS e rodar `./deploy.sh`.
+
+Observação: o Lovable Cloud continua ativado neste projeto (não é possível desativá-lo). No preview da Lovable o app segue usando o backend Cloud; na VPS, com o `.env` preenchido, ele usa o **seu** Supabase.
+
+## Detalhes técnicos
+
+- O SQL é gerado a partir das 19 migrations em `supabase/migrations/` já consolidadas, mais um dump dos dados atuais lido por `psql`, sem `INSERT INTO storage.buckets` (buckets são criados pelo painel).
+- Seeds de `user_roles` do histórico usam um UUID de usuário que não existe no seu projeto; ficam comentados no script, com instrução para substituir pelo UUID do seu admin.
+- Nenhuma alteração de lógica de negócio; apenas configuração de credenciais e geração dos artefatos de migração.
+
+## O que preciso de você
+
+1. **Project URL** e **anon/publishable key** do projeto `2corridanatalina` (podem ser públicas).
+2. **Service role key** — envie apenas quando eu pedir, para eu armazenar como secret; ela não vai para o código.
+3. Se houver arquivos no Storage do projeto Supabase antigo que precisem ser copiados: URL + service role key desse projeto antigo. Caso contrário, os buckets nascem vazios e os uploads são refeitos pelo admin.
