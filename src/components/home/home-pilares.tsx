@@ -1,6 +1,7 @@
 import { useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { Play } from "lucide-react";
+import { ChevronRight, Play } from "lucide-react";
 import { ContentSection } from "@/components/site/page-shell";
 import { parseYoutubeId } from "@/lib/youtube";
 import capaVideoLancamento from "@/assets/capa-video-lancamento.jpg?w=1280&quality=75&format=webp";
@@ -81,6 +82,17 @@ export function HomePilares() {
           )}
         </div>
       </motion.div>
+
+      {/* Botão CTA para Inscrição */}
+      <div className="mt-8 flex justify-center md:mt-10">
+        <Link
+          to="/inscricao"
+          className="group inline-flex items-center justify-center gap-2.5 rounded-full bg-gradient-orange px-8 py-4 text-base font-extrabold uppercase tracking-wide text-white shadow-orange transition duration-300 hover:scale-[1.03] hover:shadow-[0_14px_36px_rgba(247,96,5,0.45)] md:px-10 md:py-4.5 md:text-lg"
+        >
+          INSCREVA-SE AGORA
+          <ChevronRight className="h-5 w-5 transition duration-300 group-hover:translate-x-1" />
+        </Link>
+      </div>
     </ContentSection>
   );
 }
