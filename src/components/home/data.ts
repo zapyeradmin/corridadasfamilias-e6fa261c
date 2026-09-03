@@ -39,12 +39,15 @@ export const TIMELINE = [
     title: "No dia da corrida",
     intro: "No dia 20 de dezembro de 2026, se liguem:",
     schedule: [
-      { time: "05:00", desc: "Concentração no Beach Garden no Shopping Serra Talhada" },
-      { time: "05:30", desc: "Limite da entrega dos Kits e início do Aquecimento Coletivo" },
-      { time: "05:50", desc: "Momento de Preparação para a largada" },
-      { time: "06:00", desc: "Largada Oficial da Corrida" },
-      { time: "09:00", desc: "Início da Cerimônia de Premiação" },
-      { time: "10:00", desc: "Encerramento do Evento e momento de confraternização com Show ao vivo" },
+      { time: "05:00", desc: "Concentração no Beach Garden no Shopping Serra Talhada." },
+      { time: "05:30", desc: "Limite da entrega dos Kits e início do Aquecimento Coletivo." },
+      { time: "05:50", desc: "Momento de Preparação para a largada." },
+      { time: "06:00", desc: "Largada Oficial da Corrida." },
+      { time: "09:00", desc: "Início da Cerimônia de Premiação." },
+      {
+        time: "10:00",
+        desc: "Encerramento do Evento e momento de confraternização com Show ao vivo.",
+      },
     ],
   },
 ] as const;

@@ -30,7 +30,7 @@ export function HomeCtaVideo() {
             Inscrições abertas
           </p>
           <h2 className="heading-section mt-2 text-3xl text-white md:text-5xl">
-            Garanta sua vaga e celebre com a sua família
+            Garanta sua vaga logo
           </h2>
         </div>
 
@@ -75,7 +75,7 @@ export function HomeCtaVideo() {
 
         <Link
           to="/inscricao"
-          className="inline-flex items-center gap-2 rounded-full bg-white px-7 py-4 text-sm font-extrabold uppercase tracking-wide text-[color:var(--color-brand-purple-text)] shadow-premium transition hover:scale-[1.03]"
+          className="inline-flex items-center gap-2 rounded-full bg-white px-7 py-4 text-sm font-extrabold uppercase tracking-wide text-[color:var(--color-brand-orange)] shadow-premium transition hover:scale-[1.03]"
         >
           Quero me inscrever
           <ChevronRight className="h-4 w-4" />

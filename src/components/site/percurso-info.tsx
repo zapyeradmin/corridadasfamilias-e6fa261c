@@ -5,7 +5,7 @@ export const PERCURSO_INFOS: { icon: typeof Flag; titulo: string; texto: string 
     icon: Flag,
     titulo: "Percurso Oficial",
     texto:
-      "Largada e chegada na Igreja Matriz de Nossa Senhora do Rosário na Rua Cornélio Soares, Rua Joca Magalhães, Rua José Alves da Silveira, Avenida Afonso Magalhães (retorno no cruzamento com a Rua Neco Maranhão, próximo à Drogaria DjaFarma), Rua Enock Ignácio de Oliveira, Rua Joaquim Conrado de Lorena e Sá, retorno à Rua Cornélio Soares e chegada na Igreja Matriz de Nossa Senhora do Rosário na Rua Cornélio Soares.",
+      "Largada e chegada no Beach Garden no Shopping Serra Talhada, Rua Joca Magalhães, Rua José Alves da Silveira, Avenida Afonso Magalhães (retorno no cruzamento com a Rua Neco Maranhão, próximo à Drogaria DjaFarma), Rua Enock Ignácio de Oliveira, Rua Joaquim Conrado de Lorena e Sá, retorno à Rua Cornélio Soares e chegada na Igreja Matriz de Nossa Senhora do Rosário na Rua Cornélio Soares.",
   },
   {
     icon: MapPin,
@@ -15,7 +15,7 @@ export const PERCURSO_INFOS: { icon: typeof Flag; titulo: string; texto: string 
   {
     icon: RouteIcon,
     titulo: "Distância",
-    texto: "5km de percurso oficial cronometrado.",
+    texto: "6km de percurso oficial cronometrado.",
   },
   {
     icon: Mountain,
@@ -36,16 +36,14 @@ export function PercursoInfoItem({
 }) {
   return (
     <li className="flex gap-4">
-      <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[color:var(--color-brand-orange)]/10 text-[color:var(--color-brand-orange)]">
-        <Icon className="h-5 w-5" />
+      <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full border-2 border-[#c20505] bg-[#c20505] text-white shadow-[0_4px_14px_rgba(194,5,5,0.25)]">
+        <Icon className="h-5 w-5 text-white" />
       </span>
       <div className="flex-1">
-        <h4 className="text-sm font-extrabold uppercase tracking-[0.18em] text-[color:var(--color-brand-purple-title)]">
+        <h4 className="text-sm font-extrabold uppercase tracking-[0.18em] text-[#c20505]">
           {titulo}
         </h4>
-        <p className="mt-1 text-sm leading-relaxed text-[color:var(--color-brand-purple-text)]/80">
-          {texto}
-        </p>
+        <p className="mt-1 text-sm leading-relaxed text-[#3d0000]">{texto}</p>
       </div>
     </li>
   );

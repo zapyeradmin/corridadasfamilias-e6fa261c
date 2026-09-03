@@ -6,13 +6,13 @@ export function HomePercurso() {
     <section className="bg-white">
       <div className="mx-auto max-w-[1200px] px-5 py-20 md:px-8 md:py-28">
         <div className="text-left">
-          <p className="text-xs font-bold uppercase tracking-[0.35em] text-[color:var(--color-brand-purple-text)]/70">
+          <p className="text-xs font-bold uppercase tracking-[0.35em] text-[color:var(--color-brand-orange)]">
             Percurso completo da corrida
           </p>
-          <h2 className="heading-section mt-3 text-3xl text-[color:var(--color-brand-purple-title)] md:text-5xl">
+          <h2 className="heading-section mt-3 text-3xl text-[#c20505] md:text-5xl">
             Fique por dentro do percurso, para não errar no dia da corrida
           </h2>
-          <p className="mt-5 max-w-3xl text-base leading-relaxed text-[color:var(--color-brand-purple-text)]/80 text-justify md:text-lg">
+          <p className="mt-4 text-base text-justify text-[#3d0000]">
             Explore um trajeto que celebra a beleza da nossa Serra Talhada, passando por pontos
             importantes da cidade. Fiquem atentos ao trajeto:
           </p>
@@ -32,11 +32,11 @@ export function HomePercurso() {
           </div>
 
           <div>
-            <h3 className="text-2xl font-extrabold leading-tight text-[color:var(--color-brand-purple-title)] md:text-3xl">
+            <h3 className="text-2xl font-extrabold leading-tight text-[#c20505] md:text-3xl">
               O trajeto passa pelas principais ruas da Cidade
             </h3>
-            <p className="mt-4 text-base leading-relaxed text-[color:var(--color-brand-purple-text)]/80">
-              O percurso de 5km foi desenhado para ser acessível a todos os níveis de corredores,
+            <p className="mt-4 text-base text-justify text-[#3d0000]">
+              O percurso de 6km foi desenhado para ser acessível a todos os níveis de corredores,
               desde iniciantes até os mais experientes, proporcionando uma experiência inesquecível.
             </p>
 

@@ -18,7 +18,7 @@ export function HomeFaq() {
             Perguntas frequentes (FAQ)
           </h2>
           <p className="mt-5 max-w-3xl text-base leading-relaxed text-white text-justify md:text-lg">
-            Encontre respostas para as dúvidas mais comuns sobre a 2ª Corrida das Famílias.
+            Encontre respostas para as dúvidas mais comuns sobre a 2ª Corrida Natalina.
           </p>
         </div>
 
@@ -27,7 +27,7 @@ export function HomeFaq() {
             <AccordionItem
               key={i}
               value={`faq-${i}`}
-              className="overflow-hidden rounded-2xl border-0 bg-[#431181] px-5 shadow-[0_10px_30px_rgba(22,9,31,0.18)] md:px-7"
+              className="overflow-hidden rounded-2xl border-0 bg-[#c20505] px-5 shadow-[0_10px_30px_rgba(22,9,31,0.18)] md:px-7"
             >
               <AccordionTrigger className="py-5 text-left text-base font-extrabold uppercase tracking-tight text-white hover:no-underline md:text-lg [&>svg]:h-5 [&>svg]:w-5 [&>svg]:text-white">
                 {item.q}
