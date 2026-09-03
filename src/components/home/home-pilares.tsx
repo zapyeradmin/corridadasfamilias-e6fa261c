@@ -56,7 +56,7 @@ export function HomePilares() {
               type="button"
               onClick={() => setIsPlaying(true)}
               aria-label="Reproduzir vídeo da 2ª Edição da Corrida Natalina"
-              className="group absolute inset-0 flex h-full w-full items-center justify-center"
+              className="group absolute inset-0 h-full w-full"
             >
               <img
                 src={capaVideoLancamento}
@@ -65,15 +65,15 @@ export function HomePilares() {
                 decoding="async"
                 width={1280}
                 height={720}
-                className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
               />
               <span
                 aria-hidden
-                className="absolute inset-0 bg-black/25 transition group-hover:bg-black/35"
+                className="absolute inset-0 bg-black/25 transition duration-300 group-hover:bg-black/35"
               />
               <span
                 aria-hidden
-                className="relative grid h-20 w-20 place-items-center rounded-full bg-white/95 text-[#c20505] shadow-[0_12px_32px_rgba(194,5,5,0.4)] transition group-hover:scale-110 md:h-24 md:w-24"
+                className="absolute left-1/2 top-1/2 grid h-20 w-20 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-white/95 text-[#c20505] shadow-[0_12px_32px_rgba(194,5,5,0.45)] ring-4 ring-white/25 transition duration-300 group-hover:scale-110 group-hover:ring-white/40 md:h-24 md:w-24"
               >
                 <Play className="h-8 w-8 translate-x-0.5 fill-current md:h-10 md:w-10" />
               </span>
