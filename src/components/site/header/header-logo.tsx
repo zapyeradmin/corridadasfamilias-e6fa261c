@@ -3,10 +3,10 @@ import logo from "@/assets/logo-corrida.png?w=600&quality=88&format=webp";
 
 export function HeaderLogo() {
   return (
-    <Link to="/" className="relative flex items-center" aria-label="II Corrida das Famílias">
+    <Link to="/" className="relative flex items-center" aria-label="2ª Corrida Natalina | Corre +">
       <img
         src={logo}
-        alt="II Corrida das Famílias"
+        alt="2ª Corrida Natalina | Corre +"
         loading="eager"
         fetchPriority="high"
         decoding="async"

@@ -13,7 +13,7 @@ export function HomeHero() {
         src={heroRunnerFallback}
         srcSet={heroRunner}
         sizes="100vw"
-        alt="2ª Corrida Natalina | CORRE+"
+        alt="2ª Corrida Natalina | Corre +"
         fetchPriority="high"
         decoding="async"
         width={1024}
@@ -44,7 +44,7 @@ export function HomeHero() {
             <span className="grid h-5 w-5 place-items-center rounded-full border border-white bg-white text-[#c20505]">
               <Calendar className="h-3 w-3" />
             </span>
-            {SITE.eventDateLabel}
+            {SITE.eventDateLabel} · Largada às 06:00
           </motion.p>
 
           <motion.h1
@@ -54,7 +54,7 @@ export function HomeHero() {
             className="heading-display mt-6 text-white"
           >
             <span className="block text-[10px] font-bold uppercase tracking-[0.4em] text-white/65 sm:text-xs sm:tracking-[0.55em] md:text-sm">
-              II Edição · 6KM
+              2ª Edição (2026) · 6KM · Corre +
             </span>
             <span className="mt-3 block text-[3.25rem] font-black leading-[0.92] tracking-tight sm:mt-4 sm:text-6xl md:text-7xl lg:text-[6.25rem]">
               Corrida
@@ -143,9 +143,17 @@ export function HomeHero() {
               Faltam para a largada
             </h2>
             <Countdown className="mt-6" />
+            <div className="mt-5 rounded-2xl border border-white/20 bg-white/10 p-3.5 text-center backdrop-blur">
+              <p className="text-xs font-black uppercase tracking-wider text-white">
+                Lote 1 (Promocional) · R$ 83,60
+              </p>
+              <p className="mt-1 text-[11px] leading-tight text-white/90">
+                🎁 <strong>Brinde exclusivo:</strong> primeiros 335 inscritos confirmados recebem Coqueteleira + Chaveiro!
+              </p>
+            </div>
             <Link
               to="/inscricao"
-              className="group mt-8 flex w-full items-center justify-center gap-2 rounded-full bg-white px-5 py-3.5 text-sm font-extrabold uppercase tracking-wide text-[#c20505] shadow-md transition hover:bg-white/95"
+              className="group mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-white px-5 py-3.5 text-sm font-extrabold uppercase tracking-wide text-[#c20505] shadow-md transition hover:bg-white/95"
             >
               Inscreva-se agora
               <ChevronRight className="h-4 w-4 transition group-hover:translate-x-0.5" />

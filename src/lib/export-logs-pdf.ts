@@ -20,7 +20,7 @@ export function exportAccessLogsToPdf(logs: AccessLogRow[]) {
 
   doc.setFont("helvetica", "bold");
   doc.setFontSize(14);
-  doc.text("Relatório de Logs de Acesso — Corrida das Famílias", 40, 40);
+  doc.text("Relatório de Logs de Acesso — 2ª Corrida Natalina | Corre +", 40, 40);
 
   doc.setFont("helvetica", "normal");
   doc.setFontSize(9);

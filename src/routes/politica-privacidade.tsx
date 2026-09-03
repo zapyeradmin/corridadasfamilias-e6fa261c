@@ -4,9 +4,9 @@ import { ContentSection, PageHeader } from "@/components/site/page-shell";
 export const Route = createFileRoute("/politica-privacidade")({
   head: () => ({
     meta: [
-      { title: "Política de Privacidade — II Corrida das Famílias" },
+      { title: "Política de Privacidade — 2ª Corrida Natalina | Corre +" },
       { name: "description", content: "Como tratamos seus dados pessoais conforme a LGPD." },
-      { property: "og:title", content: "Política de Privacidade — II Corrida das Famílias" },
+      { property: "og:title", content: "Política de Privacidade — 2ª Corrida Natalina | Corre +" },
     ],
   }),
   component: Page,

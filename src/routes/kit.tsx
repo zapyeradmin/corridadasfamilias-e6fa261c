@@ -6,17 +6,17 @@ import kitExclusivo from "@/assets/kit-exclusivo.png?w=1024&quality=82&format=we
 export const Route = createFileRoute("/kit")({
   head: () => ({
     meta: [
-      { title: "Kit do atleta — 2ª Corrida Natalina | CORRE+" },
+      { title: "Kit do atleta — 2ª Corrida Natalina | Corre +" },
       {
         name: "description",
         content:
-          "Kit oficial da 2ª Corrida Natalina | CORRE+: camiseta exclusiva, número de peito, hidratação no percurso e medalha finisher.",
+          "Kit oficial da 2ª Corrida Natalina | Corre +: camiseta exclusiva, número de peito, chip de cronometragem, coqueteleira e chaveiro para os 335 primeiros inscritos.",
       },
-      { property: "og:title", content: "Kit do atleta — 2ª Corrida Natalina | CORRE+" },
+      { property: "og:title", content: "Kit do atleta — 2ª Corrida Natalina | Corre +" },
       {
         property: "og:description",
         content:
-          "Conheça todos os itens do kit oficial: camiseta, número, hidratação, medalha finisher e a tradicional contribuição solidária.",
+          "Conheça todos os itens do kit oficial: camiseta, número, chip de cronometragem, coqueteleira, chaveiro e medalha finisher.",
       },
       { property: "og:image", content: kitExclusivo },
       { name: "twitter:image", content: kitExclusivo },
@@ -40,7 +40,7 @@ function Page() {
             <div className="relative aspect-square">
               <img
                 src={kitExclusivo}
-                alt="Kit exclusivo do atleta da II Corrida das Famílias"
+                alt="Kit exclusivo do atleta da 2ª Corrida Natalina | Corre +"
                 loading="lazy"
                 decoding="async"
                 width={1024}
@@ -68,7 +68,7 @@ function Page() {
           </div>
 
           <p className="mt-12 whitespace-pre-line rounded-2xl bg-[color:var(--color-brand-soft)] p-6 text-sm text-[#3d0000]">
-            {`A entrega dos kits será informada com antecedência pela organização oficial da 2ª Corrida Natalina.\n\nCada participante deverá levar 1kg de alimento não perecível no momento da retirada do kit, reforçando o compromisso solidário do nosso evento.`}
+            {`A entrega dos kits será informada com antecedência pela organização oficial da 2ª Corrida Natalina | Corre +.\n\nCada participante deverá levar 1kg de alimento não perecível no momento da retirada do kit, reforçando o compromisso solidário do nosso evento.`}
           </p>
         </div>
       </section>

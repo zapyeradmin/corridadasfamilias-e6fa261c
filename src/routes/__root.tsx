@@ -79,19 +79,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { name: "theme-color", content: "#e70202" },
-      { title: "2ª Corrida Natalina | CORRE+" },
+      { title: "2ª Corrida Natalina | Corre +" },
       {
         name: "description",
         content:
-          "2ª Corrida Natalina em Serra Talhada/PE. CORRE+ — Saúde, esporte e solidariedade.",
+          "2ª Corrida Natalina em Serra Talhada/PE. Corre + — Saúde, esporte, celebração e confraternização.",
       },
       { property: "og:type", content: "website" },
       { property: "og:locale", content: "pt_BR" },
-      { property: "og:title", content: "2ª Corrida Natalina | CORRE+" },
+      { property: "og:title", content: "2ª Corrida Natalina | Corre +" },
       {
         property: "og:description",
         content:
-          "2ª Corrida Natalina em Serra Talhada/PE. CORRE+ — Saúde, esporte e solidariedade.",
+          "2ª Corrida Natalina em Serra Talhada/PE. Corre + — Saúde, esporte, celebração e confraternização.",
       },
       {
         property: "og:image",
@@ -99,11 +99,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "https://storage.googleapis.com/gpt-engineer-file-uploads/24NXY8uInCbJ0YtSRcez5EU2T9E3/social-images/social-1778899143554-banner-1.webp",
       },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "2ª Corrida Natalina | CORRE+" },
+      { name: "twitter:title", content: "2ª Corrida Natalina | Corre +" },
       {
         name: "twitter:description",
         content:
-          "Juntos no Rosário, Famílias unidas na Fé. Uma corrida de 5km em Serra Talhada/PE para celebrar a Fé, fortalecer Famílias e promover Saúde e Solidariedade.",
+          "2ª Corrida Natalina (Edição 2026) | Corre +. Uma corrida de 6km em Serra Talhada/PE no dia 20 de dezembro de 2026.",
       },
       {
         name: "twitter:image",

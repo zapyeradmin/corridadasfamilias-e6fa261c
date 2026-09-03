@@ -5,13 +5,13 @@ import { CategoriasGrid } from "@/components/site/categorias-premiacoes";
 export const Route = createFileRoute("/premiacao")({
   head: () => ({
     meta: [
-      { title: "Premiação — 2ª Corrida Natalina | CORRE+" },
+      { title: "Premiação — 2ª Corrida Natalina | Corre +" },
       {
         name: "description",
         content:
-          "Premiação da 2ª Corrida Natalina | CORRE+: prêmios em dinheiro, troféus por categoria e medalha finisher.",
+          "Premiação da 2ª Corrida Natalina | Corre +: prêmios em dinheiro, troféus por categoria e medalha finisher.",
       },
-      { property: "og:title", content: "Premiação — 2ª Corrida Natalina | CORRE+" },
+      { property: "og:title", content: "Premiação — 2ª Corrida Natalina | Corre +" },
       {
         property: "og:description",
         content:

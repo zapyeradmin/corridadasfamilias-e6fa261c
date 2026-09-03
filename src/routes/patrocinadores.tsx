@@ -10,17 +10,17 @@ import { useSiteContacts } from "@/hooks/use-site-contacts";
 export const Route = createFileRoute("/patrocinadores")({
   head: () => ({
     meta: [
-      { title: "Patrocinadores — 2ª Corrida Natalina | CORRE+" },
+      { title: "Patrocinadores — 2ª Corrida Natalina | Corre +" },
       {
         name: "description",
         content:
-          "Marcas e instituições que apoiam a 2ª Corrida Natalina em Serra Talhada/PE. CORRE+.",
+          "Marcas e parceiros que apoiam a 2ª Corrida Natalina | Corre + em Serra Talhada/PE.",
       },
-      { property: "og:title", content: "Patrocinadores — 2ª Corrida Natalina | CORRE+" },
+      { property: "og:title", content: "Patrocinadores — 2ª Corrida Natalina | Corre +" },
       {
         property: "og:description",
         content:
-          "Conheça as marcas que acreditam no esporte, na fé e nas famílias da nossa comunidade.",
+          "Conheça as marcas que acreditam no esporte, na saúde e na celebração da nossa comunidade.",
       },
     ],
   }),

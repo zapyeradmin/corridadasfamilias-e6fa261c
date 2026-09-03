@@ -74,11 +74,9 @@ export const createRegistration = createServerFn({ method: "POST" })
       const lot = lots?.[0];
       if (!lot) return fail("Não há lote de inscrições aberto no momento.");
 
-      // Calcula idade na data do evento e preço aplicável (até 9 anos = infantil)
+      // Preço único para todos os participantes (sem lote infantil)
       const ageAtEvent = yearsBetween(data.birth_date, event.event_date);
-      const isChild = ageAtEvent <= 9;
-      const amountCents =
-        isChild && lot.child_price_cents ? lot.child_price_cents : lot.price_cents;
+      const amountCents = lot.price_cents;
 
       // Validações de categoria por idade/gênero
       const g = GENDER_DB[data.gender];
@@ -117,8 +115,8 @@ export const createRegistration = createServerFn({ method: "POST" })
         );
       }
 
-      const participantType: "adulto" | "crianca" = isChild ? "crianca" : "adulto";
-      const orderNsu = `inscricao_${participantType}_lote1_${crypto.randomUUID()}`;
+      const participantType = "adulto";
+      const orderNsu = `inscricao_lote1_${crypto.randomUUID()}`;
 
       const { data: registration, error: regErr } = await supabaseAdmin
         .from("registrations")

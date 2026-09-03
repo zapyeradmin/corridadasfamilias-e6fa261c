@@ -6,16 +6,16 @@ import percursoMapa from "@/assets/percurso-mapa.png?w=1024&quality=82&format=we
 export const Route = createFileRoute("/percurso")({
   head: () => ({
     meta: [
-      { title: "Percurso 5km — 2ª Corrida Natalina | CORRE+" },
+      { title: "Percurso 6km — 2ª Corrida Natalina | Corre +" },
       {
         name: "description",
-        content: "Percurso oficial de 5km com largada e chegada em Serra Talhada/PE. CORRE+.",
+        content: "Percurso oficial de 6km com largada e chegada no Beach Garden · Shopping Serra Talhada. 2ª Corrida Natalina | Corre +.",
       },
-      { property: "og:title", content: "Percurso 5km — 2ª Corrida Natalina | CORRE+" },
+      { property: "og:title", content: "Percurso 6km — 2ª Corrida Natalina | Corre +" },
       {
         property: "og:description",
         content:
-          "Trajeto pelas principais ruas do centro de Serra Talhada — largada e chegada na Igreja Matriz de Nossa Senhora do Rosário.",
+          "Trajeto pelas principais vias de Serra Talhada — largada e chegada no Beach Garden · Shopping Serra Talhada.",
       },
       { property: "og:image", content: percursoMapa },
       { name: "twitter:image", content: percursoMapa },
@@ -28,9 +28,9 @@ function Page() {
   return (
     <>
       <PageHeader
-        eyebrow="5 quilômetros"
+        eyebrow="6 quilômetros"
         title="Percurso oficial"
-        description="Largada e chegada na Igreja Matriz, com trajeto pelas principais ruas do centro de Serra Talhada."
+        description="Largada e chegada no Beach Garden · Shopping Serra Talhada, com trajeto sinalizado pelas principais ruas."
       />
 
       <section className="bg-white">
@@ -39,7 +39,7 @@ function Page() {
             <div className="aspect-[4/3] w-full">
               <img
                 src={percursoMapa}
-                alt="Mapa do percurso oficial da II Corrida das Famílias em Serra Talhada"
+                alt="Mapa do percurso oficial da 2ª Corrida Natalina | Corre + em Serra Talhada"
                 loading="lazy"
                 decoding="async"
                 width={1024}
@@ -53,7 +53,7 @@ function Page() {
                 O trajeto passa pelas principais ruas da Cidade
               </h3>
               <p className="mt-4 text-base leading-relaxed text-[#3d0000]">
-                O percurso de 5km foi desenhado para ser acessível a todos os níveis de corredores,
+                O percurso de 6km foi desenhado para ser acessível a todos os níveis de corredores,
                 desde iniciantes até os mais experientes, proporcionando uma experiência
                 inesquecível.
               </p>

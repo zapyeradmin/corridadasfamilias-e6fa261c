@@ -20,7 +20,7 @@ export const Route = createFileRoute("/inscricao_/sucesso")({
       {
         name: "description",
         content:
-          "Sua inscrição foi registrada. Realize o pagamento para garantir sua vaga na II Corrida das Famílias.",
+          "Sua inscrição foi registrada. Realize o pagamento para garantir sua vaga na 2ª Corrida Natalina | Corre +.",
       },
     ],
   }),

@@ -19,7 +19,7 @@ export const Route = createFileRoute("/pagamento")({
   }),
   head: () => ({
     meta: [
-      { title: "Validando pagamento — II Corrida das Famílias" },
+      { title: "Validando pagamento — 2ª Corrida Natalina | Corre +" },
       {
         name: "description",
         content: "Estamos validando o status do seu pagamento junto à InfinitePay.",
@@ -40,7 +40,7 @@ function Page() {
   // Tenta inferir o protocolo a partir do order_nsu se não veio direto
   const protocol =
     search.protocol ||
-    (search.order_nsu && /^inscricao_(adulto|crianca)_lote1_/.test(search.order_nsu) ? "" : "");
+    (search.order_nsu && /^inscricao_(adulto|crianca|lote1)_/.test(search.order_nsu) ? "" : "");
 
   useEffect(() => {
     cancelled.current = false;

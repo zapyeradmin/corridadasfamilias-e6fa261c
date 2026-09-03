@@ -20,14 +20,14 @@ export const Route = createFileRoute("/sucesso")({
   }),
   head: () => ({
     meta: [
-      { title: "Inscrição confirmada — 2ª Corrida Natalina | CORRE+" },
+      { title: "Inscrição confirmada — 2ª Corrida Natalina | Corre +" },
       {
         name: "description",
         content:
-          "Sua inscrição na II Corrida das Famílias foi confirmada. Veja os próximos passos: comprovante por e-mail, retirada do kit e dia da corrida.",
+          "Sua inscrição na 2ª Corrida Natalina | Corre + foi confirmada. Veja os próximos passos: comprovante por e-mail, retirada do kit e dia da corrida.",
       },
       { name: "robots", content: "noindex,nofollow" },
-      { property: "og:title", content: "Pagamento confirmado — II Corrida das Famílias" },
+      { property: "og:title", content: "Pagamento confirmado — 2ª Corrida Natalina | Corre +" },
       {
         property: "og:description",
         content:
@@ -64,15 +64,15 @@ function Page() {
   const { whatsappHref } = useSiteContacts();
 
   const waText = protocol
-    ? `Olá! Confirmei minha inscrição na 2ª Corrida Natalina (protocolo ${protocol}) e gostaria de tirar uma dúvida.`
-    : "Olá! Confirmei minha inscrição na 2ª Corrida Natalina e gostaria de tirar uma dúvida.";
+    ? `Olá! Confirmei minha inscrição na 2ª Corrida Natalina | Corre + (protocolo ${protocol}) e gostaria de tirar uma dúvida.`
+    : "Olá! Confirmei minha inscrição na 2ª Corrida Natalina | Corre + e gostaria de tirar uma dúvida.";
 
   return (
     <>
       <PageHeader
         eyebrow="Inscrição confirmada"
         title="Parabéns, você está inscrito!"
-        description="Recebemos a confirmação do seu pagamento e sua vaga na 2ª Corrida Natalina está garantida."
+        description="Recebemos a confirmação do seu pagamento e sua vaga na 2ª Corrida Natalina | Corre + está garantida."
       />
 
       <ContentSection>
@@ -86,7 +86,7 @@ function Page() {
               Tudo certo com sua inscrição!
             </h2>
             <p className="mt-4 max-w-2xl text-base text-[#3d0000]">
-              Sua vaga na <strong>2ª Corrida Natalina | CORRE+</strong> está confirmada. A partir de
+              Sua vaga na <strong>2ª Corrida Natalina | Corre +</strong> está confirmada. A partir de
               agora você faz parte desta grande celebração do esporte, da saúde e da superação.
             </p>
 

@@ -21,7 +21,7 @@ export function HomeKit() {
           <div className="relative aspect-square">
             <img
               src={kitExclusivo}
-              alt="Kit exclusivo do atleta da 2ª Corrida Natalina"
+              alt="Kit exclusivo do atleta da 2ª Corrida Natalina | Corre +"
               loading="lazy"
               decoding="async"
               width={1024}

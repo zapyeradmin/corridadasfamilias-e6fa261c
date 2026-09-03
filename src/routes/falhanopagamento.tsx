@@ -20,14 +20,14 @@ export const Route = createFileRoute("/falhanopagamento")({
   }),
   head: () => ({
     meta: [
-      { title: "Falha no pagamento — II Corrida das Famílias" },
+      { title: "Falha no pagamento — 2ª Corrida Natalina | Corre +" },
       {
         name: "description",
         content:
-          "Não foi possível concluir o pagamento da sua inscrição. Tente novamente ou fale com a organização da II Corrida das Famílias.",
+          "Não foi possível concluir o pagamento da sua inscrição. Tente novamente ou fale com a organização da 2ª Corrida Natalina | Corre +.",
       },
       { name: "robots", content: "noindex,nofollow" },
-      { property: "og:title", content: "Falha no pagamento — II Corrida das Famílias" },
+      { property: "og:title", content: "Falha no pagamento — 2ª Corrida Natalina | Corre +" },
       {
         property: "og:description",
         content:
@@ -70,8 +70,8 @@ function Page() {
   const { whatsappHref, whatsappLabel } = useSiteContacts();
 
   const waText = protocol
-    ? `Olá! Tive um problema ao concluir o pagamento da minha inscrição na II Corrida das Famílias. Protocolo: ${protocol}`
-    : "Olá! Tive um problema ao concluir o pagamento da minha inscrição na II Corrida das Famílias.";
+    ? `Olá! Tive um problema ao concluir o pagamento da minha inscrição na 2ª Corrida Natalina | Corre +. Protocolo: ${protocol}`
+    : "Olá! Tive um problema ao concluir o pagamento da minha inscrição na 2ª Corrida Natalina | Corre +.";
   const waUrl = whatsappHref(waText);
 
   return (
@@ -197,7 +197,7 @@ function Page() {
             Estamos aqui para ajudar você a completar sua inscrição
           </h3>
           <p className="max-w-xl text-base text-white/80">
-            Se precisar de suporte, fale com a organização da II Corrida das Famílias pelos canais
+            Se precisar de suporte, fale com a organização da 2ª Corrida Natalina | Corre + pelos canais
             oficiais abaixo.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3">

@@ -10,7 +10,7 @@ import logoLogin from "@/assets/logo-corrida-login.png?w=900&quality=88&format=w
 
 export const Route = createFileRoute("/login")({
   head: () => ({
-    meta: [{ title: "Entrar — 2ª Corrida Natalina | CORRE+" }],
+    meta: [{ title: "Entrar — 2ª Corrida Natalina | Corre +" }],
   }),
   validateSearch: (search) => ({
     redirect: typeof search.redirect === "string" ? search.redirect : "/admin/dashboard",
@@ -78,7 +78,7 @@ function Page() {
         <div className="mx-auto mb-8 flex w-full max-w-md justify-center">
           <img
             src={logoLogin}
-            alt="2ª Corrida Natalina | CORRE+"
+            alt="2ª Corrida Natalina | Corre +"
             className="h-24 w-auto md:h-32"
             loading="eager"
             decoding="async"

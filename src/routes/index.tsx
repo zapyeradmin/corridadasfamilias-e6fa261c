@@ -35,15 +35,15 @@ const HomeFaq = lazy(() =>
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "2ª Corrida Natalina | CORRE+" },
+      { title: "2ª Corrida Natalina | Corre +" },
       {
         name: "description",
-        content: `Inscrições abertas para a ${SITE.name}, ${SITE.eventDateLabel}, em ${SITE.city}. Corrida de 5km com largada na ${SITE.location}.`,
+        content: `Inscrições abertas para a ${SITE.name}, ${SITE.eventDateLabel}, em ${SITE.city}. Corrida de 6km com largada no ${SITE.location}.`,
       },
-      { property: "og:title", content: "2ª Corrida Natalina | CORRE+" },
+      { property: "og:title", content: "2ª Corrida Natalina | Corre +" },
       {
         property: "og:description",
-        content: `Corrida de 5km em ${SITE.city}. ${SITE.eventDateLabel}.`,
+        content: `Corrida de 6km em ${SITE.city}. ${SITE.eventDateLabel}.`,
       },
     ],
     links: [

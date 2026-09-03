@@ -7,7 +7,7 @@ import { getDashboardKPIs } from "@/lib/admin.functions";
 import { formatCents, formatDateTimeBR } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/admin/dashboard")({
-  head: () => ({ meta: [{ title: "Admin · Dashboard — II Corrida das Famílias" }] }),
+  head: () => ({ meta: [{ title: "Admin · Dashboard — 2ª Corrida Natalina | Corre +" }] }),
   component: Page,
 });
 

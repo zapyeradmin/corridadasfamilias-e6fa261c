@@ -1,4 +1,4 @@
-import { Shirt, Hash, Timer, Droplets, Medal, HandHeart, type LucideIcon } from "lucide-react";
+import { Shirt, Hash, Timer, Droplets, Medal, HandHeart, Gift, type LucideIcon } from "lucide-react";
 
 export type KitItemData = {
   icon: LucideIcon;
@@ -17,13 +17,19 @@ export const KIT_ITENS: KitItemData[] = [
     icon: Hash,
     titulo: "Número de Peito",
     texto:
-      "Número de identificação personalizado exclusiva para cada atleta. Cada atleta terá número único.",
+      "Número de identificação personalizado exclusivo para cada atleta. Cada participante terá número único.",
   },
   {
     icon: Timer,
     titulo: "Chip de Cronometragem",
     texto:
       "A corrida terá cronometragem por chip, garantindo mais precisão, segurança e agilidade na apuração dos resultados de cada atleta.",
+  },
+  {
+    icon: Gift,
+    titulo: "Coqueteleira + Chaveiro (335 Primeiros)",
+    texto:
+      "Brinde exclusivo da corrida para os primeiros 335 inscritos com pagamento confirmado: 1 Coqueteleira Personalizada + 1 Chaveiro Personalizado!",
   },
   {
     icon: Droplets,

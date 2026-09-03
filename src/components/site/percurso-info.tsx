@@ -5,7 +5,7 @@ export const PERCURSO_INFOS: { icon: typeof Flag; titulo: string; texto: string 
     icon: Flag,
     titulo: "Percurso Oficial",
     texto:
-      "Largada e chegada no Beach Garden no Shopping Serra Talhada, Rua Joca Magalhães, Rua José Alves da Silveira, Avenida Afonso Magalhães (retorno no cruzamento com a Rua Neco Maranhão, próximo à Drogaria DjaFarma), Rua Enock Ignácio de Oliveira, Rua Joaquim Conrado de Lorena e Sá, retorno à Rua Cornélio Soares e chegada na Igreja Matriz de Nossa Senhora do Rosário na Rua Cornélio Soares.",
+      "Largada e chegada no Beach Garden no Shopping Serra Talhada, passando pelas principais vias da cidade com retorno e chegada no Beach Garden · Shopping Serra Talhada.",
   },
   {
     icon: MapPin,

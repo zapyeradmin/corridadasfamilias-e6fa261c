@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/_authenticated/admin/inscricoes")({
-  head: () => ({ meta: [{ title: "Admin · Inscrições — II Corrida das Famílias" }] }),
+  head: () => ({ meta: [{ title: "Admin · Inscrições — 2ª Corrida Natalina | Corre +" }] }),
   component: Page,
 });
 

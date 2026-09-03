@@ -14,7 +14,7 @@ export function SiteFooter() {
         <div>
           <img
             src={logo}
-            alt="2ª Corrida Natalina | CORRE+"
+            alt="2ª Corrida Natalina | Corre +"
             loading="lazy"
             decoding="async"
             width={1247}
@@ -22,7 +22,7 @@ export function SiteFooter() {
             className="-mt-8 h-32 w-auto md:-mt-12 md:h-40"
           />
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-white/90">
-            Idealizada pela equipe CORRE+, a 2ª Corrida Natalina tem como objetivo uma experiência
+            Idealizada pela equipe Corre +, a 2ª Corrida Natalina tem como objetivo uma experiência
             marcada por movimento, superação, integração e celebração.
           </p>
         </div>
@@ -87,7 +87,7 @@ export function SiteFooter() {
       <div className="border-t border-white/15">
         <div className="mx-auto flex max-w-[1360px] flex-col items-center justify-between gap-2 px-5 py-6 text-xs text-white/80 md:flex-row md:px-8">
           <p>
-            © {new Date().getFullYear()} 2ª Corrida Natalina | CORRE+. Todos os direitos reservados.
+            © {new Date().getFullYear()} 2ª Corrida Natalina | Corre +. Todos os direitos reservados.
           </p>
           <p>Feito para celebrar a saúde, união e superação.</p>
         </div>

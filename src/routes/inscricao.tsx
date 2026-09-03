@@ -15,13 +15,13 @@ import { isValidCpf, maskCpf, maskPhone, normalizeCpf, formatBRL } from "@/lib/c
 export const Route = createFileRoute("/inscricao")({
   head: () => ({
     meta: [
-      { title: "Inscrição — 2ª Corrida Natalina | CORRE+" },
+      { title: "Inscrição — 2ª Corrida Natalina | Corre +" },
       {
         name: "description",
         content:
-          "Garanta sua vaga na 2ª Corrida Natalina | CORRE+. Inscrição online em 3 passos com pagamento via InfinitePay.",
+          "Garanta sua vaga na 2ª Corrida Natalina | Corre +. Inscrição online em lote promocional único com brindes exclusivos.",
       },
-      { property: "og:title", content: "Inscrição — 2ª Corrida Natalina | CORRE+" },
+      { property: "og:title", content: "Inscrição — 2ª Corrida Natalina | Corre +" },
     ],
   }),
   component: Page,
@@ -67,15 +67,11 @@ function ageOn(birthIso: string, refIso: string): number {
 }
 
 function resolvePrice(
-  birth: string | undefined,
-  eventDate: string | undefined,
-  lot: { price_cents: number; child_price_cents: number | null } | null | undefined,
+  _birth: string | undefined,
+  _eventDate: string | undefined,
+  lot: { price_cents: number; child_price_cents?: number | null } | null | undefined,
 ): number | undefined {
   if (!lot) return undefined;
-  if (birth && /^\d{4}-\d{2}-\d{2}$/.test(birth) && eventDate) {
-    const a = ageOn(birth, eventDate);
-    if (a <= 9 && lot.child_price_cents) return lot.child_price_cents;
-  }
   return lot.price_cents;
 }
 
@@ -216,35 +212,30 @@ function Page() {
           <aside className="rounded-3xl border border-border bg-[color:var(--color-brand-soft)] p-6 shadow-soft">
             <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#c20505]">Resumo</p>
             <h3 className="heading-section mt-2 text-2xl text-[#c20505]">
-              {eventData?.event?.name ?? "2ª Corrida Natalina | CORRE+"}
+              {eventData?.event?.name ?? "2ª Corrida Natalina | Corre +"}
             </h3>
             {eventData?.currentLot ? (
               (() => {
                 const lot = eventData.currentLot;
-                const birth = form.watch("birth_date");
-                const eventDate = eventData.event?.event_date;
-                const age = birth && eventDate ? ageOn(birth, eventDate) : null;
-                const isChild = age != null && age <= 9;
-                const price = resolvePrice(birth, eventDate, lot);
                 return (
                   <>
                     <p className="mt-3 text-sm text-[#3d0000]">
                       Lote vigente: <strong>{lot.name}</strong>
                     </p>
                     <p className="mt-1 text-3xl font-black text-[#c20505]">
-                      {formatBRL(price ?? lot.price_cents)}
+                      {formatBRL(lot.price_cents)}
                     </p>
-                    {age != null && (
-                      <p className="mt-1 text-xs font-bold uppercase tracking-wide text-[#c20505]">
-                        {isChild ? "Valor infantil (até 9 anos)" : "Valor adulto"}
+                    <p className="mt-1 text-xs font-bold uppercase tracking-wide text-[#c20505]">
+                      Valor Único
+                    </p>
+                    <div className="mt-3 rounded-2xl border border-[#c20505]/20 bg-white p-3.5 shadow-sm">
+                      <p className="text-xs font-black uppercase tracking-wider text-[#c20505]">
+                        🎁 Brinde Exclusivo
                       </p>
-                    )}
-                    <p className="mt-3 text-xs text-[#3d0000]/80">
-                      Adulto {formatBRL(lot.price_cents)}
-                      {lot.child_price_cents
-                        ? ` · Criança até 9 anos ${formatBRL(lot.child_price_cents)}`
-                        : ""}
-                    </p>
+                      <p className="mt-1 text-xs leading-relaxed text-[#3d0000]">
+                        Os primeiros <strong>335 inscritos com pagamento confirmado</strong> receberão de brinde uma <strong>Coqueteleira Personalizada da Corrida + um Chaveiro Personalizado</strong>!
+                      </p>
+                    </div>
                   </>
                 );
               })()
@@ -256,6 +247,7 @@ function Page() {
               <li>• Chip de cronometragem</li>
               <li>• Medalha de finisher</li>
               <li>• Pontos de hidratação no percurso</li>
+              <li>• Coqueteleira + Chaveiro para os 335 primeiros confirmados</li>
             </ul>
           </aside>
         </div>

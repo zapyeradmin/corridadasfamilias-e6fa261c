@@ -28,7 +28,7 @@ export function HomeInfoCorrida() {
       </h2>
       <p className="mt-4 text-base text-justify text-[#3d0000]">
         Esta é a 2ª Edição da Corrida Natalina, um evento que celebra o esporte, a saúde, a união e
-        o espírito de confraternização. Idealizada pela CORRE+, a corrida reúne atletas, famílias,
+        o espírito de confraternização. Idealizada pela Corre +, a corrida reúne atletas, famílias,
         equipes e toda a comunidade de Serra Talhada em uma experiência marcada por movimento,
         superação, integração e celebração.
       </p>

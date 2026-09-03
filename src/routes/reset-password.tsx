@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { ContentSection, PageHeader } from "@/components/site/page-shell";
 
 export const Route = createFileRoute("/reset-password")({
-  head: () => ({ meta: [{ title: "Redefinir senha — II Corrida das Famílias" }] }),
+  head: () => ({ meta: [{ title: "Redefinir senha — 2ª Corrida Natalina | Corre +" }] }),
   component: Page,
 });
 
