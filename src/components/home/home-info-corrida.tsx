@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Calendar, HeartPulse, MapPin, Route as RouteIcon } from "lucide-react";
+import { Calendar, MapPin } from "lucide-react";
 import { ContentSection } from "@/components/site/page-shell";
 import { SITE } from "@/lib/site-config";
 import informacoesCorrida from "@/assets/informacoes-corrida.jpg?w=1024&quality=78&format=webp";
@@ -8,26 +8,12 @@ const INFOS = [
   {
     icon: Calendar,
     title: "Data e Horários",
-    lines: [`Data: ${SITE.eventDateLabel}`, "Concentração: 05:00", "Largada: 06:00 (sem atrasos)"],
+    lines: ["Data: 20 de dezembro de 2026", "Concentração: 05:00", "Largada: 06:00 (sem atrasos)"],
   },
   {
     icon: MapPin,
     title: "Localização Estratégica",
     lines: [`Local: ${SITE.location}`],
-  },
-  {
-    icon: RouteIcon,
-    title: "Percurso Oficial",
-    lines: ["Distância: 6km"],
-  },
-  {
-    icon: HeartPulse,
-    title: "Suporte ao Atleta",
-    lines: [
-      "Pontos de Hidratação: 5 pontos estratégicos",
-      "Apoio de Saúde: equipe com enfermeiros e ambulância de prontidão durante toda a corrida",
-      "Suporte: banheiros químicos, massagens, frutas e repositores energéticos para todos os atletas",
-    ],
   },
 ];
 
@@ -89,16 +75,16 @@ export function HomeInfoCorrida() {
             {INFOS.map((info) => (
               <div
                 key={info.title}
-                className="flex gap-4 rounded-2xl border border-border bg-white p-5 shadow-soft"
+                className="flex gap-4 rounded-2xl border border-border bg-white p-5 shadow-soft transition hover:shadow-card"
               >
-                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-gradient-orange text-white shadow-orange">
-                  <info.icon className="h-5 w-5" />
+                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border-2 border-[#c20505] bg-[#c20505] text-white shadow-[0_4px_14px_rgba(194,5,5,0.25)]">
+                  <info.icon className="h-5 w-5 text-white" />
                 </span>
                 <div>
-                  <h4 className="text-base font-extrabold uppercase tracking-tight text-[color:var(--color-brand-purple-title)]">
+                  <h4 className="text-base font-extrabold uppercase tracking-tight text-[#c20505]">
                     {info.title}
                   </h4>
-                  <ul className="mt-1 space-y-1 text-sm leading-relaxed text-[color:var(--color-brand-purple-text)]/85">
+                  <ul className="mt-1 space-y-1 text-sm font-medium leading-relaxed text-[#3d0000]">
                     {info.lines.map((line) => (
                       <li key={line}>{line}</li>
                     ))}
