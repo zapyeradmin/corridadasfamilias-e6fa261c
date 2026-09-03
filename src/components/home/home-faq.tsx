@@ -27,7 +27,7 @@ export function HomeFaq() {
             <AccordionItem
               key={i}
               value={`faq-${i}`}
-              className="overflow-hidden rounded-2xl border border-white/20 bg-white/10 px-5 shadow-[0_8px_24px_rgba(0,0,0,0.12)] backdrop-blur-sm transition hover:bg-white/[0.14] md:px-7"
+              className="overflow-hidden rounded-2xl border-0 bg-[#930202] px-5 shadow-[0_8px_24px_rgba(0,0,0,0.18)] transition hover:bg-[#850202] md:px-7"
             >
               <AccordionTrigger className="py-5 text-left text-base font-extrabold uppercase tracking-tight text-white hover:no-underline md:text-lg [&>svg]:h-5 [&>svg]:w-5 [&>svg]:text-white">
                 {item.q}
