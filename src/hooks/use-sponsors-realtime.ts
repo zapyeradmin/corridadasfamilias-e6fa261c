@@ -15,13 +15,9 @@ export function useSponsorsRealtime() {
     const channelName = `sponsors-changes-${Math.random().toString(36).slice(2)}`;
     const channel = supabase
       .channel(channelName)
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "sponsors" },
-        () => {
-          queryClient.invalidateQueries({ queryKey: ["sponsors"] });
-        },
-      )
+      .on("postgres_changes", { event: "*", schema: "public", table: "sponsors" }, () => {
+        queryClient.invalidateQueries({ queryKey: ["sponsors"] });
+      })
       .subscribe();
 
     return () => {

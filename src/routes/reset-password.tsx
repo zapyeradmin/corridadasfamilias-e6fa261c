@@ -20,7 +20,9 @@ function Page() {
 
   useEffect(() => {
     // Supabase auth helper parses recovery hash automatically when SDK loads.
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event) => {
       if (event === "PASSWORD_RECOVERY" || event === "SIGNED_IN") setReady(true);
     });
     supabase.auth.getSession().then(({ data }) => {

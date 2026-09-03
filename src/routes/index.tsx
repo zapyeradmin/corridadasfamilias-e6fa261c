@@ -6,8 +6,8 @@ import { HomePilares } from "@/components/home/home-pilares";
 import { CategoriasPremiacoes } from "@/components/site/categorias-premiacoes";
 import { getPublishedSponsors } from "@/lib/public.functions";
 import { SITE } from "@/lib/site-config";
-import heroRunner from "@/assets/hero-runner.jpg?w=1280&quality=72&format=webp";
-import heroRunnerSrcset from "@/assets/hero-runner.jpg?w=800;1280;1920&quality=72&format=webp&as=srcset";
+import heroRunner from "@/assets/capa-hero-5.jpg?w=1280&quality=88&format=webp";
+import heroRunnerSrcset from "@/assets/capa-hero-5.jpg?w=800;1024;1440;1920&quality=88&format=webp&as=srcset";
 
 // Lazy-load below-the-fold sections so the initial JS bundle stays small.
 const HomeInfoCorrida = lazy(() =>
@@ -35,12 +35,12 @@ const HomeFaq = lazy(() =>
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: `${SITE.name} — ${SITE.slogan}` },
+      { title: "2ª Corrida Natalina | CORRE+" },
       {
         name: "description",
         content: `Inscrições abertas para a ${SITE.name}, ${SITE.eventDateLabel}, em ${SITE.city}. Corrida de 5km com largada na ${SITE.location}.`,
       },
-      { property: "og:title", content: `${SITE.name} — ${SITE.slogan}` },
+      { property: "og:title", content: "2ª Corrida Natalina | CORRE+" },
       {
         property: "og:description",
         content: `Corrida de 5km em ${SITE.city}. ${SITE.eventDateLabel}.`,
@@ -51,9 +51,9 @@ export const Route = createFileRoute("/")({
         rel: "preload",
         as: "image",
         href: heroRunner,
-        imagesrcset: heroRunnerSrcset,
-        imagesizes: "100vw",
-        fetchpriority: "high",
+        imageSrcSet: heroRunnerSrcset,
+        imageSizes: "100vw",
+        fetchPriority: "high",
       },
     ],
   }),

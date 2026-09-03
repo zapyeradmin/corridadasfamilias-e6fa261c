@@ -93,8 +93,9 @@ function Page() {
               Algo deu errado com a sua transação
             </h2>
             <p className="mt-4 max-w-2xl text-base text-[color:var(--color-brand-purple-text)]">
-              Seu pagamento não foi processado e a inscrição <strong>ainda não está confirmada</strong>.
-              Você pode tentar novamente agora mesmo — leva menos de 2 minutos.
+              Seu pagamento não foi processado e a inscrição{" "}
+              <strong>ainda não está confirmada</strong>. Você pode tentar novamente agora mesmo —
+              leva menos de 2 minutos.
             </p>
 
             {(protocol || reason) && (
@@ -201,8 +202,8 @@ function Page() {
             Estamos aqui para ajudar você a completar sua inscrição
           </h3>
           <p className="max-w-xl text-base text-white/80">
-            Se precisar de suporte, fale com a organização da II Corrida das Famílias pelos
-            canais oficiais abaixo.
+            Se precisar de suporte, fale com a organização da II Corrida das Famílias pelos canais
+            oficiais abaixo.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3">
             <a

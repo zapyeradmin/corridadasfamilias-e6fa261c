@@ -30,7 +30,6 @@ export function TabPagamento() {
 
   const origin = siteUrlData?.publicSiteUrl ?? "https://www.corridadasfamilias.com.br";
 
-
   return (
     <div className="space-y-8">
       <section className="space-y-4 rounded-2xl border border-border bg-card p-6">
@@ -40,33 +39,32 @@ export function TabPagamento() {
             Use estas URLs ao configurar o Checkout no painel da InfinitePay.
           </p>
         </header>
-        <ReadOnlyField label="URL do Webhook InfinitePay" value={`${origin}/api/webhooks/infinitepay`} />
+        <ReadOnlyField
+          label="URL do Webhook InfinitePay"
+          value={`${origin}/api/webhooks/infinitepay`}
+        />
         <ReadOnlyField label="URL de Redirecionamento InfinitePay" value={`${origin}/pagamento`} />
-        <ReadOnlyField label="URL de Redirecionamento de Sucesso InfinitePay" value={`${origin}/sucesso`} />
+        <ReadOnlyField
+          label="URL de Redirecionamento de Sucesso InfinitePay"
+          value={`${origin}/sucesso`}
+        />
       </section>
 
       <section className="space-y-4">
         <header>
           <h2 className="text-lg font-extrabold">Links dos Checkouts InfinitePay</h2>
           <p className="text-sm text-muted-foreground">
-            Cadastre, edite e salve os links dos checkouts. Eles serão usados automaticamente em <code>/inscricao</code>.
+            Cadastre, edite e salve os links dos checkouts. Eles serão usados automaticamente em{" "}
+            <code>/inscricao</code>.
           </p>
         </header>
         <div className="grid gap-6 lg:grid-cols-2">
-          <CheckoutCard
-            title="Checkout Adulto"
-            tipo="adulto"
-            initial={data?.adulto}
-          />
-          <CheckoutCard
-            title="Checkout Criança"
-            tipo="crianca"
-            initial={data?.crianca}
-          />
+          <CheckoutCard title="Checkout Adulto" tipo="adulto" initial={data?.adulto} />
+          <CheckoutCard title="Checkout Criança" tipo="crianca" initial={data?.crianca} />
         </div>
         <p className="rounded-xl border border-dashed border-border bg-muted/30 p-4 text-xs text-muted-foreground">
-          <strong>Regra de idade:</strong> inscritos com até 9 anos (inclusive) são redirecionados para o
-          Checkout Criança. Acima disso, Checkout Adulto.
+          <strong>Regra de idade:</strong> inscritos com até 9 anos (inclusive) são redirecionados
+          para o Checkout Criança. Acima disso, Checkout Adulto.
         </p>
       </section>
     </div>
@@ -76,7 +74,9 @@ export function TabPagamento() {
 function ReadOnlyField({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{label}</label>
+      <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+        {label}
+      </label>
       <div className="mt-1 flex gap-2">
         <input
           readOnly
@@ -218,7 +218,9 @@ function CheckoutCard({
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block">
-      <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{label}</span>
+      <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+        {label}
+      </span>
       <div className="mt-1">{children}</div>
     </label>
   );

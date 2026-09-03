@@ -10,7 +10,7 @@ import logoLogin from "@/assets/logo-corrida-login.png?w=900&quality=88&format=w
 
 export const Route = createFileRoute("/login")({
   head: () => ({
-    meta: [{ title: "Entrar — II Corrida das Famílias" }],
+    meta: [{ title: "Entrar — 2ª Corrida Natalina | CORRE+" }],
   }),
   validateSearch: (search) => ({
     redirect: typeof search.redirect === "string" ? search.redirect : "/admin/dashboard",
@@ -69,7 +69,11 @@ function Page() {
 
   return (
     <>
-      <PageHeader eyebrow="Acesso restrito" title="Entrar" description="Painel da equipe organizadora." />
+      <PageHeader
+        eyebrow="Acesso restrito"
+        title="Entrar"
+        description="Painel da equipe organizadora."
+      />
       <ContentSection>
         <div className="mx-auto mb-8 flex w-full max-w-md justify-center">
           <img

@@ -28,8 +28,7 @@ export const KIT_ITENS: KitItemData[] = [
   {
     icon: Medal,
     titulo: "Medalha Finisher",
-    texto:
-      "Medalha Personalizada comemorativa exclusiva para todos que completarem o percurso.",
+    texto: "Medalha Personalizada comemorativa exclusiva para todos que completarem o percurso.",
   },
 ];
 

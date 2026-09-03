@@ -2,12 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getPublishedSponsors } from "@/lib/public.functions";
 import { cn } from "@/lib/utils";
-import {
-  LOGO_ASSETS,
-  LOGO_SCALE,
-  slugFromUrl,
-  FALLBACK_DIAMOND,
-} from "@/lib/sponsors-assets";
+import { LOGO_ASSETS, LOGO_SCALE, slugFromUrl, FALLBACK_DIAMOND } from "@/lib/sponsors-assets";
 import { useSponsorsRealtime } from "@/hooks/use-sponsors-realtime";
 
 const FALLBACK = FALLBACK_DIAMOND;

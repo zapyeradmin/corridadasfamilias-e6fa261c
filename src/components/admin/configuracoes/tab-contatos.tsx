@@ -15,7 +15,10 @@ export function TabContatos() {
   const uploadCover = useServerFn(uploadHomeVideoCover);
   const qc = useQueryClient();
   const { data } = useQuery({ queryKey: ["public", "site-contacts"], queryFn: () => fetch() });
-  const { data: video } = useQuery({ queryKey: ["public", "home-video"], queryFn: () => fetchVideo() });
+  const { data: video } = useQuery({
+    queryKey: ["public", "home-video"],
+    queryFn: () => fetchVideo(),
+  });
 
   const [local, setLocal] = useState("");
   const [email, setEmail] = useState("");
@@ -110,25 +113,54 @@ export function TabContatos() {
         <header>
           <h2 className="text-lg font-extrabold">Contatos Oficiais</h2>
           <p className="text-sm text-muted-foreground">
-            Esses dados aparecem no rodapé, botão flutuante de WhatsApp e demais links de contato do site.
+            Esses dados aparecem no rodapé, botão flutuante de WhatsApp e demais links de contato do
+            site.
           </p>
         </header>
 
         <div className="grid gap-4 md:grid-cols-2">
           <Field label="Local">
-            <input className={inputCls} value={local} onChange={(e) => setLocal(e.target.value)} placeholder="Igreja Matriz... em Serra Talhada/PE" />
+            <input
+              className={inputCls}
+              value={local}
+              onChange={(e) => setLocal(e.target.value)}
+              placeholder="Igreja Matriz... em Serra Talhada/PE"
+            />
           </Field>
           <Field label="E-mail Oficial">
-            <input type="email" className={inputCls} value={email} onChange={(e) => setEmail(e.target.value)} placeholder="contato@exemplo.com" />
+            <input
+              type="email"
+              className={inputCls}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="contato@exemplo.com"
+            />
           </Field>
           <Field label="WhatsApp Oficial (apenas dígitos, com DDD)">
-            <input className={inputCls} value={whats} onChange={(e) => setWhats(e.target.value)} placeholder="5587981149806" inputMode="numeric" />
+            <input
+              className={inputCls}
+              value={whats}
+              onChange={(e) => setWhats(e.target.value)}
+              placeholder="5587981149806"
+              inputMode="numeric"
+            />
           </Field>
           <Field label="Usuário do Instagram">
-            <input className={inputCls} value={igUser} onChange={(e) => setIgUser(e.target.value)} placeholder="corridadasfamilias" />
+            <input
+              className={inputCls}
+              value={igUser}
+              onChange={(e) => setIgUser(e.target.value)}
+              placeholder="corridadasfamilias"
+            />
           </Field>
           <Field label="URL do Instagram" className="md:col-span-2">
-            <input type="url" className={inputCls} value={igUrl} onChange={(e) => setIgUrl(e.target.value)} placeholder="https://www.instagram.com/..." />
+            <input
+              type="url"
+              className={inputCls}
+              value={igUrl}
+              onChange={(e) => setIgUrl(e.target.value)}
+              placeholder="https://www.instagram.com/..."
+            />
           </Field>
         </div>
 
@@ -150,7 +182,8 @@ export function TabContatos() {
             <Video className="h-5 w-5" /> Vídeo de Lançamento (Home)
           </h2>
           <p className="text-sm text-muted-foreground">
-            Esta URL e capa aparecem na seção <strong>“Inscrições abertas”</strong> da página inicial. Deixe em branco para usar o vídeo e capa padrão.
+            Esta URL e capa aparecem na seção <strong>“Inscrições abertas”</strong> da página
+            inicial. Deixe em branco para usar o vídeo e capa padrão.
           </p>
         </header>
 
@@ -164,7 +197,9 @@ export function TabContatos() {
               placeholder="https://www.youtube.com/watch?v=..."
             />
             {ytUrl && (
-              <p className={`mt-1 text-xs ${detectedId ? "text-muted-foreground" : "text-destructive"}`}>
+              <p
+                className={`mt-1 text-xs ${detectedId ? "text-muted-foreground" : "text-destructive"}`}
+              >
                 {detectedId ? `ID detectado: ${detectedId}` : "URL do YouTube inválida."}
               </p>
             )}
@@ -191,7 +226,11 @@ export function TabContatos() {
             </div>
             {coverUrl && (
               <div className="mt-3 overflow-hidden rounded-lg border border-border bg-muted">
-                <img src={coverUrl} alt="Pré-visualização da capa" className="aspect-video w-full max-w-md object-cover" />
+                <img
+                  src={coverUrl}
+                  alt="Pré-visualização da capa"
+                  className="aspect-video w-full max-w-md object-cover"
+                />
                 <div className="flex items-center justify-between gap-2 px-2 py-1 text-xs">
                   <span className="truncate text-muted-foreground">{coverUrl}</span>
                   <button
@@ -224,10 +263,20 @@ export function TabContatos() {
 
 const inputCls = "w-full rounded-lg border border-border bg-background px-3 py-2 text-sm";
 
-function Field({ label, children, className = "" }: { label: string; children: React.ReactNode; className?: string }) {
+function Field({
+  label,
+  children,
+  className = "",
+}: {
+  label: string;
+  children: React.ReactNode;
+  className?: string;
+}) {
   return (
     <label className={`block ${className}`}>
-      <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{label}</span>
+      <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+        {label}
+      </span>
       <div className="mt-1">{children}</div>
     </label>
   );

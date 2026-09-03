@@ -77,10 +77,10 @@ export const Route = createFileRoute("/api/webhooks/infinitepay")({
             .eq("transaction_nsu", transactionNsu)
             .maybeSingle();
           if (existing) {
-            return new Response(
-              JSON.stringify({ ok: true, duplicated: true }),
-              { status: 200, headers: { "Content-Type": "application/json" } },
-            );
+            return new Response(JSON.stringify({ ok: true, duplicated: true }), {
+              status: 200,
+              headers: { "Content-Type": "application/json" },
+            });
           }
         }
 
@@ -98,13 +98,10 @@ export const Route = createFileRoute("/api/webhooks/infinitepay")({
             .maybeSingle();
           if (reg) {
             registrationId = reg.id;
-            participantType =
-              (reg.participant_type as "adulto" | "crianca" | null) ?? null;
+            participantType = (reg.participant_type as "adulto" | "crianca" | null) ?? null;
             matchStatus = "matched";
 
-            const expected = participantType
-              ? EXPECTED_AMOUNT[participantType]
-              : null;
+            const expected = participantType ? EXPECTED_AMOUNT[participantType] : null;
             if (expected && amount !== expected) {
               matchStatus = "unmatched";
               notes = `Valor divergente: recebido ${amount}, esperado ${expected}`;
@@ -159,10 +156,7 @@ export const Route = createFileRoute("/api/webhooks/infinitepay")({
           };
 
           if (existingPay) {
-            await supabaseAdmin
-              .from("payments")
-              .update(paymentPatch)
-              .eq("id", existingPay.id);
+            await supabaseAdmin.from("payments").update(paymentPatch).eq("id", existingPay.id);
           } else {
             await supabaseAdmin.from("payments").insert({
               registration_id: registrationId,
@@ -182,10 +176,10 @@ export const Route = createFileRoute("/api/webhooks/infinitepay")({
             .eq("id", eventRow!.id);
         }
 
-        return new Response(
-          JSON.stringify({ ok: true, matched: matchStatus === "matched" }),
-          { status: 200, headers: { "Content-Type": "application/json" } },
-        );
+        return new Response(JSON.stringify({ ok: true, matched: matchStatus === "matched" }), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        });
       },
 
       // Health-check simples

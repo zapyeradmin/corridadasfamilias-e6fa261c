@@ -11,7 +11,7 @@ backend vivem no mesmo codebase**. Leia antes de fazer deploy em VPS.
   isomórfico. Não existe `frontend/` e `backend/` separados.
 - O build gera **dois bundles** dentro de `dist/`:
   - `dist/server/server.js` → servidor Node (SSR + APIs + server functions)
-  - `dist/client/`         → assets estáticos (JS, CSS, imagens) servidos pelo Node
+  - `dist/client/` → assets estáticos (JS, CSS, imagens) servidos pelo Node
 - **PM2** roda `dist/server/server.js` em cluster (2 workers).
 - **Nginx** faz reverse proxy do `:80/:443` para `127.0.0.1:3000`.
 
@@ -84,13 +84,13 @@ backend vivem no mesmo codebase**. Leia antes de fazer deploy em VPS.
 
 **Separação real** (já feita pelo build):
 
-| Arquivo no código              | Roda em        | Vai pro bundle... |
-|--------------------------------|----------------|-------------------|
-| `*.tsx` (componentes React)    | servidor + browser | server + client |
-| `*.functions.ts`               | só servidor    | só server       |
-| `*.server.ts` / `.server.tsx`  | só servidor    | só server       |
-| `client.server.ts`             | só servidor (service role!) | só server |
-| `api/**/*.ts`                  | só servidor    | só server       |
+| Arquivo no código             | Roda em                     | Vai pro bundle... |
+| ----------------------------- | --------------------------- | ----------------- |
+| `*.tsx` (componentes React)   | servidor + browser          | server + client   |
+| `*.functions.ts`              | só servidor                 | só server         |
+| `*.server.ts` / `.server.tsx` | só servidor                 | só server         |
+| `client.server.ts`            | só servidor (service role!) | só server         |
+| `api/**/*.ts`                 | só servidor                 | só server         |
 
 ---
 
@@ -117,16 +117,16 @@ backend vivem no mesmo codebase**. Leia antes de fazer deploy em VPS.
 Ficam no arquivo `.env` **na raiz do projeto** (não em subpastas). O Node lê
 automaticamente quando o PM2 starta `dist/server/server.js`.
 
-| Variável                       | Quem usa            | Onde fica          |
-|--------------------------------|---------------------|--------------------|
-| `VITE_SUPABASE_URL`            | Browser + build     | bundled no client  |
-| `VITE_SUPABASE_PUBLISHABLE_KEY`| Browser + build     | bundled no client  |
-| `SUPABASE_URL`                 | Server functions    | só no servidor     |
-| `SUPABASE_PUBLISHABLE_KEY`     | Server functions    | só no servidor     |
-| `SUPABASE_SERVICE_ROLE_KEY`    | Server admin client | **SECRETO**        |
-| `PUBLIC_SITE_URL`              | Server (redirects)  | só no servidor     |
-| `INFINITEPAY_WEBHOOK_SECRET`   | Webhook handler     | **SECRETO**        |
-| `LOVABLE_API_KEY`              | Server (IA, opc.)   | **SECRETO**        |
+| Variável                        | Quem usa            | Onde fica         |
+| ------------------------------- | ------------------- | ----------------- |
+| `VITE_SUPABASE_URL`             | Browser + build     | bundled no client |
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | Browser + build     | bundled no client |
+| `SUPABASE_URL`                  | Server functions    | só no servidor    |
+| `SUPABASE_PUBLISHABLE_KEY`      | Server functions    | só no servidor    |
+| `SUPABASE_SERVICE_ROLE_KEY`     | Server admin client | **SECRETO**       |
+| `PUBLIC_SITE_URL`               | Server (redirects)  | só no servidor    |
+| `INFINITEPAY_WEBHOOK_SECRET`    | Webhook handler     | **SECRETO**       |
+| `LOVABLE_API_KEY`               | Server (IA, opc.)   | **SECRETO**       |
 
 **Verificação no boot:** `src/lib/env-check.server.ts` roda automaticamente
 quando o servidor sobe e falha (em produção) se faltar alguma var obrigatória.
@@ -160,8 +160,8 @@ O `vite.config.ts` tem um toggle:
 const isNodeTarget = process.env.TARGET === "node";
 ```
 
-- `npm run build`            → build Cloudflare Workers (preview/publish Lovable)
-- `npm run build:node`       → build Node SSR (VPS Hetzner)
+- `npm run build` → build Cloudflare Workers (preview/publish Lovable)
+- `npm run build:node` → build Node SSR (VPS Hetzner)
 
 Os dois targets compartilham 100% do código. Só muda o runtime de SSR.
 

@@ -36,8 +36,8 @@ export function HomeKit() {
             </h3>
             <p className="mt-4 text-base text-[color:var(--color-brand-purple-text)]">
               Desenvolvemos um kit especial para que você tenha tudo o que precisa para participar
-              da corrida com conforto e estilo. Cada item foi cuidadosamente selecionado pensando
-              na sua experiência.
+              da corrida com conforto e estilo. Cada item foi cuidadosamente selecionado pensando na
+              sua experiência.
             </p>
 
             <ul className="mt-8 space-y-5">

@@ -13,13 +13,13 @@ import {
 export const Route = createFileRoute("/regulamento")({
   head: () => ({
     meta: [
-      { title: "Regulamento Oficial — II Corrida das Famílias" },
+      { title: "Regulamento Oficial — 2ª Corrida Natalina | CORRE+" },
       {
         name: "description",
         content:
-          "Regulamento Oficial da II Corrida das Famílias (5 km, Serra Talhada/PE, 09/08/2026): inscrições, pagamentos, lotes, percurso, kit, categorias, premiação, LGPD e anexos.",
+          "Regulamento Oficial da 2ª Corrida Natalina | CORRE+ (Serra Talhada/PE): inscrições, pagamentos, lotes, percurso, kit, categorias, premiação e regras.",
       },
-      { property: "og:title", content: "Regulamento Oficial — II Corrida das Famílias" },
+      { property: "og:title", content: "Regulamento Oficial — 2ª Corrida Natalina | CORRE+" },
       {
         property: "og:description",
         content:
@@ -380,10 +380,7 @@ function CamposAssinatura({ campos }: { campos: string[] }) {
   return (
     <dl className="mt-5 grid gap-3">
       {campos.map((c) => (
-        <div
-          key={c}
-          className="flex flex-col gap-1 sm:flex-row sm:items-end sm:gap-3"
-        >
+        <div key={c} className="flex flex-col gap-1 sm:flex-row sm:items-end sm:gap-3">
           <dt className="min-w-[230px] text-sm font-semibold text-[color:var(--color-brand-purple-title)]">
             {c}:
           </dt>
@@ -449,16 +446,14 @@ function Page() {
         {/* Intro */}
         <div className="mb-10 rounded-3xl border border-border bg-white p-7 shadow-soft">
           <p className="text-base leading-relaxed text-[color:var(--color-brand-purple-text)]">
-            Este Regulamento estabelece as condições gerais de participação, inscrição,
-            pagamento, retirada de kit, percurso, premiação, segurança, saúde, uso de
-            imagem, tratamento de dados pessoais e demais regras aplicáveis à II
-            CORRIDA DAS FAMÍLIAS.
+            Este Regulamento estabelece as condições gerais de participação, inscrição, pagamento,
+            retirada de kit, percurso, premiação, segurança, saúde, uso de imagem, tratamento de
+            dados pessoais e demais regras aplicáveis à II CORRIDA DAS FAMÍLIAS.
           </p>
           <p className="mt-4 text-base leading-relaxed text-[color:var(--color-brand-purple-text)]">
-            Ao realizar a inscrição, o participante declara ter lido, compreendido e
-            aceitado integralmente as normas deste Regulamento, comprometendo-se a
-            respeitar as orientações da Organização, dos fiscais, dos agentes de apoio e
-            das autoridades competentes.
+            Ao realizar a inscrição, o participante declara ter lido, compreendido e aceitado
+            integralmente as normas deste Regulamento, comprometendo-se a respeitar as orientações
+            da Organização, dos fiscais, dos agentes de apoio e das autoridades competentes.
           </p>
         </div>
 
@@ -469,23 +464,23 @@ function Page() {
           </p>
           <div className="mt-4 space-y-4 text-base leading-relaxed text-white/90">
             <p>
-              A II CORRIDA DAS FAMÍLIAS é um evento de corrida de rua de caráter
-              esportivo, beneficente, comunitário e religioso, realizado em Serra
-              Talhada/PE, com o propósito de reunir famílias, atletas, entusiastas da
-              corrida, jovens, adultos, idosos e a comunidade em geral em torno dos
-              pilares da fé, do esporte em família, da saúde e da solidariedade.
+              A II CORRIDA DAS FAMÍLIAS é um evento de corrida de rua de caráter esportivo,
+              beneficente, comunitário e religioso, realizado em Serra Talhada/PE, com o propósito
+              de reunir famílias, atletas, entusiastas da corrida, jovens, adultos, idosos e a
+              comunidade em geral em torno dos pilares da fé, do esporte em família, da saúde e da
+              solidariedade.
             </p>
             <p>
-              O presente Regulamento foi elaborado para orientar os participantes,
-              preservar a organização do evento, garantir maior segurança operacional e
-              estabelecer regras claras para inscrição, pagamento, participação,
-              retirada de kits, conduta durante a corrida, premiação, cancelamento,
-              reembolso, direito de imagem e tratamento de dados pessoais.
+              O presente Regulamento foi elaborado para orientar os participantes, preservar a
+              organização do evento, garantir maior segurança operacional e estabelecer regras
+              claras para inscrição, pagamento, participação, retirada de kits, conduta durante a
+              corrida, premiação, cancelamento, reembolso, direito de imagem e tratamento de dados
+              pessoais.
             </p>
             <p>
-              A participação no evento implica a aceitação integral deste Regulamento,
-              bem como das orientações complementares que venham a ser divulgadas pela
-              Organização em seus canais oficiais.
+              A participação no evento implica a aceitação integral deste Regulamento, bem como das
+              orientações complementares que venham a ser divulgadas pela Organização em seus canais
+              oficiais.
             </p>
           </div>
         </article>

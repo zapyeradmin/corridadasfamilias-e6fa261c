@@ -61,12 +61,9 @@ export function exportAccessLogsToPdf(logs: AccessLogRow[]) {
       const pageHeight = doc.internal.pageSize.getHeight();
       doc.setFontSize(8);
       doc.setTextColor(120);
-      doc.text(
-        `Página ${current} de ${pageCount}`,
-        pageWidth - 40,
-        pageHeight - 20,
-        { align: "right" },
-      );
+      doc.text(`Página ${current} de ${pageCount}`, pageWidth - 40, pageHeight - 20, {
+        align: "right",
+      });
       doc.setTextColor(0);
     },
   });

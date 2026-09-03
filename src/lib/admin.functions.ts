@@ -8,7 +8,11 @@ import type { Database } from "@/integrations/supabase/types";
 type RegistrationStatus = "pending" | "processing" | "paid" | "canceled" | "refunded";
 type SponsorTier = "diamond" | "gold" | "silver" | "standard";
 
-async function assertAdmin(supabase: SupabaseClient<Database>, userId: string, claims: { email?: string }) {
+async function assertAdmin(
+  supabase: SupabaseClient<Database>,
+  userId: string,
+  claims: { email?: string },
+) {
   const { data, error } = await supabase
     .from("user_roles")
     .select("role")
@@ -23,13 +27,14 @@ async function assertAdmin(supabase: SupabaseClient<Database>, userId: string, c
 async function logAction(
   supabase: SupabaseClient<Database>,
   args: {
-  actorId: string;
-  actorEmail: string | null;
-  action: string;
-  entityType?: string;
-  entityId?: string;
-  details?: Record<string, unknown>;
-}) {
+    actorId: string;
+    actorEmail: string | null;
+    action: string;
+    entityType?: string;
+    entityId?: string;
+    details?: Record<string, unknown>;
+  },
+) {
   await supabase.from("access_logs").insert({
     actor_id: args.actorId,
     actor_email: args.actorEmail,
@@ -163,7 +168,11 @@ export const updateRegistrationStatus = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ context, data }) => {
-    const admin = await assertAdmin(context.supabase, context.userId, context.claims as { email?: string });
+    const admin = await assertAdmin(
+      context.supabase,
+      context.userId,
+      context.claims as { email?: string },
+    );
     const { error } = await context.supabase
       .from("registrations")
       .update({ status: data.status })
@@ -200,7 +209,11 @@ export const simulatePaymentApproval = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => z.object({ protocol: z.string().min(4) }).parse(input))
   .handler(async ({ context, data }) => {
-    const admin = await assertAdmin(context.supabase, context.userId, context.claims as { email?: string });
+    const admin = await assertAdmin(
+      context.supabase,
+      context.userId,
+      context.claims as { email?: string },
+    );
     const { data: reg } = await context.supabase
       .from("registrations")
       .select("id")
@@ -343,7 +356,11 @@ export const createSponsor = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => sponsorMutationSchema.parse(input))
   .handler(async ({ context, data }) => {
-    const admin = await assertAdmin(context.supabase, context.userId, context.claims as { email?: string });
+    const admin = await assertAdmin(
+      context.supabase,
+      context.userId,
+      context.claims as { email?: string },
+    );
     const { data: row, error } = await context.supabase
       .from("sponsors")
       .insert({
@@ -370,13 +387,14 @@ export const createSponsor = createServerFn({ method: "POST" })
 export const updateSponsor = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) =>
-    sponsorMutationSchema
-      .partial()
-      .extend({ id: z.string().uuid() })
-      .parse(input),
+    sponsorMutationSchema.partial().extend({ id: z.string().uuid() }).parse(input),
   )
   .handler(async ({ context, data }) => {
-    const admin = await assertAdmin(context.supabase, context.userId, context.claims as { email?: string });
+    const admin = await assertAdmin(
+      context.supabase,
+      context.userId,
+      context.claims as { email?: string },
+    );
     const { id, ...rest } = data;
     const patch: Database["public"]["Tables"]["sponsors"]["Update"] = {
       updated_at: new Date().toISOString(),
@@ -402,7 +420,11 @@ export const deleteSponsor = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
   .handler(async ({ context, data }) => {
-    const admin = await assertAdmin(context.supabase, context.userId, context.claims as { email?: string });
+    const admin = await assertAdmin(
+      context.supabase,
+      context.userId,
+      context.claims as { email?: string },
+    );
     const { data: existing } = await context.supabase
       .from("sponsors")
       .select("logo_url")
@@ -416,7 +438,10 @@ export const deleteSponsor = createServerFn({ method: "POST" })
       const idx = existing.logo_url.indexOf(marker);
       if (idx >= 0) {
         const path = existing.logo_url.slice(idx + marker.length);
-        await supabaseAdmin.storage.from("sponsors").remove([path]).catch(() => undefined);
+        await supabaseAdmin.storage
+          .from("sponsors")
+          .remove([path])
+          .catch(() => undefined);
       }
     }
     await logAction(context.supabase, {
@@ -446,13 +471,15 @@ export const uploadSponsorLogo = createServerFn({ method: "POST" })
     if (bytes.byteLength > 2 * 1024 * 1024) {
       throw new Error("Arquivo excede 2 MB.");
     }
-    const ext = data.contentType === "image/png" ? "png" : data.contentType === "image/webp" ? "webp" : "jpg";
-    const safeBase = data.filename
-      .replace(/\.[a-zA-Z0-9]+$/, "")
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "")
-      .slice(0, 60) || "sponsor";
+    const ext =
+      data.contentType === "image/png" ? "png" : data.contentType === "image/webp" ? "webp" : "jpg";
+    const safeBase =
+      data.filename
+        .replace(/\.[a-zA-Z0-9]+$/, "")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "")
+        .slice(0, 60) || "sponsor";
     const path = `${safeBase}-${Date.now()}.${ext}`;
     const ct = data.contentType === "image/jpg" ? "image/jpeg" : data.contentType;
     const { error } = await supabaseAdmin.storage
@@ -462,7 +489,6 @@ export const uploadSponsorLogo = createServerFn({ method: "POST" })
     const { data: pub } = supabaseAdmin.storage.from("sponsors").getPublicUrl(path);
     return { publicUrl: pub.publicUrl, path };
   });
-
 
 export const listSettingsAdmin = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
@@ -487,7 +513,11 @@ export const updateSettingAdmin = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ context, data }) => {
-    const admin = await assertAdmin(context.supabase, context.userId, context.claims as { email?: string });
+    const admin = await assertAdmin(
+      context.supabase,
+      context.userId,
+      context.claims as { email?: string },
+    );
     const { data: rows, error } = await context.supabase
       .from("settings")
       .upsert(
@@ -544,7 +574,11 @@ export const updateCheckoutConfig = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => checkoutSchema.parse(input))
   .handler(async ({ context, data }) => {
-    const admin = await assertAdmin(context.supabase, context.userId, context.claims as { email?: string });
+    const admin = await assertAdmin(
+      context.supabase,
+      context.userId,
+      context.claims as { email?: string },
+    );
     const key = data.tipo === "crianca" ? "checkout_crianca" : "checkout_adulto";
     const value = {
       nome_produto: data.nome_produto,
@@ -553,15 +587,25 @@ export const updateCheckoutConfig = createServerFn({ method: "POST" })
       checkout_url: data.checkout_url,
       status: data.checkout_url ? "ativo" : "pendente_configuracao",
     };
-    const { error } = await context.supabase.from("settings").upsert(
-      { key, value: value as never, is_public: true, updated_at: new Date().toISOString() },
-      { onConflict: "key" },
-    );
+    const { error } = await context.supabase
+      .from("settings")
+      .upsert(
+        { key, value: value as never, is_public: true, updated_at: new Date().toISOString() },
+        { onConflict: "key" },
+      );
     if (error) throw new Error(error.message);
     // Mirror to legacy keys so existing infinitepay.functions readers continue working.
-    const legacyKey = data.tipo === "crianca" ? "infinitepay_checkout_crianca_url" : "infinitepay_checkout_adulto_url";
+    const legacyKey =
+      data.tipo === "crianca"
+        ? "infinitepay_checkout_crianca_url"
+        : "infinitepay_checkout_adulto_url";
     await context.supabase.from("settings").upsert(
-      { key: legacyKey, value: data.checkout_url as never, is_public: true, updated_at: new Date().toISOString() },
+      {
+        key: legacyKey,
+        value: data.checkout_url as never,
+        is_public: true,
+        updated_at: new Date().toISOString(),
+      },
       { onConflict: "key" },
     );
     await logAction(context.supabase, {
@@ -586,7 +630,10 @@ const contactsSchema = z.object({
     .string()
     .trim()
     .max(20)
-    .refine((v) => v.replace(/\D/g, "").length >= 10 && v.replace(/\D/g, "").length <= 13, "WhatsApp inválido"),
+    .refine(
+      (v) => v.replace(/\D/g, "").length >= 10 && v.replace(/\D/g, "").length <= 13,
+      "WhatsApp inválido",
+    ),
   instagram_url: z.string().trim().url("URL inválida").max(300).or(z.literal("")),
   instagram_usuario: z.string().trim().max(60).default(""),
 });
@@ -595,7 +642,11 @@ export const updateSiteContacts = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => contactsSchema.parse(input))
   .handler(async ({ context, data }) => {
-    const admin = await assertAdmin(context.supabase, context.userId, context.claims as { email?: string });
+    const admin = await assertAdmin(
+      context.supabase,
+      context.userId,
+      context.claims as { email?: string },
+    );
     const value = {
       local: data.local,
       email_oficial: data.email_oficial,
@@ -604,7 +655,12 @@ export const updateSiteContacts = createServerFn({ method: "POST" })
       instagram_usuario: data.instagram_usuario.replace(/^@+/, ""),
     };
     const { error } = await context.supabase.from("settings").upsert(
-      { key: "site_contacts", value: value as never, is_public: true, updated_at: new Date().toISOString() },
+      {
+        key: "site_contacts",
+        value: value as never,
+        is_public: true,
+        updated_at: new Date().toISOString(),
+      },
       { onConflict: "key" },
     );
     if (error) throw new Error(error.message);
@@ -629,7 +685,9 @@ const homeVideoSchema = z.object({
     .trim()
     .max(500)
     .refine(
-      (v) => v === "" || /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be|youtube-nocookie\.com)\//i.test(v),
+      (v) =>
+        v === "" ||
+        /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be|youtube-nocookie\.com)\//i.test(v),
       "Informe uma URL válida do YouTube",
     ),
   cover_url: z.string().trim().max(1000).url("URL inválida").or(z.literal("")),
@@ -639,10 +697,19 @@ export const updateHomeVideo = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => homeVideoSchema.parse(input))
   .handler(async ({ context, data }) => {
-    const admin = await assertAdmin(context.supabase, context.userId, context.claims as { email?: string });
+    const admin = await assertAdmin(
+      context.supabase,
+      context.userId,
+      context.claims as { email?: string },
+    );
     const value = { youtube_url: data.youtube_url, cover_url: data.cover_url };
     const { error } = await context.supabase.from("settings").upsert(
-      { key: "home_video", value: value as never, is_public: true, updated_at: new Date().toISOString() },
+      {
+        key: "home_video",
+        value: value as never,
+        is_public: true,
+        updated_at: new Date().toISOString(),
+      },
       { onConflict: "key" },
     );
     if (error) throw new Error(error.message);
@@ -674,13 +741,15 @@ export const uploadHomeVideoCover = createServerFn({ method: "POST" })
     if (bytes.byteLength > 3 * 1024 * 1024) {
       throw new Error("Arquivo excede 3 MB.");
     }
-    const ext = data.contentType === "image/png" ? "png" : data.contentType === "image/webp" ? "webp" : "jpg";
-    const safeBase = data.filename
-      .replace(/\.[a-zA-Z0-9]+$/, "")
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "")
-      .slice(0, 60) || "capa";
+    const ext =
+      data.contentType === "image/png" ? "png" : data.contentType === "image/webp" ? "webp" : "jpg";
+    const safeBase =
+      data.filename
+        .replace(/\.[a-zA-Z0-9]+$/, "")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "")
+        .slice(0, 60) || "capa";
     const path = `${safeBase}-${Date.now()}.${ext}`;
     const ct = data.contentType === "image/jpg" ? "image/jpeg" : data.contentType;
     const { error } = await supabaseAdmin.storage
@@ -691,24 +760,22 @@ export const uploadHomeVideoCover = createServerFn({ method: "POST" })
     return { publicUrl: pub.publicUrl, path };
   });
 
-
-
 // ─────────────────────────────────────────────────────────
 // Gerenciamento de usuários (Supabase Auth + user_roles)
 // ─────────────────────────────────────────────────────────
 
 type AppRole = "admin" | "staff";
 
-const passwordSchema = z
-  .string()
-  .min(8, "Senha deve ter no mínimo 8 caracteres")
-  .max(72);
+const passwordSchema = z.string().min(8, "Senha deve ter no mínimo 8 caracteres").max(72);
 
 export const listAdminUsers = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     await assertAdmin(context.supabase, context.userId, context.claims as { email?: string });
-    const { data: list, error } = await supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 200 });
+    const { data: list, error } = await supabaseAdmin.auth.admin.listUsers({
+      page: 1,
+      perPage: 200,
+    });
     if (error) throw new Error(error.message);
     const { data: roles } = await context.supabase.from("user_roles").select("user_id, role");
     const roleByUser = new Map<string, AppRole>();
@@ -735,7 +802,11 @@ export const createAdminUser = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ context, data }) => {
-    const admin = await assertAdmin(context.supabase, context.userId, context.claims as { email?: string });
+    const admin = await assertAdmin(
+      context.supabase,
+      context.userId,
+      context.claims as { email?: string },
+    );
     const { data: created, error } = await supabaseAdmin.auth.admin.createUser({
       email: data.email,
       password: data.password,
@@ -772,8 +843,13 @@ export const updateAdminUser = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ context, data }) => {
-    const admin = await assertAdmin(context.supabase, context.userId, context.claims as { email?: string });
-    const patch: { email?: string; password?: string; user_metadata?: Record<string, unknown> } = {};
+    const admin = await assertAdmin(
+      context.supabase,
+      context.userId,
+      context.claims as { email?: string },
+    );
+    const patch: { email?: string; password?: string; user_metadata?: Record<string, unknown> } =
+      {};
     if (data.email) patch.email = data.email;
     if (data.password) patch.password = data.password;
     if (data.full_name) patch.user_metadata = { full_name: data.full_name };
@@ -788,7 +864,8 @@ export const updateAdminUser = createServerFn({ method: "POST" })
           .from("user_roles")
           .select("user_id", { count: "exact", head: true })
           .eq("role", "admin");
-        if ((count ?? 0) <= 1) throw new Error("Você é o último administrador. Promova outro usuário antes.");
+        if ((count ?? 0) <= 1)
+          throw new Error("Você é o último administrador. Promova outro usuário antes.");
       }
       await supabaseAdmin.from("user_roles").delete().eq("user_id", data.id);
       const { error: insErr } = await supabaseAdmin
@@ -811,7 +888,11 @@ export const deleteAdminUser = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
   .handler(async ({ context, data }) => {
-    const admin = await assertAdmin(context.supabase, context.userId, context.claims as { email?: string });
+    const admin = await assertAdmin(
+      context.supabase,
+      context.userId,
+      context.claims as { email?: string },
+    );
     if (data.id === admin.userId) throw new Error("Você não pode excluir a si mesmo.");
     // Não permitir excluir o último admin
     const { data: targetRoles } = await supabaseAdmin

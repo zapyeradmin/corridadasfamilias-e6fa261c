@@ -5,13 +5,13 @@ import { CategoriasGrid } from "@/components/site/categorias-premiacoes";
 export const Route = createFileRoute("/premiacao")({
   head: () => ({
     meta: [
-      { title: "Premiação — II Corrida das Famílias" },
+      { title: "Premiação — 2ª Corrida Natalina | CORRE+" },
       {
         name: "description",
         content:
-          "Premiação da II Corrida das Famílias: prêmios em dinheiro no Geral Masculino e Feminino, troféus por categoria e medalha finisher para todos que cruzarem a linha de chegada.",
+          "Premiação da 2ª Corrida Natalina | CORRE+: prêmios em dinheiro, troféus por categoria e medalha finisher.",
       },
-      { property: "og:title", content: "Premiação — II Corrida das Famílias" },
+      { property: "og:title", content: "Premiação — 2ª Corrida Natalina | CORRE+" },
       {
         property: "og:description",
         content:
@@ -32,10 +32,8 @@ function Page() {
       />
 
       <section className="relative bg-white">
-
         <div className="mx-auto max-w-[1200px] px-5 pt-6 pb-20 md:px-8 md:pt-8 md:pb-28">
           <CategoriasGrid />
-
         </div>
       </section>
 
@@ -45,8 +43,7 @@ function Page() {
             Pronto para correr com a sua família?
           </h3>
           <p className="max-w-xl text-base text-white/80">
-            Garanta sua vaga e venha viver essa experiência única em Serra
-            Talhada/PE.
+            Garanta sua vaga e venha viver essa experiência única em Serra Talhada/PE.
           </p>
           <Link
             to="/inscricao"

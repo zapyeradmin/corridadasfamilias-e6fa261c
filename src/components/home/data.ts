@@ -1,12 +1,4 @@
-import {
-  Heart,
-  Activity,
-  Users,
-  HandHeart,
-  ClipboardList,
-  Package,
-  Flag,
-} from "lucide-react";
+import { Heart, Activity, Users, HandHeart, ClipboardList, Package, Flag } from "lucide-react";
 
 export const PILARES = [
   {
@@ -35,14 +27,12 @@ export const TIMELINE = [
   {
     icon: ClipboardList,
     title: "Abertura das Inscrições",
-    body:
-      "Garanta sua inscrição na corrida mais vibrante da cidade! Inscrições online com vagas limitadas. A partir das 17h do dia 17 de maio de 2026 até às 23h59 do dia 12 de julho de 2026.",
+    body: "Garanta sua inscrição na corrida mais vibrante da cidade! Inscrições online com vagas limitadas. A partir das 17h do dia 17 de maio de 2026 até às 23h59 do dia 12 de julho de 2026.",
   },
   {
     icon: Package,
     title: "Entrega dos Kits",
-    body:
-      "Retire seu kit atleta (Camiseta Oficial, Número) das 19:30 às 21:30 nos dias 4, 5 e 6 de agosto de 2026. No Centro Pastoral da Igreja de N. Sra. da Conceição. Não esqueça de levar sua doação de 1Kg de Alimento não perecível, e para os inscritos que forem retirar seu Kit do Atleta no dia 09 de agosto, deverá receber até o horário limite das 5:30, no local da largada.",
+    body: "Retire seu kit atleta (Camiseta Oficial, Número) das 19:30 às 21:30 nos dias 4, 5 e 6 de agosto de 2026. No Centro Pastoral da Igreja de N. Sra. da Conceição. Não esqueça de levar sua doação de 1Kg de Alimento não perecível, e para os inscritos que forem retirar seu Kit do Atleta no dia 09 de agosto, deverá receber até o horário limite das 5:30, no local da largada.",
   },
   {
     icon: Flag,

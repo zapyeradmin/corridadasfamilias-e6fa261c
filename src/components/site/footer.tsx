@@ -6,7 +6,8 @@ import logo from "@/assets/logo-corrida.png?w=600&quality=88&format=webp";
 
 export function SiteFooter() {
   const { contacts, whatsappLabel, whatsappHref } = useSiteContacts();
-  const igHref = contacts.instagram_url || `https://www.instagram.com/${contacts.instagram_usuario}`;
+  const igHref =
+    contacts.instagram_url || `https://www.instagram.com/${contacts.instagram_usuario}`;
   return (
     <footer className="bg-[color:var(--color-brand-dark)] text-white">
       <div className="mx-auto grid max-w-[1360px] gap-12 px-5 py-16 md:grid-cols-3 md:px-8">
@@ -21,12 +22,15 @@ export function SiteFooter() {
             className="-mt-8 h-32 w-auto md:-mt-12 md:h-40"
           />
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-white/70">
-            Juntos no Rosário, Famílias unidas na Fé. Corrida organizada pelo ECC da Paróquia de N. Sra. do Rosário.
+            Juntos no Rosário, Famílias unidas na Fé. Corrida organizada pelo ECC da Paróquia de N.
+            Sra. do Rosário.
           </p>
         </div>
 
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-white/50">Navegação</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-white/50">
+            Navegação
+          </p>
           <ul className="mt-4 grid grid-cols-2 gap-y-2 text-sm">
             {NAV_LINKS.map((l) => (
               <li key={l.to}>
@@ -36,7 +40,10 @@ export function SiteFooter() {
               </li>
             ))}
             <li>
-              <Link to="/politica-privacidade" className="text-white/80 transition hover:text-white">
+              <Link
+                to="/politica-privacidade"
+                className="text-white/80 transition hover:text-white"
+              >
                 Política de Privacidade
               </Link>
             </li>
@@ -78,4 +85,3 @@ export function SiteFooter() {
     </footer>
   );
 }
-

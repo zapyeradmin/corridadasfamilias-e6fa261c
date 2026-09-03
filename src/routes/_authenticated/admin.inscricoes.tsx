@@ -4,7 +4,11 @@ import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
-import { listRegistrations, updateRegistrationStatus, getRegistrationDetail } from "@/lib/admin.functions";
+import {
+  listRegistrations,
+  updateRegistrationStatus,
+  getRegistrationDetail,
+} from "@/lib/admin.functions";
 import { formatCents, formatDateTimeBR } from "@/lib/format";
 import { Input } from "@/components/ui/input";
 import {
@@ -56,8 +60,10 @@ function Page() {
   });
 
   const mutation = useMutation({
-    mutationFn: (vars: { id: string; status: "pending" | "processing" | "paid" | "canceled" | "refunded" }) =>
-      updateStatus({ data: vars }),
+    mutationFn: (vars: {
+      id: string;
+      status: "pending" | "processing" | "paid" | "canceled" | "refunded";
+    }) => updateStatus({ data: vars }),
     onSuccess: () => {
       toast.success("Status atualizado.");
       qc.invalidateQueries({ queryKey: ["admin"] });
@@ -80,7 +86,9 @@ function Page() {
     <div className="space-y-6">
       <header>
         <h1 className="text-2xl font-extrabold uppercase tracking-tight">Inscrições</h1>
-        <p className="mt-1 text-sm text-muted-foreground">{data ? `${data.total} resultados` : "—"}</p>
+        <p className="mt-1 text-sm text-muted-foreground">
+          {data ? `${data.total} resultados` : "—"}
+        </p>
       </header>
 
       <div className="flex flex-wrap items-center gap-3">
@@ -100,10 +108,14 @@ function Page() {
             setStatus(v);
           }}
         >
-          <SelectTrigger className="w-44"><SelectValue /></SelectTrigger>
+          <SelectTrigger className="w-44">
+            <SelectValue />
+          </SelectTrigger>
           <SelectContent>
             {STATUSES.map((s) => (
-              <SelectItem key={s} value={s}>{STATUS_LABEL[s]}</SelectItem>
+              <SelectItem key={s} value={s}>
+                {STATUS_LABEL[s]}
+              </SelectItem>
             ))}
           </SelectContent>
         </Select>
@@ -125,7 +137,11 @@ function Page() {
           </thead>
           <tbody>
             {isLoading && (
-              <tr><td colSpan={8} className="px-4 py-6 text-center text-sm text-muted-foreground">Carregando…</td></tr>
+              <tr>
+                <td colSpan={8} className="px-4 py-6 text-center text-sm text-muted-foreground">
+                  Carregando…
+                </td>
+              </tr>
             )}
             {data?.rows.map((r) => (
               <tr key={r.id} className="border-t border-border">
@@ -146,16 +162,22 @@ function Page() {
                       })
                     }
                   >
-                    <SelectTrigger className="h-8 w-32"><SelectValue /></SelectTrigger>
+                    <SelectTrigger className="h-8 w-32">
+                      <SelectValue />
+                    </SelectTrigger>
                     <SelectContent>
                       {STATUSES.filter((s) => s !== "all").map((s) => (
-                        <SelectItem key={s} value={s}>{STATUS_LABEL[s]}</SelectItem>
+                        <SelectItem key={s} value={s}>
+                          {STATUS_LABEL[s]}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </td>
                 <td className="px-4 py-3">{formatCents(r.amount_cents)}</td>
-                <td className="px-4 py-3 text-xs text-muted-foreground">{formatDateTimeBR(r.created_at)}</td>
+                <td className="px-4 py-3 text-xs text-muted-foreground">
+                  {formatDateTimeBR(r.created_at)}
+                </td>
                 <td className="px-4 py-3">
                   <button
                     type="button"
@@ -168,7 +190,11 @@ function Page() {
               </tr>
             ))}
             {data && data.rows.length === 0 && !isLoading && (
-              <tr><td colSpan={8} className="px-4 py-6 text-center text-sm text-muted-foreground">Nenhuma inscrição encontrada.</td></tr>
+              <tr>
+                <td colSpan={8} className="px-4 py-6 text-center text-sm text-muted-foreground">
+                  Nenhuma inscrição encontrada.
+                </td>
+              </tr>
             )}
           </tbody>
         </table>
@@ -238,7 +264,12 @@ function RegistrationDetailDialog({
   });
 
   return (
-    <Dialog open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
+    <Dialog
+      open={open}
+      onOpenChange={(o) => {
+        if (!o) onClose();
+      }}
+    >
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl font-extrabold uppercase tracking-tight">
@@ -256,7 +287,10 @@ function RegistrationDetailDialog({
         ) : (
           <div className="space-y-6">
             <section className="grid gap-3 sm:grid-cols-2">
-              <Field label="Status" value={STATUS_LABEL[data.registration.status] ?? data.registration.status} />
+              <Field
+                label="Status"
+                value={STATUS_LABEL[data.registration.status] ?? data.registration.status}
+              />
               <Field label="Valor" value={formatCents(data.registration.amount_cents)} />
               <Field label="E-mail" value={data.registration.email} />
               <Field label="WhatsApp" value={data.registration.whatsapp} />
@@ -272,7 +306,10 @@ function RegistrationDetailDialog({
               />
               <Field label="Notas médicas" value={data.registration.medical_notes ?? "—"} />
               <Field label="LGPD aceito" value={data.registration.accepted_lgpd ? "Sim" : "Não"} />
-              <Field label="Termos aceitos" value={data.registration.accepted_terms ? "Sim" : "Não"} />
+              <Field
+                label="Termos aceitos"
+                value={data.registration.accepted_terms ? "Sim" : "Não"}
+              />
               <Field label="Criada em" value={formatDateTimeBR(data.registration.created_at)} />
               <Field label="Atualizada em" value={formatDateTimeBR(data.registration.updated_at)} />
             </section>
@@ -296,12 +333,23 @@ function RegistrationDetailDialog({
                         <td className="px-3 py-2">{p.provider}</td>
                         <td className="px-3 py-2">{STATUS_LABEL[p.status] ?? p.status}</td>
                         <td className="px-3 py-2">{formatCents(p.amount_cents)}</td>
-                        <td className="px-3 py-2 text-xs text-muted-foreground">{formatDateTimeBR(p.paid_at)}</td>
-                        <td className="px-3 py-2 text-xs text-muted-foreground">{formatDateTimeBR(p.created_at)}</td>
+                        <td className="px-3 py-2 text-xs text-muted-foreground">
+                          {formatDateTimeBR(p.paid_at)}
+                        </td>
+                        <td className="px-3 py-2 text-xs text-muted-foreground">
+                          {formatDateTimeBR(p.created_at)}
+                        </td>
                       </tr>
                     ))}
                     {data.payments.length === 0 && (
-                      <tr><td colSpan={5} className="px-3 py-4 text-center text-xs text-muted-foreground">Sem pagamentos registrados.</td></tr>
+                      <tr>
+                        <td
+                          colSpan={5}
+                          className="px-3 py-4 text-center text-xs text-muted-foreground"
+                        >
+                          Sem pagamentos registrados.
+                        </td>
+                      </tr>
                     )}
                   </tbody>
                 </table>
@@ -317,7 +365,9 @@ function RegistrationDetailDialog({
 function Field({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-lg border border-border bg-muted/30 p-3">
-      <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{label}</p>
+      <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+        {label}
+      </p>
       <p className="mt-1 text-sm font-semibold text-foreground break-words">{value}</p>
     </div>
   );

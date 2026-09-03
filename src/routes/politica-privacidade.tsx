@@ -31,9 +31,8 @@ function Page() {
           </p>
           <h2>3. Compartilhamento</h2>
           <p>
-            Dados financeiros são compartilhados com a Infinity Pay para processamento do
-            pagamento. Não vendemos nem compartilhamos dados pessoais com terceiros para fins
-            comerciais.
+            Dados financeiros são compartilhados com a Infinity Pay para processamento do pagamento.
+            Não vendemos nem compartilhamos dados pessoais com terceiros para fins comerciais.
           </p>
           <h2>4. Seus direitos</h2>
           <p>
@@ -42,8 +41,8 @@ function Page() {
           </p>
           <h2>5. Segurança</h2>
           <p>
-            Aplicamos políticas de segurança em nível de banco de dados (RLS) e controles de
-            acesso ao painel administrativo para proteger as informações.
+            Aplicamos políticas de segurança em nível de banco de dados (RLS) e controles de acesso
+            ao painel administrativo para proteger as informações.
           </p>
         </article>
       </ContentSection>

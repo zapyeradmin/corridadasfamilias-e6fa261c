@@ -13,7 +13,7 @@ export function MobileMenu({ open, onClose }: Props) {
   return (
     <div
       className={cn(
-        "relative z-10 lg:hidden overflow-hidden border-t border-white/5 bg-[color:var(--color-brand-dark)] transition-[max-height] duration-300",
+        "relative z-10 lg:hidden overflow-hidden border-t border-white/10 bg-[#c90202] transition-[max-height] duration-300",
         open ? "max-h-[80vh]" : "max-h-0",
       )}
     >

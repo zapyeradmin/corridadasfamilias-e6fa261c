@@ -61,7 +61,6 @@ function Page() {
     }
   }
 
-
   if (!protocol) {
     return (
       <ContentSection className="text-center">
@@ -119,8 +118,7 @@ function Page() {
             ) : null}
 
             <p className="mt-6 text-center text-sm text-[color:var(--color-brand-purple-text)]">
-              Sua inscrição foi registrada. A vaga só será confirmada após a aprovação do
-              pagamento.
+              Sua inscrição foi registrada. A vaga só será confirmada após a aprovação do pagamento.
             </p>
 
             <div className="mt-8">
@@ -128,9 +126,21 @@ function Page() {
                 Formas de pagamento
               </p>
               <ul className="mt-4 grid gap-3 sm:grid-cols-3">
-                <PayMethod icon={<QrCode className="h-5 w-5" />} label="PIX" hint="Aprovação imediata" />
-                <PayMethod icon={<CreditCard className="h-5 w-5" />} label="Cartão à vista" hint="Crédito em 1x" />
-                <PayMethod icon={<CreditCard className="h-5 w-5" />} label="Cartão parcelado" hint="Até 12x" />
+                <PayMethod
+                  icon={<QrCode className="h-5 w-5" />}
+                  label="PIX"
+                  hint="Aprovação imediata"
+                />
+                <PayMethod
+                  icon={<CreditCard className="h-5 w-5" />}
+                  label="Cartão à vista"
+                  hint="Crédito em 1x"
+                />
+                <PayMethod
+                  icon={<CreditCard className="h-5 w-5" />}
+                  label="Cartão parcelado"
+                  hint="Até 12x"
+                />
               </ul>
             </div>
 
@@ -141,7 +151,11 @@ function Page() {
                 disabled={redirecting}
                 className="inline-flex items-center gap-2 rounded-full bg-gradient-orange px-8 py-4 text-sm font-extrabold uppercase tracking-wide text-white shadow-orange disabled:cursor-not-allowed disabled:opacity-70"
               >
-                {redirecting ? <Loader2 className="h-5 w-5 animate-spin" /> : <CreditCard className="h-5 w-5" />}
+                {redirecting ? (
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                ) : (
+                  <CreditCard className="h-5 w-5" />
+                )}
                 {redirecting ? "Abrindo checkout..." : "Realizar pagamento"}
               </button>
               <a
@@ -166,21 +180,15 @@ function Page() {
   );
 }
 
-function PayMethod({
-  icon,
-  label,
-  hint,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  hint: string;
-}) {
+function PayMethod({ icon, label, hint }: { icon: React.ReactNode; label: string; hint: string }) {
   return (
     <li className="flex flex-col items-center gap-1 rounded-2xl border border-border bg-white p-4 text-center">
       <span className="grid h-9 w-9 place-items-center rounded-full bg-[color:var(--color-brand-soft)] text-[color:var(--color-brand-purple-title)]">
         {icon}
       </span>
-      <span className="text-sm font-bold text-[color:var(--color-brand-purple-title)]">{label}</span>
+      <span className="text-sm font-bold text-[color:var(--color-brand-purple-title)]">
+        {label}
+      </span>
       <span className="text-[11px] text-[color:var(--color-brand-purple-text)]/70">{hint}</span>
     </li>
   );

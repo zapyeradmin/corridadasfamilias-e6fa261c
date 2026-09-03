@@ -159,10 +159,10 @@ sudo systemctl reload nginx
 
 No painel da Cloudflare → DNS → Records, crie/edite:
 
-| Tipo | Nome | Valor              | Proxy            |
-|------|------|--------------------|--------------------|
-| A    | @    | `178.104.101.145`  | 🟠 ver passo 8     |
-| A    | www  | `178.104.101.145`  | 🟠 ver passo 8     |
+| Tipo | Nome | Valor             | Proxy          |
+| ---- | ---- | ----------------- | -------------- |
+| A    | @    | `178.104.101.145` | 🟠 ver passo 8 |
+| A    | www  | `178.104.101.145` | 🟠 ver passo 8 |
 
 Aguarde propagação (5–30 min). Confirme com:
 
@@ -220,8 +220,6 @@ se o **proxy estiver desligado** (nuvem cinza) durante a emissão.
    e adicione `listen 443 ssl;` (o `certbot --nginx` da Opção A faz isso
    automaticamente; aqui é manual).
 
-
-
 ---
 
 ## 9. Webhook InfinitePay
@@ -272,6 +270,7 @@ Verifique `INFINITEPAY_WEBHOOK_SECRET` no `.env` e reinicie: `pm2 reload corrida
 `sudo certbot renew --force-renewal && sudo systemctl reload nginx`.
 
 **Atualizar Node:**
+
 ```bash
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo bash -
 sudo apt install -y nodejs

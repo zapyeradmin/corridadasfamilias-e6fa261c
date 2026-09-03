@@ -8,7 +8,7 @@ Documento histórico do que foi construído neste projeto, da concepção à eta
 
 **Projeto:** Site oficial e plataforma de inscrições da **II Corrida das Famílias**, organizada pelo ECC da Paróquia de Nossa Senhora do Rosário, em Serra Talhada/PE.
 
-- **Lema:** *"Juntos no Rosário, Famílias unidas na Fé"*
+- **Lema:** _"Juntos no Rosário, Famílias unidas na Fé"_
 - **Distância:** 5 km
 - **Data do evento:** 09 de agosto de 2026
 - **Local de largada:** Igreja Matriz de Nossa Senhora do Rosário
@@ -18,15 +18,15 @@ Documento histórico do que foi construído neste projeto, da concepção à eta
 
 ## 2. Stack técnica
 
-| Camada | Tecnologia |
-| --- | --- |
-| Framework | TanStack Start v1 (SSR) |
-| UI | React 19 + Tailwind CSS v4 + shadcn/ui |
-| Animações | Framer Motion |
-| Build | Vite 7 (Cloudflare Workers em produção) |
-| Backend | Lovable Cloud (Supabase: Auth + Postgres + RLS) |
+| Camada     | Tecnologia                                                   |
+| ---------- | ------------------------------------------------------------ |
+| Framework  | TanStack Start v1 (SSR)                                      |
+| UI         | React 19 + Tailwind CSS v4 + shadcn/ui                       |
+| Animações  | Framer Motion                                                |
+| Build      | Vite 7 (Cloudflare Workers em produção)                      |
+| Backend    | Lovable Cloud (Supabase: Auth + Postgres + RLS)              |
 | Pagamentos | Integração futura com gateway (preparado em `registrations`) |
-| Hospedagem | Cloudflare via Lovable |
+| Hospedagem | Cloudflare via Lovable                                       |
 
 Roteamento por arquivos em `src/routes/`. Server functions tipadas via `createServerFn` em `src/lib/*.functions.ts`. Cliente Supabase de browser/admin separado em `src/integrations/supabase/`.
 
@@ -34,15 +34,15 @@ Roteamento por arquivos em `src/routes/`. Server functions tipadas via `createSe
 
 ## 3. Modelo de dados (Supabase)
 
-| Tabela | Função |
-| --- | --- |
-| `events` | Edições do evento (ativo, datas, local). |
-| `lots` | Lotes de inscrição com janela de venda e preço. |
-| `registrations` | Inscrições dos atletas (nome, CPF, status, valor). |
-| `sponsors` | Patrocinadores com tier (`diamond`, `gold`, `silver`, `standard`). |
-| `gallery_items` | Fotos publicadas na galeria. |
-| `settings` | Configurações públicas/privadas chave-valor. |
-| `user_roles` | Papéis (`admin`) — separado por segurança, com função `has_role` SECURITY DEFINER. |
+| Tabela          | Função                                                                             |
+| --------------- | ---------------------------------------------------------------------------------- |
+| `events`        | Edições do evento (ativo, datas, local).                                           |
+| `lots`          | Lotes de inscrição com janela de venda e preço.                                    |
+| `registrations` | Inscrições dos atletas (nome, CPF, status, valor).                                 |
+| `sponsors`      | Patrocinadores com tier (`diamond`, `gold`, `silver`, `standard`).                 |
+| `gallery_items` | Fotos publicadas na galeria.                                                       |
+| `settings`      | Configurações públicas/privadas chave-valor.                                       |
+| `user_roles`    | Papéis (`admin`) — separado por segurança, com função `has_role` SECURITY DEFINER. |
 
 RLS habilitado em todas as tabelas. Verificação de admin é sempre **server-side**.
 
@@ -51,6 +51,7 @@ RLS habilitado em todas as tabelas. Verificação de admin é sempre **server-si
 ## 4. Funcionalidades implementadas
 
 ### Site público
+
 - **Home (`/`)** — hero com countdown, pilares, informações da corrida, cronograma oficial, vídeo de lançamento.
 - **Regulamento (`/regulamento`)**
 - **Percurso (`/percurso`)**
@@ -62,15 +63,19 @@ RLS habilitado em todas as tabelas. Verificação de admin é sempre **server-si
 - **Política de Privacidade (`/politica-privacidade`)**
 
 ### Fluxo de inscrição
+
 - **`/inscricao`** — formulário com validação de CPF, dados pessoais, contato de emergência.
 - **`/inscricao/sucesso`** — confirmação com protocolo.
 
 ### Autenticação
+
 - **`/login`** e **`/reset-password`** via Supabase Auth.
 - Sincronização global de sessão em `__root.tsx` (`AuthSync`) que invalida queries em logout.
 
 ### Painel admin (`/_authenticated/admin/*`)
+
 Protegido por `beforeLoad` que verifica papel `admin`:
+
 - **Dashboard** — KPIs (total de inscrições, pagas, pendentes, receita).
 - **Inscrições** — listagem, filtro, detalhe (`/admin/inscricoes/$id`).
 - **Pagamentos**
@@ -99,7 +104,7 @@ Componentes shadcn/ui em `src/components/ui/` consumindo os tokens.
 ## 6. Histórico de evolução do header
 
 1. **Versão inicial** — header monolítico com gradientes.
-2. **Alinhamento à esquerda** dos textos *"Inscrições abertas"* e *"Garanta sua vaga e celebre com a sua família"* na home.
+2. **Alinhamento à esquerda** dos textos _"Inscrições abertas"_ e _"Garanta sua vaga e celebre com a sua família"_ na home.
 3. **Menu mobile/tablet** — removida a sobreposição quando aberto, fundo sólido `--color-brand-dark`.
 4. **Cor uniforme em desktop** — gradientes movidos para um wrapper `relative w-full` ocupando toda a largura, eliminando contraste nas laterais fora do container `max-w-[1360px]`.
 5. **Refatoração atual** — header dividido em sub-componentes (ver seção 7).
@@ -109,15 +114,17 @@ Componentes shadcn/ui em `src/components/ui/` consumindo os tokens.
 ## 7. Refatoração desta etapa
 
 ### Organização de código
+
 - **Hook reutilizável `useAuth`** (`src/hooks/use-auth.ts`) — extraído do header. Centraliza listener de sessão e checagem do papel `admin`. Pode ser consumido em outras telas.
 - **Header decomposto** em `src/components/site/header/`:
   - `header-decorations.tsx` — camadas de gradiente e brilhos.
   - `header-logo.tsx` — logo + texto da marca.
   - `desktop-nav.tsx` — navegação desktop com botão Inscreva-se, Admin e Sair.
   - `mobile-menu.tsx` — drawer mobile com fundo sólido.
-- **`src/components/site/header.tsx`** vira um *composer* enxuto (~60 linhas vs. ~180 antes).
+- **`src/components/site/header.tsx`** vira um _composer_ enxuto (~60 linhas vs. ~180 antes).
 
 ### Convenções
+
 - Uso consistente de tokens semânticos (`color:var(--color-brand-*)`) em vez de hex inline em componentes — exceções restantes documentadas (gradiente decorativo do header e fundo translúcido `#2a0f4a`).
 - Imports do `lucide-react` por nome (tree-shaking).
 - Server functions seguem padrão `*.functions.ts` + helpers em `*.server.ts`.
@@ -159,4 +166,4 @@ Variáveis de ambiente vêm do Lovable Cloud (`VITE_SUPABASE_URL`, `VITE_SUPABAS
 
 ---
 
-*Última atualização: maio/2026.*
+_Última atualização: maio/2026._

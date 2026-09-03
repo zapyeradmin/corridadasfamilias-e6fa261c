@@ -116,16 +116,24 @@ function Page() {
               </tr>
             )}
             {data?.rows.map((p) => {
-              const reg = (p as unknown as { registrations: { full_name: string; cpf: string } | null }).registrations;
+              const reg = (
+                p as unknown as { registrations: { full_name: string; cpf: string } | null }
+              ).registrations;
               return (
                 <tr key={p.id} className="border-t border-border">
                   <td className="px-4 py-3 font-semibold">{reg?.full_name ?? "—"}</td>
-                  <td className="px-4 py-3 font-mono text-xs">{reg?.cpf ? maskCpf(reg.cpf) : "—"}</td>
+                  <td className="px-4 py-3 font-mono text-xs">
+                    {reg?.cpf ? maskCpf(reg.cpf) : "—"}
+                  </td>
                   <td className="px-4 py-3">{p.provider}</td>
                   <td className="px-4 py-3">{STATUS_LABEL[p.status] ?? p.status}</td>
                   <td className="px-4 py-3">{formatCents(p.amount_cents)}</td>
-                  <td className="px-4 py-3 text-xs text-muted-foreground">{formatDateTimeBR(p.paid_at)}</td>
-                  <td className="px-4 py-3 text-xs text-muted-foreground">{formatDateTimeBR(p.created_at)}</td>
+                  <td className="px-4 py-3 text-xs text-muted-foreground">
+                    {formatDateTimeBR(p.paid_at)}
+                  </td>
+                  <td className="px-4 py-3 text-xs text-muted-foreground">
+                    {formatDateTimeBR(p.created_at)}
+                  </td>
                 </tr>
               );
             })}

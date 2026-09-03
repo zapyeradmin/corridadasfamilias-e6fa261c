@@ -6,13 +6,12 @@ import percursoMapa from "@/assets/percurso-mapa.png?w=1024&quality=82&format=we
 export const Route = createFileRoute("/percurso")({
   head: () => ({
     meta: [
-      { title: "Percurso 5km — II Corrida das Famílias" },
+      { title: "Percurso 5km — 2ª Corrida Natalina | CORRE+" },
       {
         name: "description",
-        content:
-          "Percurso oficial de 5km com largada e chegada na Igreja Matriz de Nossa Senhora do Rosário, em Serra Talhada/PE.",
+        content: "Percurso oficial de 5km com largada e chegada em Serra Talhada/PE. CORRE+.",
       },
-      { property: "og:title", content: "Percurso 5km — II Corrida das Famílias" },
+      { property: "og:title", content: "Percurso 5km — 2ª Corrida Natalina | CORRE+" },
       {
         property: "og:description",
         content:
@@ -36,7 +35,6 @@ function Page() {
 
       <section className="bg-white">
         <div className="mx-auto max-w-[1200px] px-5 pt-6 pb-20 md:px-8 md:pt-8 md:pb-28">
-
           <div className="mt-12 grid items-center gap-10 md:grid-cols-2 md:gap-12 my-[20px] border-0 py-0">
             <div className="aspect-[4/3] w-full">
               <img
@@ -55,9 +53,9 @@ function Page() {
                 O trajeto passa pelas principais ruas da Cidade
               </h3>
               <p className="mt-4 text-base leading-relaxed text-[color:var(--color-brand-purple-text)]/80">
-                O percurso de 5km foi desenhado para ser acessível a todos os
-                níveis de corredores, desde iniciantes até os mais experientes,
-                proporcionando uma experiência inesquecível.
+                O percurso de 5km foi desenhado para ser acessível a todos os níveis de corredores,
+                desde iniciantes até os mais experientes, proporcionando uma experiência
+                inesquecível.
               </p>
 
               <ul className="mt-8 flex flex-col gap-6">

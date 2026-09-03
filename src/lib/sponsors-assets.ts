@@ -36,5 +36,10 @@ export const FALLBACK_DIAMOND: DiamondSponsor[] = [
   { id: "oracle-digital", name: "Oracle Digital", slug: "oracle-digital", website_url: null },
   { id: "nattivo-cafe", name: "Nattivo Café", slug: "nattivo-cafe", website_url: null },
   { id: "urbano-alimentos", name: "Urbano Alimentos", slug: "urbano-alimentos", website_url: null },
-  { id: "prefeitura-serra-talhada", name: "Prefeitura de Serra Talhada", slug: "prefeitura-serra-talhada", website_url: null },
+  {
+    id: "prefeitura-serra-talhada",
+    name: "Prefeitura de Serra Talhada",
+    slug: "prefeitura-serra-talhada",
+    website_url: null,
+  },
 ];

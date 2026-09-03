@@ -15,13 +15,13 @@ import { isValidCpf, maskCpf, maskPhone, normalizeCpf, formatBRL } from "@/lib/c
 export const Route = createFileRoute("/inscricao")({
   head: () => ({
     meta: [
-      { title: "Inscrição — II Corrida das Famílias" },
+      { title: "Inscrição — 2ª Corrida Natalina | CORRE+" },
       {
         name: "description",
         content:
-          "Garanta sua vaga na II Corrida das Famílias. Inscrição online em 3 passos com pagamento via Infinity Pay.",
+          "Garanta sua vaga na 2ª Corrida Natalina | CORRE+. Inscrição online em 3 passos com pagamento via InfinitePay.",
       },
-      { property: "og:title", content: "Inscrição — II Corrida das Famílias" },
+      { property: "og:title", content: "Inscrição — 2ª Corrida Natalina | CORRE+" },
     ],
   }),
   component: Page,
@@ -338,32 +338,58 @@ function StepPersonal({ form }: { form: ReturnType<typeof useForm<FormValues>> }
 
   return (
     <div className="grid gap-5 md:grid-cols-2">
-      <Field label="Nome completo" error={formState.errors.full_name?.message} className="md:col-span-2">
-        <input className={inputClass} {...register("full_name")} placeholder="Como aparece no documento" />
+      <Field
+        label="Nome completo"
+        error={formState.errors.full_name?.message}
+        className="md:col-span-2"
+      >
+        <input
+          className={inputClass}
+          {...register("full_name")}
+          placeholder="Como aparece no documento"
+        />
       </Field>
       <Field label="CPF" error={formState.errors.cpf?.message}>
-        <input className={inputClass} {...register("cpf")} placeholder="000.000.000-00" inputMode="numeric" />
+        <input
+          className={inputClass}
+          {...register("cpf")}
+          placeholder="000.000.000-00"
+          inputMode="numeric"
+        />
       </Field>
       <Field label="Data de nascimento" error={formState.errors.birth_date?.message}>
         <input type="date" className={inputClass} {...register("birth_date")} />
       </Field>
       <Field label="E-mail" error={formState.errors.email?.message}>
-        <input type="email" className={inputClass} {...register("email")} placeholder="voce@email.com" />
+        <input
+          type="email"
+          className={inputClass}
+          {...register("email")}
+          placeholder="voce@email.com"
+        />
       </Field>
       <Field label="WhatsApp" error={formState.errors.whatsapp?.message}>
-        <input className={inputClass} {...register("whatsapp")} placeholder="(87) 90000-0000" inputMode="numeric" />
+        <input
+          className={inputClass}
+          {...register("whatsapp")}
+          placeholder="(87) 90000-0000"
+          inputMode="numeric"
+        />
       </Field>
       <Field label="Gênero" error={formState.errors.gender?.message}>
         <select className={inputClass} {...register("gender")} defaultValue="">
-          <option value="" disabled>Selecione</option>
+          <option value="" disabled>
+            Selecione
+          </option>
           <option value="female">Feminino</option>
           <option value="male">Masculino</option>
-          
         </select>
       </Field>
       <Field label="Categoria" error={formState.errors.category?.message}>
         <select className={inputClass} {...register("category")} defaultValue="">
-          <option value="" disabled>Selecione</option>
+          <option value="" disabled>
+            Selecione
+          </option>
           <option value="geral_masculino">Geral Masculino (idade livre)</option>
           <option value="geral_feminino">Geral Feminino (idade livre)</option>
           <option value="infanto_juvenil_masculino">Infanto-Juvenil Masculino (9–17 anos)</option>
@@ -387,7 +413,9 @@ function StepKit({ form }: { form: ReturnType<typeof useForm<FormValues>> }) {
     <div className="grid gap-5 md:grid-cols-2">
       <Field label="Tamanho da camisa" error={formState.errors.shirt_size?.message}>
         <select className={inputClass} {...register("shirt_size")} defaultValue="">
-          <option value="" disabled>Selecione</option>
+          <option value="" disabled>
+            Selecione
+          </option>
           <option value="pp">PP</option>
           <option value="p">P</option>
           <option value="m">M</option>
@@ -401,9 +429,17 @@ function StepKit({ form }: { form: ReturnType<typeof useForm<FormValues>> }) {
         <input className={inputClass} {...register("emergency_contact_name")} placeholder="Nome" />
       </Field>
       <Field label="Telefone do contato" error={formState.errors.emergency_contact_phone?.message}>
-        <input className={inputClass} {...register("emergency_contact_phone")} placeholder="(87) 90000-0000" />
+        <input
+          className={inputClass}
+          {...register("emergency_contact_phone")}
+          placeholder="(87) 90000-0000"
+        />
       </Field>
-      <Field label="Observações médicas (opcional)" error={formState.errors.medical_notes?.message} className="md:col-span-2">
+      <Field
+        label="Observações médicas (opcional)"
+        error={formState.errors.medical_notes?.message}
+        className="md:col-span-2"
+      >
         <textarea
           className={`${inputClass} min-h-[120px]`}
           {...register("medical_notes")}
@@ -426,11 +462,21 @@ function StepReview({
   return (
     <div className="grid gap-5">
       <div className="rounded-2xl border border-border bg-[color:var(--color-brand-soft)]/40 p-5 text-sm text-[color:var(--color-brand-purple-text)]">
-        <p><strong>Nome:</strong> {v.full_name}</p>
-        <p><strong>CPF:</strong> {v.cpf}</p>
-        <p><strong>E-mail:</strong> {v.email}</p>
-        <p><strong>WhatsApp:</strong> {v.whatsapp}</p>
-        <p><strong>Categoria:</strong> {v.category} — Camisa {v.shirt_size?.toUpperCase()}</p>
+        <p>
+          <strong>Nome:</strong> {v.full_name}
+        </p>
+        <p>
+          <strong>CPF:</strong> {v.cpf}
+        </p>
+        <p>
+          <strong>E-mail:</strong> {v.email}
+        </p>
+        <p>
+          <strong>WhatsApp:</strong> {v.whatsapp}
+        </p>
+        <p>
+          <strong>Categoria:</strong> {v.category} — Camisa {v.shirt_size?.toUpperCase()}
+        </p>
         {amount != null && (
           <p className="mt-3 text-base">
             <strong>Total:</strong>{" "}
@@ -442,9 +488,17 @@ function StepReview({
       </div>
 
       <label className="flex items-start gap-3 text-sm text-[color:var(--color-brand-purple-text)]">
-        <input type="checkbox" className="mt-1 h-5 w-5 accent-[color:var(--color-brand-orange)]" {...register("accepted_terms")} />
+        <input
+          type="checkbox"
+          className="mt-1 h-5 w-5 accent-[color:var(--color-brand-orange)]"
+          {...register("accepted_terms")}
+        />
         <span>
-          Li e aceito o <a className="font-bold underline" href="/regulamento" target="_blank">regulamento</a> da prova.
+          Li e aceito o{" "}
+          <a className="font-bold underline" href="/regulamento" target="_blank">
+            regulamento
+          </a>{" "}
+          da prova.
         </span>
       </label>
       {formState.errors.accepted_terms && (
@@ -452,9 +506,17 @@ function StepReview({
       )}
 
       <label className="flex items-start gap-3 text-sm text-[color:var(--color-brand-purple-text)]">
-        <input type="checkbox" className="mt-1 h-5 w-5 accent-[color:var(--color-brand-orange)]" {...register("accepted_lgpd")} />
+        <input
+          type="checkbox"
+          className="mt-1 h-5 w-5 accent-[color:var(--color-brand-orange)]"
+          {...register("accepted_lgpd")}
+        />
         <span>
-          Concordo com a <a className="font-bold underline" href="/politica-privacidade" target="_blank">política de privacidade</a> e o tratamento dos meus dados conforme a LGPD.
+          Concordo com a{" "}
+          <a className="font-bold underline" href="/politica-privacidade" target="_blank">
+            política de privacidade
+          </a>{" "}
+          e o tratamento dos meus dados conforme a LGPD.
         </span>
       </label>
       {formState.errors.accepted_lgpd && (

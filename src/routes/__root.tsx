@@ -16,7 +16,6 @@ import { WhatsAppFab } from "@/components/site/whatsapp-fab";
 import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
 
-
 function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -51,9 +50,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
         <h1 className="text-2xl font-extrabold uppercase tracking-tight text-foreground">
           Algo deu errado
         </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Tente novamente ou volte ao início.
-        </p>
+        <p className="mt-2 text-sm text-muted-foreground">Tente novamente ou volte ao início.</p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
             onClick={() => {
@@ -81,20 +78,20 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { name: "theme-color", content: "#16091f" },
-      { title: "II Corrida das Famílias |  Inscreva-se Já!" },
+      { name: "theme-color", content: "#e70202" },
+      { title: "2ª Corrida Natalina | CORRE+" },
       {
         name: "description",
         content:
-          "Juntos no Rosário, Famílias unidas na Fé. Uma corrida de 5km em Serra Talhada/PE para celebrar a Fé, fortalecer Famílias e promover Saúde e Solidariedade.",
+          "2ª Corrida Natalina em Serra Talhada/PE. CORRE+ — Saúde, esporte e solidariedade.",
       },
       { property: "og:type", content: "website" },
       { property: "og:locale", content: "pt_BR" },
-      { property: "og:title", content: "II Corrida das Famílias |  Inscreva-se Já!" },
+      { property: "og:title", content: "2ª Corrida Natalina | CORRE+" },
       {
         property: "og:description",
         content:
-          "Juntos no Rosário, Famílias unidas na Fé. Uma corrida de 5km em Serra Talhada/PE para celebrar a Fé, fortalecer Famílias e promover Saúde e Solidariedade.",
+          "2ª Corrida Natalina em Serra Talhada/PE. CORRE+ — Saúde, esporte e solidariedade.",
       },
       {
         property: "og:image",
@@ -102,7 +99,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "https://storage.googleapis.com/gpt-engineer-file-uploads/24NXY8uInCbJ0YtSRcez5EU2T9E3/social-images/social-1778899143554-banner-1.webp",
       },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "II Corrida das Famílias |  Inscreva-se Já!" },
+      { name: "twitter:title", content: "2ª Corrida Natalina | CORRE+" },
       {
         name: "twitter:description",
         content:
@@ -115,6 +112,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
     ],
     links: [
+      { rel: "icon", href: "/favicon.ico", sizes: "any" },
+      { rel: "icon", type: "image/png", sizes: "32x32", href: "/favicon-32x32.png" },
+      { rel: "icon", type: "image/png", sizes: "16x16", href: "/favicon-16x16.png" },
+      { rel: "apple-touch-icon", sizes: "180x180", href: "/apple-touch-icon.png" },
       { rel: "stylesheet", href: appCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
@@ -122,7 +123,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap",
       },
-      { rel: "preconnect", href: "https://ljquyrrprrwqpmaomwsh.supabase.co", crossOrigin: "anonymous" },
+      {
+        rel: "preconnect",
+        href: "https://ljquyrrprrwqpmaomwsh.supabase.co",
+        crossOrigin: "anonymous",
+      },
       { rel: "dns-prefetch", href: "https://ljquyrrprrwqpmaomwsh.supabase.co" },
     ],
   }),

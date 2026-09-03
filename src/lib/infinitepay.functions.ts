@@ -44,18 +44,12 @@ export const getCheckoutUrlForRegistration = createServerFn({ method: "POST" })
           process.env.VITE_PUBLIC_SITE_URL ||
           "https://www.corridadasfamilias.com.br"
         ).replace(/\/+$/, "");
-        url.searchParams.set(
-          "redirect_url",
-          `${publicSiteUrl}/pagamento?protocol=${reg.protocol}`,
-        );
+        url.searchParams.set("redirect_url", `${publicSiteUrl}/pagamento?protocol=${reg.protocol}`);
 
         if (reg.full_name) url.searchParams.set("customer_name", reg.full_name);
         if (reg.email) url.searchParams.set("customer_email", reg.email);
         if (reg.whatsapp)
-          url.searchParams.set(
-            "customer_cellphone",
-            reg.whatsapp.replace(/\D/g, ""),
-          );
+          url.searchParams.set("customer_cellphone", reg.whatsapp.replace(/\D/g, ""));
         checkoutUrl = url.toString();
       } catch {
         checkoutUrl = baseUrl;

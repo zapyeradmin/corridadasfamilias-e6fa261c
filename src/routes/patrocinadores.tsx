@@ -10,13 +10,13 @@ import { useSiteContacts } from "@/hooks/use-site-contacts";
 export const Route = createFileRoute("/patrocinadores")({
   head: () => ({
     meta: [
-      { title: "Patrocinadores — II Corrida das Famílias" },
+      { title: "Patrocinadores — 2ª Corrida Natalina | CORRE+" },
       {
         name: "description",
         content:
-          "Marcas e instituições que apoiam a II Corrida das Famílias em Serra Talhada/PE.",
+          "Marcas e instituições que apoiam a 2ª Corrida Natalina em Serra Talhada/PE. CORRE+.",
       },
-      { property: "og:title", content: "Patrocinadores — II Corrida das Famílias" },
+      { property: "og:title", content: "Patrocinadores — 2ª Corrida Natalina | CORRE+" },
       {
         property: "og:description",
         content:
@@ -78,9 +78,7 @@ function Page() {
     (_, i) => i + cards.length + 1,
   );
 
-  const waHref = whatsappHref(
-    "Olá! Tenho interesse em patrocinar a II Corrida das Famílias.",
-  );
+  const waHref = whatsappHref("Olá! Tenho interesse em patrocinar a II Corrida das Famílias.");
 
   return (
     <>

@@ -119,8 +119,7 @@ export function CategoriasPremiacoes() {
     <section
       className="relative text-white"
       style={{
-        background:
-          "linear-gradient(180deg, #e9591b 0%, #ff5300 12%, #ff5300 100%)",
+        background: "linear-gradient(180deg, #e9591b 0%, #ff5300 12%, #ff5300 100%)",
       }}
     >
       <div className="mx-auto max-w-[1200px] px-5 py-20 md:px-8 md:py-28">
@@ -135,8 +134,8 @@ export function CategoriasPremiacoes() {
             className="mt-5 text-base leading-relaxed text-white/95 md:text-lg"
             style={{ textAlign: "justify" }}
           >
-            Confira todas categorias e as premiações para os três melhores
-            colocados de cada categoria. Todos os participantes recebem medalha!
+            Confira todas categorias e as premiações para os três melhores colocados de cada
+            categoria. Todos os participantes recebem medalha!
           </p>
         </div>
 

@@ -86,8 +86,8 @@ function Page() {
               Tudo certo com sua inscrição!
             </h2>
             <p className="mt-4 max-w-2xl text-base text-[color:var(--color-brand-purple-text)]">
-              Sua vaga na <strong>II Corrida das Famílias</strong> está confirmada. A partir
-              de agora você faz parte desta grande celebração da fé, da família e do esporte.
+              Sua vaga na <strong>II Corrida das Famílias</strong> está confirmada. A partir de
+              agora você faz parte desta grande celebração da fé, da família e do esporte.
             </p>
 
             {(protocol || email) && (
@@ -153,8 +153,9 @@ function Page() {
                 Contribuição solidária
               </h4>
               <p className="mt-1 text-sm text-[color:var(--color-brand-purple-text)]">
-                Não esqueça: na retirada do kit, cada atleta entrega <strong>1kg de alimento
-                não perecível</strong>, destinado a famílias em situação de vulnerabilidade.
+                Não esqueça: na retirada do kit, cada atleta entrega{" "}
+                <strong>1kg de alimento não perecível</strong>, destinado a famílias em situação de
+                vulnerabilidade.
               </p>
             </div>
           </div>

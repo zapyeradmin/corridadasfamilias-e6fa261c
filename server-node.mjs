@@ -117,8 +117,13 @@ function tryServeStatic(req, res) {
     res.statusCode = 200;
     res.setHeader("Content-Type", MIME_TYPES[extname(filePath)] || "application/octet-stream");
     res.setHeader("Content-Length", stat.size);
-    res.setHeader("Cache-Control", pathname.startsWith("/assets/") ? "public, max-age=31536000, immutable" : "public, max-age=3600");
-    if (req.method === "HEAD") return res.end(), true;
+    res.setHeader(
+      "Cache-Control",
+      pathname.startsWith("/assets/")
+        ? "public, max-age=31536000, immutable"
+        : "public, max-age=3600",
+    );
+    if (req.method === "HEAD") return (res.end(), true);
     createReadStream(filePath).pipe(res);
     return true;
   }

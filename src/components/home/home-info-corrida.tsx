@@ -7,11 +7,7 @@ const INFOS = [
   {
     icon: Calendar,
     title: "Data e Horários",
-    lines: [
-      "Data: 09 de agosto de 2026",
-      "Concentração: 05:00",
-      "Largada: 06:00 (sem atrasos)",
-    ],
+    lines: ["Data: 09 de agosto de 2026", "Concentração: 05:00", "Largada: 06:00 (sem atrasos)"],
   },
   {
     icon: MapPin,
@@ -44,10 +40,9 @@ export function HomeInfoCorrida() {
         Fique por dentro da corrida
       </h2>
       <p className="mt-4 text-base text-justify text-[color:var(--color-brand-purple-text)]">
-        Esta é a segunda edição da corrida que une todas as famílias, sob o lema “Juntos no
-        Rosário, Famílias unidas na Fé” a II Corrida das Famílias em Serra Talhada continua
-        sendo idealizada pelo ECC da Paróquia do Rosário, unindo Fé, Esporte em Família, Saúde
-        e Solidariedade.
+        Esta é a segunda edição da corrida que une todas as famílias, sob o lema “Juntos no Rosário,
+        Famílias unidas na Fé” a II Corrida das Famílias em Serra Talhada continua sendo idealizada
+        pelo ECC da Paróquia do Rosário, unindo Fé, Esporte em Família, Saúde e Solidariedade.
       </p>
 
       <div className="mt-12 grid gap-10 lg:grid-cols-2 lg:items-start">
@@ -84,8 +79,8 @@ export function HomeInfoCorrida() {
             Venha fazer parte dessa experiência única de alegria, fé e saúde com toda a família.
           </h3>
           <p className="mt-4 text-base text-[color:var(--color-brand-purple-text)]">
-            Reúna a sua família, amigos e toda sua equipe de corrida, coloque o seu tênis e
-            venha celebrar com a gente. Fique por dentro de todas as informações:
+            Reúna a sua família, amigos e toda sua equipe de corrida, coloque o seu tênis e venha
+            celebrar com a gente. Fique por dentro de todas as informações:
           </p>
 
           <div className="mt-8 space-y-5">

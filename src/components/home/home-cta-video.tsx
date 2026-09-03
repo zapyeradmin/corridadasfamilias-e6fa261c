@@ -19,7 +19,8 @@ export function HomeCtaVideo() {
   });
 
   const videoId = parseYoutubeId(data?.youtube_url) ?? FALLBACK_VIDEO_ID;
-  const coverUrl = data?.cover_url && data.cover_url.length > 0 ? data.cover_url : capaVideoLancamento;
+  const coverUrl =
+    data?.cover_url && data.cover_url.length > 0 ? data.cover_url : capaVideoLancamento;
 
   return (
     <section className="bg-gradient-orange text-white">
@@ -58,7 +59,10 @@ export function HomeCtaVideo() {
                 height={720}
                 className="h-full w-full object-cover"
               />
-              <span aria-hidden className="absolute inset-0 bg-black/20 transition group-hover:bg-black/30" />
+              <span
+                aria-hidden
+                className="absolute inset-0 bg-black/20 transition group-hover:bg-black/30"
+              />
               <span
                 aria-hidden
                 className="absolute left-1/2 top-1/2 grid h-20 w-20 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-white/95 text-[color:var(--color-brand-orange)] shadow-premium transition group-hover:scale-110 md:h-24 md:w-24"

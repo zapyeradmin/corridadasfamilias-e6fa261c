@@ -10,8 +10,7 @@ export const PERCURSO_INFOS: { icon: typeof Flag; titulo: string; texto: string 
   {
     icon: MapPin,
     titulo: "Sinalização e Apoio",
-    texto:
-      "Percurso sinalizado, com staff dedicados e pontos de hidratação durante todo percurso.",
+    texto: "Percurso sinalizado, com staff dedicados e pontos de hidratação durante todo percurso.",
   },
   {
     icon: RouteIcon,

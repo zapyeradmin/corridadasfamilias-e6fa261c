@@ -63,9 +63,7 @@ export function HomePatrocinadores() {
     (_, i) => i + cards.length + 1,
   );
 
-  const waHref = whatsappHref(
-    "Olá! Tenho interesse em patrocinar a II Corrida das Famílias.",
-  );
+  const waHref = whatsappHref("Olá! Tenho interesse em patrocinar a II Corrida das Famílias.");
 
   return (
     <section className="bg-[color:var(--color-brand-orange)]">

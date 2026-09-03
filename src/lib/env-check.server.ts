@@ -12,8 +12,16 @@ type EnvSpec = {
 const SPEC: EnvSpec[] = [
   // Supabase server (admin) — obrigatórias para qualquer server function/rota.
   { name: "SUPABASE_URL", required: true, usedFor: "Supabase admin client" },
-  { name: "SUPABASE_SERVICE_ROLE_KEY", required: true, usedFor: "Supabase admin client (bypass RLS)" },
-  { name: "SUPABASE_PUBLISHABLE_KEY", required: true, usedFor: "Supabase server-side leitura pública" },
+  {
+    name: "SUPABASE_SERVICE_ROLE_KEY",
+    required: true,
+    usedFor: "Supabase admin client (bypass RLS)",
+  },
+  {
+    name: "SUPABASE_PUBLISHABLE_KEY",
+    required: true,
+    usedFor: "Supabase server-side leitura pública",
+  },
 
   // Cliente — bundled em build time, mas precisam existir no momento do build.
   { name: "VITE_SUPABASE_URL", required: true, usedFor: "Supabase client (browser)" },
@@ -25,8 +33,16 @@ const SPEC: EnvSpec[] = [
   { name: "PUBLIC_SITE_URL", required: false, usedFor: "Redirect/webhook callbacks (InfinitePay)" },
 
   // Opcionais, mas avisamos se faltarem.
-  { name: "INFINITEPAY_WEBHOOK_SECRET", required: false, usedFor: "Verificação da assinatura do webhook InfinitePay" },
-  { name: "LOVABLE_API_KEY", required: false, usedFor: "Lovable AI Gateway (somente se usado em server functions)" },
+  {
+    name: "INFINITEPAY_WEBHOOK_SECRET",
+    required: false,
+    usedFor: "Verificação da assinatura do webhook InfinitePay",
+  },
+  {
+    name: "LOVABLE_API_KEY",
+    required: false,
+    usedFor: "Lovable AI Gateway (somente se usado em server functions)",
+  },
 ];
 
 let didRun = false;

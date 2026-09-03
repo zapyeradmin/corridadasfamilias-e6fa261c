@@ -29,16 +29,16 @@ export function Countdown({ className = "" }: { className?: string }) {
   ];
 
   return (
-    <div className={`grid grid-cols-4 gap-2 sm:gap-4 ${className}`}>
+    <div className={`grid grid-cols-4 gap-2 sm:gap-2.5 ${className}`}>
       {cells.map((c) => (
         <div
           key={c.label}
-          className="rounded-2xl border border-white/15 bg-white/10 px-2 py-3 text-center backdrop-blur-md sm:px-4 sm:py-4"
+          className="flex flex-col items-center justify-center rounded-xl border border-white/15 bg-white/10 px-1 py-3 text-center backdrop-blur-md sm:rounded-2xl sm:px-2 sm:py-3.5"
         >
-          <div className="heading-display text-3xl text-white sm:text-5xl">
+          <div className="heading-display text-2xl font-black leading-none tracking-tight text-white tabular-nums sm:text-3xl lg:text-[2rem]">
             {String(c.value).padStart(2, "0")}
           </div>
-          <div className="mt-1 text-[10px] font-bold uppercase tracking-[0.25em] text-white/70 sm:text-xs">
+          <div className="mt-1.5 text-[9px] font-bold uppercase tracking-[0.16em] text-white/80 sm:text-[11px] sm:tracking-[0.2em]">
             {c.label}
           </div>
         </div>

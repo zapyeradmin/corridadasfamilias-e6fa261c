@@ -23,9 +23,12 @@ const PAGE_SIZE = 10;
 
 function Page() {
   const fetchKpis = useServerFn(getDashboardKPIs);
-  const { data, error, isError, isLoading } = useQuery({ queryKey: ["admin", "kpis"], queryFn: () => fetchKpis() });
+  const { data, error, isError, isLoading } = useQuery({
+    queryKey: ["admin", "kpis"],
+    queryFn: () => fetchKpis(),
+  });
 
-  const recent = data?.recent ?? [];
+  const recent = useMemo(() => data?.recent ?? [], [data?.recent]);
   const totalPages = Math.max(1, Math.ceil(recent.length / PAGE_SIZE));
   const [page, setPage] = useState(1);
   const [pageInput, setPageInput] = useState("1");
@@ -46,7 +49,9 @@ function Page() {
     <div className="space-y-8">
       <header>
         <h1 className="text-2xl font-extrabold uppercase tracking-tight">Dashboard</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Visão geral das inscrições e pagamentos.</p>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Visão geral das inscrições e pagamentos.
+        </p>
       </header>
 
       {isLoading ? (
@@ -68,8 +73,13 @@ function Page() {
 
           <section>
             <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-lg font-extrabold uppercase tracking-tight">Últimas inscrições</h2>
-              <Link to="/admin/inscricoes" className="text-sm font-semibold text-primary hover:underline">
+              <h2 className="text-lg font-extrabold uppercase tracking-tight">
+                Últimas inscrições
+              </h2>
+              <Link
+                to="/admin/inscricoes"
+                className="text-sm font-semibold text-primary hover:underline"
+              >
                 Ver todas →
               </Link>
             </div>
@@ -89,18 +99,27 @@ function Page() {
                     <tr key={r.id} className="border-t border-border">
                       <td className="px-4 py-3 font-mono text-xs">{r.protocol}</td>
                       <td className="px-4 py-3">
-                        <Link to="/admin/inscricoes/$id" params={{ id: r.id }} className="font-semibold hover:underline">
+                        <Link
+                          to="/admin/inscricoes/$id"
+                          params={{ id: r.id }}
+                          className="font-semibold hover:underline"
+                        >
                           {r.full_name}
                         </Link>
                       </td>
                       <td className="px-4 py-3">{STATUS_LABEL[r.status] ?? r.status}</td>
                       <td className="px-4 py-3">{formatCents(r.amount_cents)}</td>
-                      <td className="px-4 py-3 text-xs text-muted-foreground">{formatDateTimeBR(r.created_at)}</td>
+                      <td className="px-4 py-3 text-xs text-muted-foreground">
+                        {formatDateTimeBR(r.created_at)}
+                      </td>
                     </tr>
                   ))}
                   {pageRows.length === 0 && (
                     <tr>
-                      <td colSpan={5} className="px-4 py-6 text-center text-sm text-muted-foreground">
+                      <td
+                        colSpan={5}
+                        className="px-4 py-6 text-center text-sm text-muted-foreground"
+                      >
                         Nenhuma inscrição ainda.
                       </td>
                     </tr>

@@ -10,13 +10,13 @@ import {
 export const Route = createFileRoute("/faq")({
   head: () => ({
     meta: [
-      { title: "FAQ — II Corrida das Famílias" },
+      { title: "FAQ — 2ª Corrida Natalina | CORRE+" },
       {
         name: "description",
         content:
-          "Perguntas frequentes sobre inscrição, pagamento, kit, percurso, transferência e confirmação da II Corrida das Famílias.",
+          "Perguntas frequentes sobre inscrição, pagamento, kit, percurso, transferência e confirmação da 2ª Corrida Natalina | CORRE+.",
       },
-      { property: "og:title", content: "FAQ — II Corrida das Famílias" },
+      { property: "og:title", content: "FAQ — 2ª Corrida Natalina | CORRE+" },
       {
         property: "og:description",
         content:

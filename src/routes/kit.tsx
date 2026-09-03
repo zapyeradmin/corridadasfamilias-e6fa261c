@@ -6,13 +6,13 @@ import kitExclusivo from "@/assets/kit-exclusivo.png?w=1024&quality=82&format=we
 export const Route = createFileRoute("/kit")({
   head: () => ({
     meta: [
-      { title: "Kit do atleta — II Corrida das Famílias" },
+      { title: "Kit do atleta — 2ª Corrida Natalina | CORRE+" },
       {
         name: "description",
         content:
-          "Kit oficial da II Corrida das Famílias: camiseta exclusiva, número de peito, hidratação no percurso, medalha finisher e contribuição solidária.",
+          "Kit oficial da 2ª Corrida Natalina | CORRE+: camiseta exclusiva, número de peito, hidratação no percurso e medalha finisher.",
       },
-      { property: "og:title", content: "Kit do atleta — II Corrida das Famílias" },
+      { property: "og:title", content: "Kit do atleta — 2ª Corrida Natalina | CORRE+" },
       {
         property: "og:description",
         content:
@@ -54,9 +54,9 @@ function Page() {
                 Kit Exclusivo para sua Corrida
               </h3>
               <p className="mt-4 text-base text-[color:var(--color-brand-purple-text)]">
-                Desenvolvemos um kit especial para que você tenha tudo o que precisa
-                para participar da corrida com conforto e estilo. Cada item foi
-                cuidadosamente selecionado pensando na sua experiência.
+                Desenvolvemos um kit especial para que você tenha tudo o que precisa para participar
+                da corrida com conforto e estilo. Cada item foi cuidadosamente selecionado pensando
+                na sua experiência.
               </p>
 
               <ul className="mt-8 space-y-5">

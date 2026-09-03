@@ -47,24 +47,24 @@ App em <http://localhost:8080>.
 
 Veja **`.env.example`** para a lista completa. Resumo:
 
-| Variável | Onde | Para quê |
-|---|---|---|
-| `PUBLIC_SITE_URL` | servidor | URL canônica usada em `redirect_url` da InfinitePay |
-| `VITE_PUBLIC_SITE_URL` | cliente | mesmo valor, exposto ao bundle |
-| `VITE_SUPABASE_URL` / `VITE_SUPABASE_PUBLISHABLE_KEY` | cliente | client Supabase do navegador |
-| `SUPABASE_URL` / `SUPABASE_PUBLISHABLE_KEY` | servidor | client Supabase no SSR |
-| `SUPABASE_SERVICE_ROLE_KEY` | servidor | admin client (bypassa RLS). **NUNCA expor.** |
-| `LOVABLE_API_KEY` | servidor | gateway de IA (opcional, gerenciado pela Lovable) |
+| Variável                                              | Onde     | Para quê                                            |
+| ----------------------------------------------------- | -------- | --------------------------------------------------- |
+| `PUBLIC_SITE_URL`                                     | servidor | URL canônica usada em `redirect_url` da InfinitePay |
+| `VITE_PUBLIC_SITE_URL`                                | cliente  | mesmo valor, exposto ao bundle                      |
+| `VITE_SUPABASE_URL` / `VITE_SUPABASE_PUBLISHABLE_KEY` | cliente  | client Supabase do navegador                        |
+| `SUPABASE_URL` / `SUPABASE_PUBLISHABLE_KEY`           | servidor | client Supabase no SSR                              |
+| `SUPABASE_SERVICE_ROLE_KEY`                           | servidor | admin client (bypassa RLS). **NUNCA expor.**        |
+| `LOVABLE_API_KEY`                                     | servidor | gateway de IA (opcional, gerenciado pela Lovable)   |
 
 ## URLs da InfinitePay em produção
 
 Configurar no painel da InfinitePay:
 
-| Item | URL |
-|---|---|
-| Webhook | `https://www.corridadasfamilias.com.br/api/webhooks/infinitepay` |
-| Redirecionamento | `https://www.corridadasfamilias.com.br/pagamento` |
-| Sucesso | `https://www.corridadasfamilias.com.br/sucesso` |
+| Item             | URL                                                              |
+| ---------------- | ---------------------------------------------------------------- |
+| Webhook          | `https://www.corridadasfamilias.com.br/api/webhooks/infinitepay` |
+| Redirecionamento | `https://www.corridadasfamilias.com.br/pagamento`                |
+| Sucesso          | `https://www.corridadasfamilias.com.br/sucesso`                  |
 
 A página `/admin/configuracoes` (aba **Pagamento**) exibe estas URLs com botão de copiar, derivadas de `PUBLIC_SITE_URL`.
 
@@ -110,16 +110,16 @@ O script `npm start` atual roda `vite preview` em `0.0.0.0:${PORT}`, suficiente 
 
 ## Testando
 
-| Fluxo | Como |
-|---|---|
-| Build de produção | `bun run build` |
-| Página inicial | abrir `/` |
-| Inscrição | `/inscricao` (validar regra de idade no console) |
-| Pagamento (retorno OK) | `/pagamento?protocol=XXX` |
-| Sucesso | `/sucesso` |
-| Falha | `/falhanopagamento` |
-| Admin | `/admin/configuracoes`, `/admin/inscricoes`, `/admin/logs` |
-| Webhook (health-check) | `curl https://www.corridadasfamilias.com.br/api/webhooks/infinitepay` (Opção A) |
+| Fluxo                   | Como                                                                                                                 |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Build de produção       | `bun run build`                                                                                                      |
+| Página inicial          | abrir `/`                                                                                                            |
+| Inscrição               | `/inscricao` (validar regra de idade no console)                                                                     |
+| Pagamento (retorno OK)  | `/pagamento?protocol=XXX`                                                                                            |
+| Sucesso                 | `/sucesso`                                                                                                           |
+| Falha                   | `/falhanopagamento`                                                                                                  |
+| Admin                   | `/admin/configuracoes`, `/admin/inscricoes`, `/admin/logs`                                                           |
+| Webhook (health-check)  | `curl https://www.corridadasfamilias.com.br/api/webhooks/infinitepay` (Opção A)                                      |
 | Webhook (POST simulado) | `curl -X POST -H 'Content-Type: application/json' -d '{"transaction_nsu":"TEST","order_nsu":"X","amount":6800}' ...` |
 
 ## Segurança

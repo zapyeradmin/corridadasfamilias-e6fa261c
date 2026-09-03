@@ -117,9 +117,14 @@
 
   --gradient-hero: linear-gradient(135deg, #16091f 0%, #431181 48%, #761fab 100%);
   --gradient-orange: linear-gradient(135deg, #ff5300 0%, #e9591b 100%);
-  --gradient-premium: radial-gradient(circle at top left, rgba(255, 83, 0, 0.28), transparent 35%),
+  --gradient-premium:
+    radial-gradient(circle at top left, rgba(255, 83, 0, 0.28), transparent 35%),
     linear-gradient(135deg, #16091f 0%, #431181 100%);
-  --gradient-card: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(232, 232, 232, 0.92) 100%);
+  --gradient-card: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.96) 0%,
+    rgba(232, 232, 232, 0.92) 100%
+  );
 
   --shadow-soft: 0 16px 40px rgba(22, 9, 31, 0.1);
   --shadow-card: 0 24px 60px rgba(67, 17, 129, 0.16);

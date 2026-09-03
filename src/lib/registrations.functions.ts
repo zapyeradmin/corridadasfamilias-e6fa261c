@@ -42,130 +42,137 @@ export type RegistrationInput = z.infer<typeof registrationSchema>;
 
 export const createRegistration = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => registrationSchema.parse(input))
-  .handler(async ({ data }): Promise<
-    | { ok: true; protocol: string; amount_cents: number; checkout_url: string }
-    | { ok: false; error: string }
-  > => {
-    const fail = (error: string) => ({ ok: false as const, error });
+  .handler(
+    async ({
+      data,
+    }): Promise<
+      | { ok: true; protocol: string; amount_cents: number; checkout_url: string }
+      | { ok: false; error: string }
+    > => {
+      const fail = (error: string) => ({ ok: false as const, error });
 
-    // Buscar evento ativo + lote vigente (servidor recalcula preço)
-    const { data: event } = await supabaseAdmin
-      .from("events")
-      .select("id, event_date")
-      .eq("is_active", true)
-      .order("event_date", { ascending: true })
-      .limit(1)
-      .maybeSingle();
-    if (!event) return fail("Nenhum evento ativo no momento.");
+      // Buscar evento ativo + lote vigente (servidor recalcula preço)
+      const { data: event } = await supabaseAdmin
+        .from("events")
+        .select("id, event_date")
+        .eq("is_active", true)
+        .order("event_date", { ascending: true })
+        .limit(1)
+        .maybeSingle();
+      if (!event) return fail("Nenhum evento ativo no momento.");
 
-    const nowIso = new Date().toISOString();
-    const { data: lots } = await supabaseAdmin
-      .from("lots")
-      .select("id, price_cents, child_price_cents")
-      .eq("event_id", event.id)
-      .eq("is_active", true)
-      .lte("starts_at", nowIso)
-      .gte("ends_at", nowIso)
-      .order("sort_order", { ascending: true })
-      .limit(1);
-    const lot = lots?.[0];
-    if (!lot) return fail("Não há lote de inscrições aberto no momento.");
+      const nowIso = new Date().toISOString();
+      const { data: lots } = await supabaseAdmin
+        .from("lots")
+        .select("id, price_cents, child_price_cents")
+        .eq("event_id", event.id)
+        .eq("is_active", true)
+        .lte("starts_at", nowIso)
+        .gte("ends_at", nowIso)
+        .order("sort_order", { ascending: true })
+        .limit(1);
+      const lot = lots?.[0];
+      if (!lot) return fail("Não há lote de inscrições aberto no momento.");
 
-    // Calcula idade na data do evento e preço aplicável (até 9 anos = infantil)
-    const ageAtEvent = yearsBetween(data.birth_date, event.event_date);
-    const isChild = ageAtEvent <= 9;
-    const amountCents = isChild && lot.child_price_cents ? lot.child_price_cents : lot.price_cents;
+      // Calcula idade na data do evento e preço aplicável (até 9 anos = infantil)
+      const ageAtEvent = yearsBetween(data.birth_date, event.event_date);
+      const isChild = ageAtEvent <= 9;
+      const amountCents =
+        isChild && lot.child_price_cents ? lot.child_price_cents : lot.price_cents;
 
-    // Validações de categoria por idade/gênero
-    const g = GENDER_DB[data.gender];
-    const cat = data.category;
-    if (cat === "infanto_juvenil_masculino" || cat === "infanto_juvenil_feminino") {
-      if (ageAtEvent < 9 || ageAtEvent > 17) {
-        return fail("Categoria Infanto-Juvenil é destinada a participantes de 9 a 17 anos.");
+      // Validações de categoria por idade/gênero
+      const g = GENDER_DB[data.gender];
+      const cat = data.category;
+      if (cat === "infanto_juvenil_masculino" || cat === "infanto_juvenil_feminino") {
+        if (ageAtEvent < 9 || ageAtEvent > 17) {
+          return fail("Categoria Infanto-Juvenil é destinada a participantes de 9 a 17 anos.");
+        }
       }
-    }
-    if (cat === "60_masculino" || cat === "60_feminino") {
-      if (ageAtEvent < 60) {
-        return fail("Categoria 60+ é destinada a participantes com 60 anos ou mais.");
+      if (cat === "60_masculino" || cat === "60_feminino") {
+        if (ageAtEvent < 60) {
+          return fail("Categoria 60+ é destinada a participantes com 60 anos ou mais.");
+        }
       }
-    }
-    if (cat.endsWith("_masculino") && g === "F") {
-      return fail("Categoria masculina não disponível para o gênero informado.");
-    }
-    if (cat.endsWith("_feminino") && g === "M") {
-      return fail("Categoria feminina não disponível para o gênero informado.");
-    }
+      if (cat.endsWith("_masculino") && g === "F") {
+        return fail("Categoria masculina não disponível para o gênero informado.");
+      }
+      if (cat.endsWith("_feminino") && g === "M") {
+        return fail("Categoria feminina não disponível para o gênero informado.");
+      }
 
-    // Checagem de duplicidade por CPF + status ativo
-    const cpfNorm = normalizeCpf(data.cpf);
-    const { data: existing } = await supabaseAdmin
-      .from("registrations")
-      .select("id, status, protocol")
-      .eq("event_id", event.id)
-      .eq("cpf_normalized", cpfNorm)
-      .in("status", ["pending", "processing", "paid"])
-      .maybeSingle();
-    if (existing) {
-      return fail(
-        existing.status === "paid"
-          ? `Este CPF já possui inscrição confirmada (protocolo ${existing.protocol}).`
-          : `Já existe uma inscrição em andamento para este CPF (protocolo ${existing.protocol}).`,
-      );
-    }
+      // Checagem de duplicidade por CPF + status ativo
+      const cpfNorm = normalizeCpf(data.cpf);
+      const { data: existing } = await supabaseAdmin
+        .from("registrations")
+        .select("id, status, protocol")
+        .eq("event_id", event.id)
+        .eq("cpf_normalized", cpfNorm)
+        .in("status", ["pending", "processing", "paid"])
+        .maybeSingle();
+      if (existing) {
+        return fail(
+          existing.status === "paid"
+            ? `Este CPF já possui inscrição confirmada (protocolo ${existing.protocol}).`
+            : `Já existe uma inscrição em andamento para este CPF (protocolo ${existing.protocol}).`,
+        );
+      }
 
-    const participantType: "adulto" | "crianca" = isChild ? "crianca" : "adulto";
-    const orderNsu = `inscricao_${participantType}_lote1_${crypto.randomUUID()}`;
+      const participantType: "adulto" | "crianca" = isChild ? "crianca" : "adulto";
+      const orderNsu = `inscricao_${participantType}_lote1_${crypto.randomUUID()}`;
 
-    const { data: registration, error: regErr } = await supabaseAdmin
-      .from("registrations")
-      .insert({
-        event_id: event.id,
-        lot_id: lot.id,
-        full_name: data.full_name.trim(),
-        cpf: data.cpf,
-        cpf_normalized: cpfNorm,
-        email: data.email.trim().toLowerCase(),
-        whatsapp: data.whatsapp,
-        birth_date: data.birth_date,
-        gender: GENDER_DB[data.gender],
-        shirt_size: SHIRT_DB[data.shirt_size],
-        category: data.category,
-        emergency_contact_name: data.emergency_contact_name.trim(),
-        emergency_contact_phone: data.emergency_contact_phone,
-        medical_notes: data.medical_notes?.trim() || null,
-        accepted_terms: true,
-        accepted_lgpd: true,
+      const { data: registration, error: regErr } = await supabaseAdmin
+        .from("registrations")
+        .insert({
+          event_id: event.id,
+          lot_id: lot.id,
+          full_name: data.full_name.trim(),
+          cpf: data.cpf,
+          cpf_normalized: cpfNorm,
+          email: data.email.trim().toLowerCase(),
+          whatsapp: data.whatsapp,
+          birth_date: data.birth_date,
+          gender: GENDER_DB[data.gender],
+          shirt_size: SHIRT_DB[data.shirt_size],
+          category: data.category,
+          emergency_contact_name: data.emergency_contact_name.trim(),
+          emergency_contact_phone: data.emergency_contact_phone,
+          medical_notes: data.medical_notes?.trim() || null,
+          accepted_terms: true,
+          accepted_lgpd: true,
+          status: "pending",
+          amount_cents: amountCents,
+          order_nsu: orderNsu,
+          participant_type: participantType,
+        })
+        .select("id, protocol, amount_cents")
+        .single();
+      if (regErr || !registration) return fail(regErr?.message ?? "Falha ao criar inscrição.");
+
+      const checkoutUrl = `/inscricao/sucesso?protocol=${registration.protocol}`;
+
+      const { error: payErr } = await supabaseAdmin.from("payments").insert({
+        registration_id: registration.id,
+        provider: "infinitypay",
         status: "pending",
-        amount_cents: amountCents,
-        order_nsu: orderNsu,
-        participant_type: participantType,
-      })
-      .select("id, protocol, amount_cents")
-      .single();
-    if (regErr || !registration) return fail(regErr?.message ?? "Falha ao criar inscrição.");
+        amount_cents: registration.amount_cents,
+        checkout_url: checkoutUrl,
+        external_reference: orderNsu,
+      });
+      if (payErr) return fail(payErr.message);
 
-    const checkoutUrl = `/inscricao/sucesso?protocol=${registration.protocol}`;
-
-    const { error: payErr } = await supabaseAdmin.from("payments").insert({
-      registration_id: registration.id,
-      provider: "infinitypay",
-      status: "pending",
-      amount_cents: registration.amount_cents,
-      checkout_url: checkoutUrl,
-      external_reference: orderNsu,
-    });
-    if (payErr) return fail(payErr.message);
-
-    return {
-      ok: true,
-      protocol: registration.protocol,
-      amount_cents: registration.amount_cents,
-      checkout_url: checkoutUrl,
-    };
-  });
+      return {
+        ok: true,
+        protocol: registration.protocol,
+        amount_cents: registration.amount_cents,
+        checkout_url: checkoutUrl,
+      };
+    },
+  );
 
 export const getRegistrationByProtocol = createServerFn({ method: "GET" })
-  .inputValidator((input: unknown) => z.object({ protocol: z.string().min(4).max(40) }).parse(input))
+  .inputValidator((input: unknown) =>
+    z.object({ protocol: z.string().min(4).max(40) }).parse(input),
+  )
   .handler(async ({ data }) => {
     const { data: reg } = await supabaseAdmin
       .from("registrations")

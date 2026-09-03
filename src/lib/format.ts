@@ -1,5 +1,5 @@
 export function formatCents(cents: number | null | undefined): string {
-  const v = ((cents ?? 0) / 100);
+  const v = (cents ?? 0) / 100;
   return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
 

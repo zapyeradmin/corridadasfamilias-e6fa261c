@@ -57,13 +57,9 @@ export const getPublishedSponsors = createServerFn({ method: "GET" }).handler(as
   return data ?? [];
 });
 
-
 export const getPublicSettings = createServerFn({ method: "GET" }).handler(async () => {
   const supabase = publicClient();
-  const { data } = await supabase
-    .from("settings")
-    .select("key, value")
-    .eq("is_public", true);
+  const { data } = await supabase.from("settings").select("key, value").eq("is_public", true);
   const map: Record<string, string> = {};
   for (const row of data ?? []) map[row.key] = JSON.stringify(row.value);
   return map;
@@ -86,14 +82,18 @@ export type SiteContacts = {
   instagram_usuario: string;
 };
 
-function pickCheckout(value: unknown, fallbackName: string, fallbackValor: number): Omit<CheckoutConfig, "updated_at"> {
+function pickCheckout(
+  value: unknown,
+  fallbackName: string,
+  fallbackValor: number,
+): Omit<CheckoutConfig, "updated_at"> {
   if (value && typeof value === "object") {
     const v = value as Record<string, unknown>;
     if ("nome_produto" in v) {
       const url = typeof v.checkout_url === "string" ? v.checkout_url : "";
       return {
         nome_produto: String(v.nome_produto ?? fallbackName),
-        lote: (String(v.lote ?? "Lote 1") as CheckoutConfig["lote"]),
+        lote: String(v.lote ?? "Lote 1") as CheckoutConfig["lote"],
         valor_cents: Number(v.valor_cents ?? fallbackValor) || fallbackValor,
         checkout_url: url,
         status: url ? "ativo" : "pendente_configuracao",
@@ -178,12 +178,7 @@ export const getHomeVideo = createServerFn({ method: "GET" }).handler(async () =
  * Fallback: https://www.corridadasfamilias.com.br
  */
 export const getPublicSiteUrl = createServerFn({ method: "GET" }).handler(async () => {
-  const fromEnv =
-    process.env.PUBLIC_SITE_URL ||
-    process.env.VITE_PUBLIC_SITE_URL ||
-    "";
+  const fromEnv = process.env.PUBLIC_SITE_URL || process.env.VITE_PUBLIC_SITE_URL || "";
   const url = (fromEnv || "https://www.corridadasfamilias.com.br").replace(/\/+$/, "");
   return { publicSiteUrl: url };
 });
-
-

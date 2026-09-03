@@ -12,9 +12,9 @@ export function HomePilares() {
         Mais que uma corrida, um movimento
       </h2>
       <p className="mt-4 text-base text-justify text-[color:var(--color-brand-purple-text)]">
-        A II CORRIDA DAS FAMÍLIAS vem reforçar o seu significado, que é um evento de corrida de
-        rua de Serra Talhada voltado para o público familiar, que nasceu com o propósito de unir
-        a comunidade em torno de quatro pilares fundamentais: Fé, Esporte em Família, Saúde e
+        A II CORRIDA DAS FAMÍLIAS vem reforçar o seu significado, que é um evento de corrida de rua
+        de Serra Talhada voltado para o público familiar, que nasceu com o propósito de unir a
+        comunidade em torno de quatro pilares fundamentais: Fé, Esporte em Família, Saúde e
         Solidariedade.
       </p>
       <p className="mt-4 text-base text-justify text-[color:var(--color-brand-purple-text)]">

@@ -6,13 +6,13 @@ Objetivo: entregar um pacote SQL completo que recria todo o backend (schema, enu
 
 Levantamento feito agora no banco em uso:
 
-| Tabela | Linhas |
-|---|---|
-| events | 1 |
-| lots | 1 |
-| sponsors | 4 |
-| settings | 5 |
-| registrations / payments / access_logs / infinitepay_events / gallery_items / user_roles | 0 |
+| Tabela                                                                                   | Linhas |
+| ---------------------------------------------------------------------------------------- | ------ |
+| events                                                                                   | 1      |
+| lots                                                                                     | 1      |
+| sponsors                                                                                 | 4      |
+| settings                                                                                 | 5      |
+| registrations / payments / access_logs / infinitepay_events / gallery_items / user_roles | 0      |
 
 Storage: buckets `gallery`, `sponsors`, `home-video` existem, porém **sem nenhum arquivo** (0 objetos). As logos hoje exibidas no site vêm de arquivos do repositório (`src/assets/sponsors/*`), não do Storage.
 

@@ -24,7 +24,10 @@ function Page() {
   return (
     <div className="space-y-8">
       <div>
-        <Link to="/admin/inscricoes" className="text-xs font-semibold text-muted-foreground hover:underline">
+        <Link
+          to="/admin/inscricoes"
+          className="text-xs font-semibold text-muted-foreground hover:underline"
+        >
           ← Voltar
         </Link>
         <h1 className="mt-2 text-2xl font-extrabold uppercase tracking-tight">{r.full_name}</h1>
@@ -41,7 +44,10 @@ function Page() {
         <Field label="Gênero" value={r.gender} />
         <Field label="Categoria" value={r.category} />
         <Field label="Camiseta" value={r.shirt_size} />
-        <Field label="Contato emergência" value={`${r.emergency_contact_name} — ${r.emergency_contact_phone}`} />
+        <Field
+          label="Contato emergência"
+          value={`${r.emergency_contact_name} — ${r.emergency_contact_phone}`}
+        />
         <Field label="Notas médicas" value={r.medical_notes ?? "—"} />
         <Field label="Criada em" value={formatDateTimeBR(r.created_at)} />
       </section>
@@ -65,12 +71,20 @@ function Page() {
                   <td className="px-4 py-3">{p.provider}</td>
                   <td className="px-4 py-3">{p.status}</td>
                   <td className="px-4 py-3">{formatCents(p.amount_cents)}</td>
-                  <td className="px-4 py-3 text-xs text-muted-foreground">{formatDateTimeBR(p.paid_at)}</td>
-                  <td className="px-4 py-3 text-xs text-muted-foreground">{formatDateTimeBR(p.created_at)}</td>
+                  <td className="px-4 py-3 text-xs text-muted-foreground">
+                    {formatDateTimeBR(p.paid_at)}
+                  </td>
+                  <td className="px-4 py-3 text-xs text-muted-foreground">
+                    {formatDateTimeBR(p.created_at)}
+                  </td>
                 </tr>
               ))}
               {data.payments.length === 0 && (
-                <tr><td colSpan={5} className="px-4 py-6 text-center text-sm text-muted-foreground">Sem pagamentos registrados.</td></tr>
+                <tr>
+                  <td colSpan={5} className="px-4 py-6 text-center text-sm text-muted-foreground">
+                    Sem pagamentos registrados.
+                  </td>
+                </tr>
               )}
             </tbody>
           </table>

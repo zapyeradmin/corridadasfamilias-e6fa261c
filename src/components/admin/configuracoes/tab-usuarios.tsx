@@ -10,7 +10,10 @@ export function TabUsuarios() {
   const fetchList = useServerFn(listAdminUsers);
   const del = useServerFn(deleteAdminUser);
   const qc = useQueryClient();
-  const { data, isLoading } = useQuery({ queryKey: ["admin", "users"], queryFn: () => fetchList() });
+  const { data, isLoading } = useQuery({
+    queryKey: ["admin", "users"],
+    queryFn: () => fetchList(),
+  });
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<AdminUserRow | null>(null);
 
@@ -28,7 +31,9 @@ export function TabUsuarios() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-lg font-extrabold">Usuários</h2>
-          <p className="text-sm text-muted-foreground">Gerencie quem tem acesso ao painel administrativo.</p>
+          <p className="text-sm text-muted-foreground">
+            Gerencie quem tem acesso ao painel administrativo.
+          </p>
         </div>
         <button
           type="button"
@@ -75,10 +80,16 @@ export function TabUsuarios() {
                 <td className="px-4 py-3">
                   <span
                     className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider ${
-                      u.role === "admin" ? "bg-violet-100 text-violet-800" : "bg-muted text-muted-foreground"
+                      u.role === "admin"
+                        ? "bg-violet-100 text-violet-800"
+                        : "bg-muted text-muted-foreground"
                     }`}
                   >
-                    {u.role === "admin" ? <ShieldCheck className="h-3 w-3" /> : <UserIcon className="h-3 w-3" />}
+                    {u.role === "admin" ? (
+                      <ShieldCheck className="h-3 w-3" />
+                    ) : (
+                      <UserIcon className="h-3 w-3" />
+                    )}
                     {u.role === "admin" ? "Administrador" : "Usuário"}
                   </span>
                 </td>
@@ -100,7 +111,9 @@ export function TabUsuarios() {
                     <button
                       type="button"
                       onClick={() => {
-                        if (confirm(`Excluir usuário "${u.email}"? Esta ação não pode ser desfeita.`)) {
+                        if (
+                          confirm(`Excluir usuário "${u.email}"? Esta ação não pode ser desfeita.`)
+                        ) {
                           delMutation.mutate(u.id);
                         }
                       }}
