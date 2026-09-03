@@ -70,7 +70,7 @@ export function SubCategoriaBlock({ sub }: { sub: SubCategoria }) {
       >
         <PersonStanding className="h-9 w-9" strokeWidth={2.2} />
       </div>
-      <h3 className="mt-4 text-base font-extrabold uppercase tracking-tight text-[color:var(--color-brand-purple-text)] md:text-lg">
+      <h3 className="mt-4 text-base font-extrabold uppercase tracking-tight text-[#c20505] md:text-lg">
         {sub.titulo}
       </h3>
       <ul className="mt-4 w-full space-y-2.5 text-left">
@@ -98,14 +98,14 @@ export function CategoriasGrid() {
           key={i}
           className="flex h-full flex-col rounded-3xl bg-white p-6 shadow-card ring-1 ring-black/5 md:p-8"
         >
-          <div className="flex items-center justify-center gap-2 text-[color:var(--color-brand-orange)]">
+          <div className="flex items-center justify-center gap-2 text-[#c20505]">
             <Trophy className="h-5 w-5" />
             <Medal className="h-5 w-5" />
           </div>
           <div className="mt-6 flex-1">
             <SubCategoriaBlock sub={cat.sub[0]} />
           </div>
-          <div className="mt-8 border-t border-[color:var(--color-brand-purple)]/10 pt-8">
+          <div className="mt-8 border-t border-black/5 pt-8">
             <SubCategoriaBlock sub={cat.sub[1]} />
           </div>
         </article>
@@ -116,12 +116,7 @@ export function CategoriasGrid() {
 
 export function CategoriasPremiacoes() {
   return (
-    <section
-      className="relative text-white"
-      style={{
-        background: "linear-gradient(180deg, #e9591b 0%, #ff5300 12%, #ff5300 100%)",
-      }}
-    >
+    <section className="relative bg-[#c20505] text-white">
       <div className="mx-auto max-w-[1200px] px-5 py-20 md:px-8 md:py-28">
         <div className="text-left">
           <p className="text-xs font-bold uppercase tracking-[0.35em] text-white/85">

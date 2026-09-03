@@ -23,7 +23,7 @@ export function HomeCtaVideo() {
     data?.cover_url && data.cover_url.length > 0 ? data.cover_url : capaVideoLancamento;
 
   return (
-    <section className="bg-gradient-orange text-white">
+    <section className="bg-[#c20505] text-white">
       <div className="mx-auto flex max-w-[1200px] flex-col items-center gap-8 px-5 py-16 md:px-8 md:py-20">
         <div className="w-full text-left">
           <p className="text-xs font-bold uppercase tracking-[0.35em] text-white/80">
@@ -34,11 +34,11 @@ export function HomeCtaVideo() {
           </h2>
         </div>
 
-        <div className="relative w-full max-w-[900px] overflow-hidden rounded-3xl border border-white/20 shadow-premium aspect-video bg-black">
+        <div className="relative aspect-video w-full max-w-[900px] overflow-hidden rounded-3xl border border-white/20 bg-black shadow-premium">
           {isVideoPlaying ? (
             <iframe
               src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`}
-              title="II Corrida das Famílias — Vídeo de Lançamento"
+              title="2ª Corrida Natalina — Vídeo de Lançamento"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
               className="absolute inset-0 h-full w-full"
@@ -52,7 +52,7 @@ export function HomeCtaVideo() {
             >
               <img
                 src={coverUrl}
-                alt="Capa do vídeo de lançamento da II Corrida das Famílias"
+                alt="Capa do vídeo de lançamento da 2ª Corrida Natalina"
                 loading="lazy"
                 decoding="async"
                 width={1280}
@@ -65,7 +65,7 @@ export function HomeCtaVideo() {
               />
               <span
                 aria-hidden
-                className="absolute left-1/2 top-1/2 grid h-20 w-20 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-white/95 text-[color:var(--color-brand-orange)] shadow-premium transition group-hover:scale-110 md:h-24 md:w-24"
+                className="absolute left-1/2 top-1/2 grid h-20 w-20 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-white/95 text-[#c20505] shadow-premium transition group-hover:scale-110 md:h-24 md:w-24"
               >
                 <Play className="h-8 w-8 translate-x-0.5 fill-current md:h-10 md:w-10" />
               </span>
@@ -75,7 +75,7 @@ export function HomeCtaVideo() {
 
         <Link
           to="/inscricao"
-          className="inline-flex items-center gap-2 rounded-full bg-white px-7 py-4 text-sm font-extrabold uppercase tracking-wide text-[color:var(--color-brand-orange)] shadow-premium transition hover:scale-[1.03]"
+          className="inline-flex items-center gap-2 rounded-full bg-white px-7 py-4 text-sm font-extrabold uppercase tracking-wide text-[#c20505] shadow-premium transition hover:scale-[1.03]"
         >
           Quero me inscrever
           <ChevronRight className="h-4 w-4" />
