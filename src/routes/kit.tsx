@@ -50,10 +50,10 @@ function Page() {
             </div>
 
             <div>
-              <h3 className="text-2xl font-extrabold leading-tight text-[color:var(--color-brand-purple-title)] md:text-3xl">
+              <h3 className="text-2xl font-extrabold leading-tight text-[#c20505] md:text-3xl">
                 Kit Exclusivo para sua Corrida
               </h3>
-              <p className="mt-4 text-base text-[color:var(--color-brand-purple-text)]">
+              <p className="mt-4 text-base text-[#3d0000]">
                 Desenvolvemos um kit especial para que você tenha tudo o que precisa para participar
                 da corrida com conforto e estilo. Cada item foi cuidadosamente selecionado pensando
                 na sua experiência.

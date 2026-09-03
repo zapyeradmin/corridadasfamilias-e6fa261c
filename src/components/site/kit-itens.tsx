@@ -1,4 +1,4 @@
-import { Shirt, Hash, Droplets, Medal, HandHeart, type LucideIcon } from "lucide-react";
+import { Shirt, Hash, Timer, Droplets, Medal, HandHeart, type LucideIcon } from "lucide-react";
 
 export type KitItemData = {
   icon: LucideIcon;
@@ -18,6 +18,12 @@ export const KIT_ITENS: KitItemData[] = [
     titulo: "Número de Peito",
     texto:
       "Número de identificação personalizado exclusiva para cada atleta. Cada atleta terá número único.",
+  },
+  {
+    icon: Timer,
+    titulo: "Chip de Cronometragem",
+    texto:
+      "A corrida terá cronometragem por chip, garantindo mais precisão, segurança e agilidade na apuração dos resultados de cada atleta.",
   },
   {
     icon: Droplets,
@@ -45,16 +51,14 @@ export const KIT_ITENS_PAGINA: KitItemData[] = [
 export function KitItem({ icon: Icon, titulo, texto }: KitItemData) {
   return (
     <li className="flex gap-4">
-      <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[color:var(--color-brand-orange)]/10 text-[color:var(--color-brand-orange)]">
-        <Icon className="h-5 w-5" />
+      <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full border-2 border-[#c20505] bg-[#c20505] text-white shadow-[0_4px_14px_rgba(194,5,5,0.25)]">
+        <Icon className="h-5 w-5 text-white" />
       </span>
       <div>
-        <h4 className="text-sm font-extrabold uppercase tracking-[0.18em] text-[color:var(--color-brand-purple-title)]">
+        <h4 className="text-sm font-extrabold uppercase tracking-[0.18em] text-[#c20505]">
           {titulo}
         </h4>
-        <p className="mt-1 text-sm leading-relaxed text-[color:var(--color-brand-purple-text)]/80">
-          {texto}
-        </p>
+        <p className="mt-1 text-sm leading-relaxed text-[#3d0000]">{texto}</p>
       </div>
     </li>
   );
