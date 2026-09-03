@@ -8,7 +8,7 @@ import { FAQ_ITEMS } from "./data";
 
 export function HomeFaq() {
   return (
-    <section className="bg-[color:var(--color-brand-orange)]">
+    <section className="bg-[#c20505]">
       <div className="mx-auto max-w-[1200px] px-5 pt-6 pb-20 md:px-8 md:pt-10 md:pb-28">
         <div className="text-left">
           <p className="text-xs font-bold uppercase tracking-[0.35em] text-white">
@@ -27,7 +27,7 @@ export function HomeFaq() {
             <AccordionItem
               key={i}
               value={`faq-${i}`}
-              className="overflow-hidden rounded-2xl border-0 bg-[#c20505] px-5 shadow-[0_10px_30px_rgba(22,9,31,0.18)] md:px-7"
+              className="overflow-hidden rounded-2xl border border-white/20 bg-white/10 px-5 shadow-[0_8px_24px_rgba(0,0,0,0.12)] backdrop-blur-sm transition hover:bg-white/[0.14] md:px-7"
             >
               <AccordionTrigger className="py-5 text-left text-base font-extrabold uppercase tracking-tight text-white hover:no-underline md:text-lg [&>svg]:h-5 [&>svg]:w-5 [&>svg]:text-white">
                 {item.q}

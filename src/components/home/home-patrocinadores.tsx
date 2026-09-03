@@ -63,10 +63,10 @@ export function HomePatrocinadores() {
     (_, i) => i + cards.length + 1,
   );
 
-  const waHref = whatsappHref("Olá! Tenho interesse em patrocinar a II Corrida das Famílias.");
+  const waHref = whatsappHref("Olá! Tenho interesse em patrocinar a 2ª Corrida Natalina.");
 
   return (
-    <section className="bg-[color:var(--color-brand-orange)]">
+    <section className="bg-[#c20505]">
       <div className="mx-auto max-w-[1200px] px-5 py-20 md:px-8 md:py-28">
         <div className="text-left">
           <p className="text-xs font-bold uppercase tracking-[0.35em] text-white">
@@ -119,7 +119,7 @@ export function HomePatrocinadores() {
               key={`ph-${n}`}
               className="grid aspect-[16/9] place-items-center rounded-2xl border border-white/40 bg-white p-3 shadow-[0_8px_24px_rgba(22,9,31,0.12)] ring-1 ring-black/5 md:p-4"
             >
-              <span className="text-sm font-extrabold uppercase tracking-wider text-[color:var(--color-brand-orange)] md:text-base">
+              <span className="text-sm font-extrabold uppercase tracking-wider text-[#c20505] md:text-base">
                 Patrocinador {n}
               </span>
             </div>
@@ -142,7 +142,7 @@ export function HomePatrocinadores() {
         <div className="mt-8 flex justify-center md:mt-10">
           <Link
             to="/inscricao"
-            className="inline-flex items-center justify-center rounded-full bg-[#c20505] px-8 py-4 text-base font-extrabold uppercase tracking-wide text-white shadow-[0_10px_30px_rgba(67,17,129,0.35)] transition hover:bg-[#3a0e72] hover:shadow-[0_14px_36px_rgba(67,17,129,0.45)] md:text-lg"
+            className="inline-flex items-center justify-center rounded-full bg-white px-8 py-4 text-base font-extrabold uppercase tracking-wide text-[#c20505] shadow-[0_10px_30px_rgba(0,0,0,0.2)] transition duration-300 hover:scale-[1.03] hover:shadow-[0_14px_36px_rgba(0,0,0,0.3)] md:text-lg"
           >
             Inscreva-se Já!
           </Link>
