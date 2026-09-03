@@ -97,7 +97,7 @@ function Page() {
               <AccordionItem
                 key={i}
                 value={`faq-${i}`}
-                className="overflow-hidden rounded-2xl border-0 bg-[#930202] px-5 shadow-[0_8px_24px_rgba(0,0,0,0.18)] transition hover:bg-[#850202] md:px-7"
+                className="overflow-hidden rounded-2xl border-0 bg-[#730101] px-5 shadow-[0_8px_24px_rgba(0,0,0,0.22)] transition hover:bg-[#630101] md:px-7"
               >
                 <AccordionTrigger className="py-5 text-left text-base font-extrabold uppercase tracking-tight text-white hover:no-underline md:text-lg [&>svg]:h-5 [&>svg]:w-5 [&>svg]:text-white">
                   {item.q}
