@@ -1,23 +1,24 @@
 import { motion } from "framer-motion";
 import { Calendar, HeartPulse, MapPin, Route as RouteIcon } from "lucide-react";
 import { ContentSection } from "@/components/site/page-shell";
+import { SITE } from "@/lib/site-config";
 import informacoesCorrida from "@/assets/informacoes-corrida.jpg?w=1024&quality=78&format=webp";
 
 const INFOS = [
   {
     icon: Calendar,
     title: "Data e Horários",
-    lines: ["Data: 09 de agosto de 2026", "Concentração: 05:00", "Largada: 06:00 (sem atrasos)"],
+    lines: [`Data: ${SITE.eventDateLabel}`, "Concentração: 05:00", "Largada: 06:00 (sem atrasos)"],
   },
   {
     icon: MapPin,
     title: "Localização Estratégica",
-    lines: ["Local: Igreja Matriz de Nossa Senhora do Rosário em Serra Talhada/PE"],
+    lines: [`Local: ${SITE.location}`],
   },
   {
     icon: RouteIcon,
     title: "Percurso Oficial",
-    lines: ["Distância: 5km"],
+    lines: ["Distância: 6km"],
   },
   {
     icon: HeartPulse,
@@ -36,13 +37,14 @@ export function HomeInfoCorrida() {
       <p className="text-xs font-bold uppercase tracking-[0.35em] text-[color:var(--color-brand-orange)]">
         Informações da Corrida
       </p>
-      <h2 className="heading-section mt-3 text-3xl text-[color:var(--color-brand-purple-title)] md:text-5xl">
+      <h2 className="heading-section mt-3 text-3xl text-[#c20505] md:text-5xl">
         Fique por dentro da corrida
       </h2>
-      <p className="mt-4 text-base text-justify text-[color:var(--color-brand-purple-text)]">
-        Esta é a segunda edição da corrida que une todas as famílias, sob o lema “Juntos no Rosário,
-        Famílias unidas na Fé” a II Corrida das Famílias em Serra Talhada continua sendo idealizada
-        pelo ECC da Paróquia do Rosário, unindo Fé, Esporte em Família, Saúde e Solidariedade.
+      <p className="mt-4 text-base text-justify text-[#3d0000]">
+        Esta é a 2ª Edição da Corrida Natalina, um evento que celebra o esporte, a saúde, a união e
+        o espírito de confraternização. Idealizada pela CORRE+, a corrida reúne atletas, famílias,
+        equipes e toda a comunidade de Serra Talhada em uma experiência marcada por movimento,
+        superação, integração e celebração.
       </p>
 
       <div className="mt-12 grid gap-10 lg:grid-cols-2 lg:items-start">
@@ -54,12 +56,12 @@ export function HomeInfoCorrida() {
         >
           <div
             aria-hidden
-            className="absolute -inset-2 rounded-[2rem] bg-gradient-to-br from-[color:var(--color-brand-orange)]/30 via-transparent to-[color:var(--color-brand-purple)]/30 blur-2xl"
+            className="absolute -inset-2 rounded-[2rem] bg-gradient-to-br from-[color:var(--color-brand-orange)]/30 via-transparent to-[#e70202]/25 blur-2xl"
           />
           <div className="relative aspect-square overflow-hidden rounded-3xl border border-border shadow-card">
             <img
               src={informacoesCorrida}
-              alt="Famílias participando da II Corrida das Famílias em Serra Talhada"
+              alt="Atletas participando da 2ª Corrida Natalina em Serra Talhada"
               loading="lazy"
               decoding="async"
               width={1024}
@@ -75,12 +77,12 @@ export function HomeInfoCorrida() {
           viewport={{ once: true }}
           transition={{ delay: 0.1 }}
         >
-          <h3 className="text-2xl font-extrabold leading-tight text-[color:var(--color-brand-purple-title)] md:text-3xl">
-            Venha fazer parte dessa experiência única de alegria, fé e saúde com toda a família.
+          <h3 className="text-2xl font-extrabold leading-tight text-[#c20505] md:text-3xl">
+            Venha viver a experiência esportiva, elevando sua saúde com muita celebração!
           </h3>
-          <p className="mt-4 text-base text-[color:var(--color-brand-purple-text)]">
-            Reúna a sua família, amigos e toda sua equipe de corrida, coloque o seu tênis e venha
-            celebrar com a gente. Fique por dentro de todas as informações:
+          <p className="mt-4 text-base text-[#3d0000]">
+            Reúna seus amigos, sua equipe de corrida, calce o tênis e venha viver a 2ª Edição da
+            Corrida Natalina. Confira todas as informações:
           </p>
 
           <div className="mt-8 space-y-5">
