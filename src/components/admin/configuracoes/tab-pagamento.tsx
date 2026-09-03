@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { Copy, Save, CheckCircle2 } from "lucide-react";
 import { updateCheckoutConfig } from "@/lib/admin.functions";
-import { getCheckoutConfig, getPublicSiteUrl, type CheckoutConfig } from "@/lib/public.functions";
+import { getCheckoutConfig, type CheckoutConfig } from "@/lib/public.functions";
 
 type Tipo = "adulto" | "crianca";
 
@@ -17,18 +17,10 @@ function formatDateBR(iso: string | null): string {
 
 export function TabPagamento() {
   const fetchConfig = useServerFn(getCheckoutConfig);
-  const fetchSiteUrl = useServerFn(getPublicSiteUrl);
   const { data } = useQuery({
     queryKey: ["public", "checkout-config"],
     queryFn: () => fetchConfig(),
   });
-  const { data: siteUrlData } = useQuery({
-    queryKey: ["public", "site-url"],
-    queryFn: () => fetchSiteUrl(),
-    staleTime: 5 * 60_000,
-  });
-
-  const origin = siteUrlData?.publicSiteUrl ?? "https://corridascorremais.com.br";
 
   return (
     <div className="space-y-8">
@@ -41,12 +33,15 @@ export function TabPagamento() {
         </header>
         <ReadOnlyField
           label="URL do Webhook InfinitePay"
-          value={`${origin}/api/webhooks/infinitepay`}
+          value="https://corridascorremais.com.br/api/webhooks/infinitepay"
         />
-        <ReadOnlyField label="URL de Redirecionamento InfinitePay" value={`${origin}/pagamento`} />
         <ReadOnlyField
-          label="URL de Redirecionamento de Sucesso InfinitePay"
-          value={`${origin}/sucesso`}
+          label="URL de Redirecionamento (Retorno / Validação)"
+          value="https://corridascorremais.com.br/pagamento"
+        />
+        <ReadOnlyField
+          label="URL de Redirecionamento de Sucesso"
+          value="https://corridascorremais.com.br/sucesso"
         />
       </section>
 
