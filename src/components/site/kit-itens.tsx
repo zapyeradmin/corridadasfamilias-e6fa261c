@@ -29,7 +29,7 @@ export const KIT_ITENS: KitItemData[] = [
     icon: Droplets,
     titulo: "Hidratação",
     texto:
-      "Hidratação durante todo percurso, distribuimos 5 pontos de hidratação, disponibilizando água para você.",
+      "Hidratação durante todo percurso, distribuimos pontos de hidratação, disponibilizando água para você.",
   },
   {
     icon: Medal,

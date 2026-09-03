@@ -27,24 +27,24 @@ export const TIMELINE = [
   {
     icon: ClipboardList,
     title: "Abertura das Inscrições",
-    body: "Garanta sua inscrição na corrida mais vibrante da cidade! Inscrições online com vagas limitadas. A partir das 17h do dia 17 de maio de 2026 até às 23h59 do dia 12 de julho de 2026.",
+    body: "Garanta sua inscrição na corrida mais vibrante da cidade! Inscrições online com vagas limitadas. A partir das 19h do dia 04 de setembro de 2026 até às 23h59 do dia 20 de novembro de 2026.",
   },
   {
     icon: Package,
     title: "Entrega dos Kits",
-    body: "Retire seu kit atleta (Camiseta Oficial, Número) das 19:30 às 21:30 nos dias 4, 5 e 6 de agosto de 2026. No Centro Pastoral da Igreja de N. Sra. da Conceição. Não esqueça de levar sua doação de 1Kg de Alimento não perecível, e para os inscritos que forem retirar seu Kit do Atleta no dia 09 de agosto, deverá receber até o horário limite das 5:30, no local da largada.",
+    body: "Retire seu kit atleta (Camiseta Oficial, Número e Chip de Cronometragem) das 19:00 às 21:30 nos dias 15, 16 e 17 de dezembro de 2026. No Beach Garden no Shopping Serra Talhada. Não esqueça de levar sua doação de 1Kg de Alimento não perecível, e para os inscritos que forem retirar seu Kit do Atleta no dia 20 de dezembro, deverá receber até o horário limite das 5:30, no local da largada.",
   },
   {
     icon: Flag,
     title: "No dia da corrida",
-    intro: "No dia 09 de agosto de 2026, se liguem:",
+    intro: "No dia 20 de dezembro de 2026, se liguem:",
     schedule: [
-      { time: "05:00", desc: "Concentração e Abertura da Arena das Famílias" },
+      { time: "05:00", desc: "Concentração no Beach Garden no Shopping Serra Talhada" },
       { time: "05:30", desc: "Limite da entrega dos Kits e início do Aquecimento Coletivo" },
-      { time: "05:50", desc: "Momento de Oração e devoção antes da largada" },
+      { time: "05:50", desc: "Momento de Preparação para a largada" },
       { time: "06:00", desc: "Largada Oficial da Corrida" },
-      { time: "08:30", desc: "Início da Cerimônia de Premiação" },
-      { time: "10:00", desc: "Encerramento do Evento" },
+      { time: "09:00", desc: "Início da Cerimônia de Premiação" },
+      { time: "10:00", desc: "Encerramento do Evento e momento de confraternização com Show ao vivo" },
     ],
   },
 ] as const;

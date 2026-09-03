@@ -17,7 +17,7 @@ export function HomeCronograma() {
           <p className="text-xs font-bold uppercase tracking-[0.35em] text-[color:var(--color-brand-orange)]">
             Cronograma Oficial
           </p>
-          <h2 className="heading-section mt-3 text-3xl text-[color:var(--color-brand-purple-title)] md:text-5xl">
+          <h2 className="heading-section mt-3 text-3xl text-[#c20505] md:text-5xl">
             Veja nosso cronograma completo
           </h2>
         </div>
@@ -58,29 +58,29 @@ export function HomeCronograma() {
                     }`}
                   >
                     <div className="rounded-3xl border border-border bg-white p-7 shadow-soft transition hover:-translate-y-1 hover:shadow-card">
-                      <span className="grid h-11 w-11 place-items-center rounded-2xl bg-[color:var(--color-brand-orange)]/10 text-[color:var(--color-brand-orange)]">
-                        <item.icon className="h-5 w-5" />
+                      <span className="grid h-11 w-11 place-items-center rounded-2xl border-2 border-[#c20505] bg-[#c20505] text-white shadow-[0_4px_14px_rgba(194,5,5,0.25)]">
+                        <item.icon className="h-5 w-5 text-white" />
                       </span>
-                      <h3 className="mt-5 text-lg font-extrabold uppercase tracking-tight text-[color:var(--color-brand-purple-title)] md:text-xl">
+                      <h3 className="mt-5 text-lg font-extrabold uppercase tracking-tight text-[#c20505] md:text-xl">
                         {item.title}
                       </h3>
                       {"body" in item && item.body && (
-                        <p className="mt-3 text-sm leading-relaxed text-justify text-[color:var(--color-brand-purple-text)]/90 md:text-base">
+                        <p className="mt-3 text-sm leading-relaxed text-justify text-[#3d0000] md:text-base">
                           {item.body}
                         </p>
                       )}
                       {"schedule" in item && item.schedule && (
                         <>
-                          <p className="mt-3 text-sm leading-relaxed text-[color:var(--color-brand-purple-text)]/90 md:text-base">
+                          <p className="mt-3 text-sm leading-relaxed text-[#3d0000] md:text-base">
                             {item.intro}
                           </p>
                           <ul className="mt-5 space-y-3">
                             {item.schedule.map((s) => (
                               <li key={s.time} className="flex items-start gap-3">
-                                <span className="inline-flex shrink-0 items-center rounded-full bg-gradient-orange px-3 py-1 text-xs font-extrabold tracking-wide text-white shadow-orange">
+                                <span className="inline-flex shrink-0 items-center rounded-full border-2 border-[#c20505] bg-[#c20505] px-3 py-1 text-xs font-extrabold tracking-wide text-white shadow-[0_2px_8px_rgba(194,5,5,0.25)]">
                                   {s.time}
                                 </span>
-                                <span className="text-sm leading-relaxed text-[color:var(--color-brand-purple-text)]/90 md:text-base">
+                                <span className="text-sm font-medium leading-relaxed text-[#3d0000] md:text-base">
                                   {s.desc}
                                 </span>
                               </li>
