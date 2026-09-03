@@ -74,12 +74,12 @@ function AdminLayout() {
     <div className="min-h-[calc(100vh-200px)] bg-muted/30">
       <div className="mx-auto flex max-w-[1360px] flex-col gap-6 px-4 py-8 md:flex-row md:px-8">
         <aside className="md:w-64 md:shrink-0">
-          <div className="overflow-hidden rounded-2xl border border-border bg-gradient-to-b from-white to-muted/40 p-3 shadow-soft">
+          <div className="overflow-hidden rounded-2xl border border-border bg-white p-3 shadow-soft">
             <div className="px-3 pb-3 pt-2">
-              <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-muted-foreground">
+              <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-[#c20505]">
                 Administração
               </p>
-              <div className="mt-2 h-px bg-gradient-to-r from-primary/40 via-border to-transparent" />
+              <div className="mt-2 h-px bg-gradient-to-r from-[#c20505]/40 via-border to-transparent" />
             </div>
             <nav className="flex flex-col gap-1">
               {NAV.map((item) => {
@@ -92,8 +92,8 @@ function AdminLayout() {
                     className={cn(
                       "group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-all",
                       active
-                        ? "bg-gradient-orange text-white shadow-orange"
-                        : "text-foreground hover:bg-muted hover:translate-x-0.5",
+                        ? "bg-[#c20505] text-white shadow-[0_6px_18px_rgba(194,5,5,0.28)]"
+                        : "text-[#3d0000] hover:bg-muted hover:translate-x-0.5",
                     )}
                   >
                     <span
@@ -106,7 +106,9 @@ function AdminLayout() {
                     <Icon
                       className={cn(
                         "h-4 w-4 shrink-0",
-                        active ? "text-white" : "text-muted-foreground group-hover:text-foreground",
+                        active
+                          ? "text-white"
+                          : "text-[#c20505] group-hover:scale-110 transition-transform",
                       )}
                     />
                     <span>{item.label}</span>
@@ -116,7 +118,7 @@ function AdminLayout() {
               <div className="my-2 h-px bg-border" />
               <button
                 onClick={logout}
-                className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-destructive transition hover:bg-destructive/10"
+                className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-[#c20505] transition hover:bg-[#c20505]/10"
               >
                 <LogOut className="h-4 w-4" /> Sair
               </button>

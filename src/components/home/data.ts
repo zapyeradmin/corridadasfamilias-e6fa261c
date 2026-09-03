@@ -55,7 +55,7 @@ export const TIMELINE = [
 export const FAQ_ITEMS: { q: string; a: string }[] = [
   {
     q: "Como faço minha inscrição?",
-    a: `A inscrição para a II CORRIDA DAS FAMÍLIAS será realizada exclusivamente pelo Site Oficial do evento.
+    a: `A inscrição para a 2ª Corrida Natalina será realizada exclusivamente pelo Site Oficial do evento.
 
 Para se inscrever, basta acessar a área de inscrição no site, preencher corretamente o formulário com seus dados pessoais, escolher sua categoria, selecionar o tamanho da camisa e aceitar os termos de participação. Após isso, clique em "Realizar Inscrição".
 
@@ -77,9 +77,9 @@ O pagamento será realizado por meio do checkout online integrado ao site oficia
     q: "Posso me inscrever no dia do evento?",
     a: `Não. As inscrições serão realizadas somente pelo Site Oficial e dentro do prazo estabelecido pela organização.
 
-As inscrições se encerram no dia 12 de julho de 2026, às 23h59, horário de Brasília. Após esse prazo, o formulário de inscrição será desativado, mesmo que ainda existam pessoas interessadas em participar. Por isso, a orientação é clara:
+As inscrições se encerram conforme o limite técnico de vagas ou prazo final do lote vigente. Por isso, a orientação é clara:
 
-Não deixe para a última hora. Garanta sua inscrição dentro do prazo oficial e participe dessa grande experiência de fé, esporte em família, saúde e solidariedade.`,
+Não deixe para a última hora. Garanta sua inscrição dentro do prazo oficial e participe dessa grande experiência de esporte, saúde, celebração e confraternização.`,
   },
   {
     q: "Posso transferir minha inscrição?",
@@ -89,14 +89,15 @@ No entanto, há uma regra importante: o tamanho da camisa escolhido no momento d
   },
   {
     q: "Como e quando será a entrega dos Kits?",
-    a: `A entrega dos kits será realizada nos dias 04, 05 e 06 de agosto de 2026, sempre no horário das 19h30 às 21h30.
+    a: `A entrega dos kits e os detalhes de locais e horários serão divulgados previamente em nossos canais oficiais e redes sociais.
 
-O local de retirada será o Salão Paroquial da Igreja de Nossa Senhora da Conceição, ao lado da Igreja de Nossa Senhora da Conceição. O kit do atleta inclui:
+O kit oficial do atleta inclui:
 
 1. Camisa oficial da corrida
 2. Número de peito
+3. Chip de cronometragem
 
-Além disso os atletas terão pontos de Hidratação durante o percurso e Medalha para os participantes que concluírem o percurso completo. Cada participante deverá levar 1kg de alimento não perecível no momento da retirada do kit, reforçando o compromisso solidário da II CORRIDA DAS FAMÍLIAS.`,
+Além disso os atletas terão pontos de hidratação durante todo o percurso e medalha finisher para os participantes que concluírem o percurso completo. Cada participante deverá levar 1kg de alimento não perecível no momento da retirada do kit, reforçando o compromisso solidário da 2ª Corrida Natalina.`,
   },
   {
     q: "Como posso saber que minha inscrição está confirmada?",

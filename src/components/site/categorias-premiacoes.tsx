@@ -80,9 +80,7 @@ export function SubCategoriaBlock({ sub }: { sub: SubCategoria }) {
             className="flex items-start gap-3 rounded-2xl bg-[color:var(--color-brand-soft)]/60 p-2.5 pr-3"
           >
             <LugarBadge lugar={p.lugar} />
-            <span className="pt-1 text-xs leading-snug text-[color:var(--color-brand-dark)]/85 md:text-sm">
-              {p.texto}
-            </span>
+            <span className="pt-1 text-xs leading-snug text-[#3d0000] md:text-sm">{p.texto}</span>
           </li>
         ))}
       </ul>
@@ -98,9 +96,13 @@ export function CategoriasGrid() {
           key={i}
           className="flex h-full flex-col rounded-3xl bg-white p-6 shadow-card ring-1 ring-black/5 md:p-8"
         >
-          <div className="flex items-center justify-center gap-2 text-[#c20505]">
-            <Trophy className="h-5 w-5" />
-            <Medal className="h-5 w-5" />
+          <div className="flex items-center justify-center gap-3">
+            <span className="grid h-9 w-9 place-items-center rounded-full border-2 border-[#c20505] bg-[#c20505] text-white shadow-sm">
+              <Trophy className="h-4.5 w-4.5" />
+            </span>
+            <span className="grid h-9 w-9 place-items-center rounded-full border-2 border-[#c20505] bg-[#c20505] text-white shadow-sm">
+              <Medal className="h-4.5 w-4.5" />
+            </span>
           </div>
           <div className="mt-6 flex-1">
             <SubCategoriaBlock sub={cat.sub[0]} />

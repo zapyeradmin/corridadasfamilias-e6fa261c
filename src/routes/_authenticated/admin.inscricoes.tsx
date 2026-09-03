@@ -85,10 +85,10 @@ function Page() {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-2xl font-extrabold uppercase tracking-tight">Inscrições</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {data ? `${data.total} resultados` : "—"}
-        </p>
+        <h1 className="text-2xl font-extrabold uppercase tracking-tight text-[#c20505]">
+          Inscrições
+        </h1>
+        <p className="mt-1 text-sm text-[#3d0000]">{data ? `${data.total} resultados` : "—"}</p>
       </header>
 
       <div className="flex flex-wrap items-center gap-3">
@@ -99,7 +99,7 @@ function Page() {
             setPage(1);
             setSearch(e.target.value);
           }}
-          className="max-w-xs"
+          className="max-w-xs text-[#3d0000]"
         />
         <Select
           value={status}
@@ -123,7 +123,7 @@ function Page() {
 
       <div className="overflow-x-auto rounded-xl border border-border">
         <table className="w-full text-sm">
-          <thead className="bg-muted text-left text-xs uppercase tracking-wider text-muted-foreground">
+          <thead className="bg-[#fbf6f5] text-left text-xs uppercase tracking-wider text-[#c20505] font-bold">
             <tr>
               <th className="px-4 py-3">Protocolo</th>
               <th className="px-4 py-3">Nome</th>

@@ -85,14 +85,14 @@ function Page() {
       <section className="bg-white">
         <div className="mx-auto max-w-[1200px] px-5 pt-10 pb-20 md:px-8 md:pt-14 md:pb-28">
           <div className="flex flex-col items-center text-center">
-            <span className="grid h-24 w-24 place-items-center rounded-full bg-destructive/15 text-destructive shadow-[0_10px_30px_rgba(220,38,38,0.18)] animate-in fade-in zoom-in duration-500">
-              <XCircle className="h-12 w-12" strokeWidth={2.5} />
+            <span className="grid h-24 w-24 place-items-center rounded-full border-4 border-[#c20505] bg-[#c20505] text-white shadow-[0_12px_32px_rgba(194,5,5,0.3)] animate-in fade-in zoom-in duration-500">
+              <XCircle className="h-12 w-12 text-white" strokeWidth={2.5} />
             </span>
 
-            <h2 className="heading-section mt-6 text-3xl text-[color:var(--color-brand-purple-title)] md:text-4xl">
+            <h2 className="heading-section mt-6 text-3xl text-[#c20505] md:text-4xl">
               Algo deu errado com a sua transação
             </h2>
-            <p className="mt-4 max-w-2xl text-base text-[color:var(--color-brand-purple-text)]">
+            <p className="mt-4 max-w-2xl text-base text-[#3d0000]">
               Seu pagamento não foi processado e a inscrição{" "}
               <strong>ainda não está confirmada</strong>. Você pode tentar novamente agora mesmo —
               leva menos de 2 minutos.
@@ -102,10 +102,10 @@ function Page() {
               <div className="mt-8 grid w-full max-w-2xl gap-3 sm:grid-cols-2">
                 {protocol && (
                   <div className="rounded-2xl border border-border bg-[color:var(--color-brand-soft)] px-5 py-4 text-left">
-                    <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-[color:var(--color-brand-purple-text)]/70">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#c20505]">
                       Protocolo da tentativa
                     </p>
-                    <p className="mt-1 break-all font-mono text-base font-extrabold text-[color:var(--color-brand-purple-title)]">
+                    <p className="mt-1 break-all font-mono text-base font-extrabold text-[#3d0000]">
                       {protocol}
                     </p>
                   </div>
@@ -115,7 +115,7 @@ function Page() {
                     <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-destructive">
                       Motivo informado
                     </p>
-                    <p className="mt-1 break-words text-sm font-semibold text-[color:var(--color-brand-purple-title)]">
+                    <p className="mt-1 break-words text-sm font-semibold text-[#3d0000]">
                       {reason}
                     </p>
                   </div>
@@ -125,10 +125,10 @@ function Page() {
           </div>
 
           <div className="mt-16">
-            <h3 className="text-center text-xs font-bold uppercase tracking-[0.35em] text-[color:var(--color-brand-orange)]">
+            <h3 className="text-center text-xs font-bold uppercase tracking-[0.35em] text-[#c20505]">
               Possíveis motivos
             </h3>
-            <p className="mt-2 text-center text-2xl font-extrabold text-[color:var(--color-brand-purple-title)] md:text-3xl">
+            <p className="mt-2 text-center text-2xl font-extrabold text-[#c20505] md:text-3xl">
               Por que o pagamento pode ter falhado
             </p>
 
@@ -136,33 +136,28 @@ function Page() {
               {MOTIVOS.map(({ icon: Icon, titulo, texto }) => (
                 <article
                   key={titulo}
-                  className="flex flex-col items-start gap-4 rounded-2xl border border-border bg-white p-6 shadow-[0_10px_30px_rgba(22,9,31,0.06)] transition hover:shadow-[0_16px_40px_rgba(22,9,31,0.12)]"
+                  className="flex flex-col items-start gap-4 rounded-2xl border border-border bg-white p-6 shadow-soft transition hover:shadow-card"
                 >
-                  <span className="grid h-12 w-12 place-items-center rounded-full bg-[color:var(--color-brand-orange)]/10 text-[color:var(--color-brand-orange)]">
-                    <Icon className="h-6 w-6" />
+                  <span className="grid h-12 w-12 place-items-center rounded-full border-2 border-[#c20505] bg-[#c20505] text-white shadow-sm">
+                    <Icon className="h-6 w-6 text-white" />
                   </span>
-                  <h4 className="text-base font-extrabold uppercase tracking-[0.14em] text-[color:var(--color-brand-purple-title)]">
+                  <h4 className="text-base font-extrabold uppercase tracking-[0.14em] text-[#c20505]">
                     {titulo}
                   </h4>
-                  <p className="text-sm leading-relaxed text-[color:var(--color-brand-purple-text)]/85">
-                    {texto}
-                  </p>
+                  <p className="text-sm leading-relaxed text-[#3d0000]">{texto}</p>
                 </article>
               ))}
             </div>
           </div>
 
           <div className="mt-10 rounded-2xl bg-[color:var(--color-brand-soft)] p-6 md:p-8">
-            <h4 className="text-sm font-extrabold uppercase tracking-[0.18em] text-[color:var(--color-brand-purple-title)]">
+            <h4 className="text-sm font-extrabold uppercase tracking-[0.18em] text-[#c20505]">
               O que fazer agora
             </h4>
             <ol className="mt-4 grid gap-3">
               {PASSOS.map((passo, i) => (
-                <li
-                  key={passo}
-                  className="flex items-start gap-3 text-sm text-[color:var(--color-brand-purple-text)]"
-                >
-                  <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-[color:var(--color-brand-orange)] text-[11px] font-extrabold text-white">
+                <li key={passo} className="flex items-start gap-3 text-sm text-[#3d0000]">
+                  <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full border-2 border-[#c20505] bg-[#c20505] text-[11px] font-extrabold text-white shadow-sm">
                     {i + 1}
                   </span>
                   <span>{passo}</span>
@@ -174,7 +169,7 @@ function Page() {
           <div className="mt-12 flex flex-wrap justify-center gap-3">
             <Link
               to="/inscricao"
-              className="inline-flex items-center gap-2 rounded-full bg-[color:var(--color-brand-orange)] px-6 py-3 text-sm font-extrabold uppercase tracking-wide text-white shadow-orange transition hover:brightness-110"
+              className="inline-flex items-center gap-2 rounded-full bg-[#c20505] px-6 py-3 text-sm font-extrabold uppercase tracking-wide text-white shadow-[0_8px_24px_rgba(194,5,5,0.28)] transition duration-300 hover:bg-[#a30404] hover:scale-[1.02]"
             >
               <RefreshCw className="h-4 w-4" /> Tentar novamente
             </Link>
@@ -188,7 +183,7 @@ function Page() {
             </a>
             <Link
               to="/"
-              className="inline-flex items-center gap-2 rounded-full border border-border bg-white px-6 py-3 text-sm font-extrabold uppercase tracking-wide text-[color:var(--color-brand-purple-text)] transition hover:bg-[color:var(--color-brand-soft)]"
+              className="inline-flex items-center gap-2 rounded-full border border-border bg-white px-6 py-3 text-sm font-extrabold uppercase tracking-wide text-[#3d0000] transition hover:bg-[color:var(--color-brand-soft)]"
             >
               <Home className="h-4 w-4" /> Voltar ao início
             </Link>
@@ -196,7 +191,7 @@ function Page() {
         </div>
       </section>
 
-      <section className="bg-[color:var(--color-brand-purple)]">
+      <section className="bg-[#c20505]">
         <div className="mx-auto flex max-w-[1200px] flex-col items-center gap-6 px-5 py-16 text-center md:px-8 md:py-20">
           <h3 className="heading-section text-2xl text-white md:text-4xl">
             Estamos aqui para ajudar você a completar sua inscrição

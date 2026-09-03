@@ -17,7 +17,7 @@ export function HomePilares() {
 
   return (
     <ContentSection>
-      <p className="text-xs font-bold uppercase tracking-[0.35em] text-[color:var(--color-brand-orange)]">
+      <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#c20505]">
         Pilares do evento
       </p>
       <h2 className="heading-section mt-3 text-3xl text-[#c20505] md:text-5xl">
@@ -87,7 +87,7 @@ export function HomePilares() {
       <div className="mt-8 flex justify-center md:mt-10">
         <Link
           to="/inscricao"
-          className="group inline-flex items-center justify-center gap-2.5 rounded-full bg-gradient-orange px-8 py-4 text-base font-extrabold uppercase tracking-wide text-white shadow-orange transition duration-300 hover:scale-[1.03] hover:shadow-[0_14px_36px_rgba(247,96,5,0.45)] md:px-10 md:py-4.5 md:text-lg"
+          className="group inline-flex items-center justify-center gap-2.5 rounded-full bg-[#c20505] px-8 py-4 text-base font-extrabold uppercase tracking-wide text-white shadow-[0_10px_30px_rgba(194,5,5,0.35)] transition duration-300 hover:scale-[1.03] hover:bg-[#a30404] md:px-10 md:py-4.5 md:text-lg"
         >
           INSCREVA-SE AGORA
           <ChevronRight className="h-5 w-5 transition duration-300 group-hover:translate-x-1" />

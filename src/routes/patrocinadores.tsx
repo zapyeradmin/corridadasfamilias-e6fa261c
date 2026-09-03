@@ -78,7 +78,7 @@ function Page() {
     (_, i) => i + cards.length + 1,
   );
 
-  const waHref = whatsappHref("Olá! Tenho interesse em patrocinar a II Corrida das Famílias.");
+  const waHref = whatsappHref("Olá! Tenho interesse em patrocinar a 2ª Corrida Natalina.");
 
   return (
     <>
@@ -126,16 +126,16 @@ function Page() {
             {placeholders.map((n) => (
               <div
                 key={`ph-${n}`}
-                className="grid aspect-[16/9] place-items-center rounded-2xl border border-dashed border-[color:var(--color-brand-purple)]/25 bg-white p-3 shadow-soft md:p-4"
+                className="grid aspect-[16/9] place-items-center rounded-2xl border border-dashed border-[#c20505]/30 bg-white p-3 shadow-soft md:p-4"
               >
-                <span className="text-sm font-extrabold uppercase tracking-wider text-[color:var(--color-brand-orange)] md:text-base">
+                <span className="text-sm font-extrabold uppercase tracking-wider text-[#c20505] md:text-base">
                   Patrocinador {n}
                 </span>
               </div>
             ))}
           </div>
 
-          <p className="mt-10 text-center text-base text-[color:var(--color-brand-purple-text)] md:mt-14 md:text-lg">
+          <p className="mt-10 text-center text-base text-[#3d0000] md:mt-14 md:text-lg">
             Quer apoiar o evento?{" "}
             <a
               href={waHref}
@@ -151,7 +151,7 @@ function Page() {
           <div className="mt-8 flex justify-center md:mt-10">
             <Link
               to="/inscricao"
-              className="inline-flex items-center justify-center rounded-full bg-[#431181] px-8 py-4 text-base font-extrabold uppercase tracking-wide text-white shadow-[0_10px_30px_rgba(67,17,129,0.35)] transition hover:bg-[#3a0e72] hover:shadow-[0_14px_36px_rgba(67,17,129,0.45)] md:text-lg"
+              className="inline-flex items-center justify-center rounded-full bg-[#c20505] px-8 py-4 text-base font-extrabold uppercase tracking-wide text-white shadow-[0_10px_30px_rgba(194,5,5,0.35)] transition duration-300 hover:scale-[1.03] hover:bg-[#a30404] md:text-lg"
             >
               Inscreva-se Já!
             </Link>

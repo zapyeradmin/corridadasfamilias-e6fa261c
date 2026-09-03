@@ -78,7 +78,7 @@ function Page() {
         <div className="mx-auto mb-8 flex w-full max-w-md justify-center">
           <img
             src={logoLogin}
-            alt="II Corrida das Famílias"
+            alt="2ª Corrida Natalina | CORRE+"
             className="h-24 w-auto md:h-32"
             loading="eager"
             decoding="async"
@@ -91,7 +91,12 @@ function Page() {
           className="mx-auto w-full max-w-md space-y-5 rounded-3xl border border-border bg-white p-8 shadow-soft"
         >
           <div className="space-y-2">
-            <Label htmlFor="email">E-mail</Label>
+            <Label
+              htmlFor="email"
+              className="text-xs font-bold uppercase tracking-wider text-[#3d0000]"
+            >
+              E-mail
+            </Label>
             <Input
               id="email"
               type="email"
@@ -99,10 +104,16 @@ function Page() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              className="text-[#3d0000]"
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password">Senha</Label>
+            <Label
+              htmlFor="password"
+              className="text-xs font-bold uppercase tracking-wider text-[#3d0000]"
+            >
+              Senha
+            </Label>
             <Input
               id="password"
               type="password"
@@ -110,16 +121,21 @@ function Page() {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              className="text-[#3d0000]"
             />
           </div>
-          <Button type="submit" className="w-full" disabled={loading}>
+          <Button
+            type="submit"
+            className="w-full bg-[#c20505] text-white font-extrabold uppercase tracking-wide hover:bg-[#a30404]"
+            disabled={loading}
+          >
             {loading ? "Entrando..." : "Entrar"}
           </Button>
           <button
             type="button"
             onClick={onForgot}
             disabled={resetting}
-            className="block w-full text-center text-sm text-[color:var(--color-brand-purple-text)] underline-offset-4 hover:underline"
+            className="block w-full text-center text-sm font-semibold text-[#c20505] underline-offset-4 hover:underline"
           >
             {resetting ? "Enviando..." : "Esqueci minha senha"}
           </button>

@@ -65,7 +65,7 @@ const LotesTable = () => (
 
 const PremiacaoGeralTable = () => (
   <div className="overflow-x-auto">
-    <p className="mb-2 text-sm font-semibold uppercase tracking-wide text-[color:var(--color-brand-purple-title)]">
+    <p className="mb-2 text-sm font-semibold uppercase tracking-wide text-[#c20505]">
       Premiação — Geral Masculina e Geral Feminina
     </p>
     <Table>
@@ -95,7 +95,7 @@ const PremiacaoGeralTable = () => (
 
 const PremiacaoCategoriasTable = () => (
   <div className="overflow-x-auto">
-    <p className="mb-2 text-sm font-semibold uppercase tracking-wide text-[color:var(--color-brand-purple-title)]">
+    <p className="mb-2 text-sm font-semibold uppercase tracking-wide text-[#c20505]">
       Premiação — Infanto-Juvenil (Masc./Fem.) e 60+ (Masc./Fem.)
     </p>
     <Table>
@@ -440,7 +440,7 @@ function Page() {
       <PageHeader
         eyebrow="Documento oficial"
         title="Regulamento Geral"
-        description="II Corrida das Famílias — “Juntos no Rosário, Famílias unidas na Fé”. Leia atentamente antes de se inscrever."
+        description="2ª Corrida Natalina | CORRE+. Leia atentamente antes de se inscrever."
       />
       <ContentSection>
         {/* Intro */}
@@ -448,7 +448,7 @@ function Page() {
           <p className="text-base leading-relaxed text-[color:var(--color-brand-purple-text)]">
             Este Regulamento estabelece as condições gerais de participação, inscrição, pagamento,
             retirada de kit, percurso, premiação, segurança, saúde, uso de imagem, tratamento de
-            dados pessoais e demais regras aplicáveis à II CORRIDA DAS FAMÍLIAS.
+            dados pessoais e demais regras aplicáveis à 2ª CORRIDA NATALINA.
           </p>
           <p className="mt-4 text-base leading-relaxed text-[color:var(--color-brand-purple-text)]">
             Ao realizar a inscrição, o participante declara ter lido, compreendido e aceitado
@@ -459,9 +459,7 @@ function Page() {
 
         {/* Preâmbulo */}
         <article className="mb-10 rounded-3xl bg-gradient-hero p-8 text-white shadow-soft">
-          <p className="text-xs font-bold uppercase tracking-[0.35em] text-[color:var(--color-brand-orange)]">
-            Preâmbulo
-          </p>
+          <p className="text-xs font-bold uppercase tracking-[0.35em] text-white/85">Preâmbulo</p>
           <div className="mt-4 space-y-4 text-base leading-relaxed text-white/90">
             <p>
               A II CORRIDA DAS FAMÍLIAS é um evento de corrida de rua de caráter esportivo,

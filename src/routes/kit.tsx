@@ -67,23 +67,23 @@ function Page() {
             </div>
           </div>
 
-          <p className="mt-12 whitespace-pre-line rounded-2xl bg-[color:var(--color-brand-soft)] p-6 text-sm text-[color:var(--color-brand-purple-text)]">
-            {`A entrega dos kits será realizada nos dias 04, 05 e 06 de agosto de 2026, sempre no horário das 19h30 às 21h30. O local de retirada será o Salão Paroquial da Igreja de Nossa Senhora da Conceição, ao lado da Igreja de Nossa Senhora da Conceição.\n\nCada participante deverá levar 1kg de alimento não perecível no momento da retirada do kit, reforçando o compromisso solidário da II CORRIDA DAS FAMÍLIAS.`}
+          <p className="mt-12 whitespace-pre-line rounded-2xl bg-[color:var(--color-brand-soft)] p-6 text-sm text-[#3d0000]">
+            {`A entrega dos kits será informada com antecedência pela organização oficial da 2ª Corrida Natalina.\n\nCada participante deverá levar 1kg de alimento não perecível no momento da retirada do kit, reforçando o compromisso solidário do nosso evento.`}
           </p>
         </div>
       </section>
 
-      <section className="bg-[color:var(--color-brand-purple)]">
+      <section className="bg-[#c20505]">
         <div className="mx-auto flex max-w-[1200px] flex-col items-center gap-6 px-5 py-16 text-center md:px-8 md:py-20">
           <h3 className="heading-section text-2xl text-white md:text-4xl">
-            Pronto para correr com a sua família?
+            Pronto para garantir seu kit oficial?
           </h3>
-          <p className="max-w-xl text-base text-white/80">
+          <p className="max-w-xl text-base text-white/90">
             Garanta sua vaga e venha viver essa experiência única em Serra Talhada/PE.
           </p>
           <Link
             to="/inscricao"
-            className="inline-flex items-center justify-center rounded-full bg-[color:var(--color-brand-orange)] px-8 py-4 text-sm font-extrabold uppercase tracking-[0.18em] text-white shadow-orange transition hover:brightness-110"
+            className="inline-flex items-center justify-center rounded-full bg-white px-8 py-4 text-sm font-extrabold uppercase tracking-[0.18em] text-[#c20505] shadow-premium transition duration-300 hover:scale-[1.03]"
           >
             Inscreva-se Já!
           </Link>

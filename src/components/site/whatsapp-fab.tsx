@@ -5,7 +5,7 @@ export function WhatsAppFab() {
   const { whatsappHref } = useSiteContacts();
   return (
     <a
-      href={whatsappHref("Olá! Gostaria de informações sobre a II Corrida das Famílias.")}
+      href={whatsappHref("Olá! Gostaria de informações sobre a 2ª Corrida Natalina.")}
       target="_blank"
       rel="noreferrer"
       aria-label="Falar no WhatsApp"

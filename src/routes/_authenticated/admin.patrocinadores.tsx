@@ -119,8 +119,10 @@ function Page() {
     <div className="space-y-6">
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-extrabold uppercase tracking-tight">Patrocinadores</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <h1 className="text-2xl font-extrabold uppercase tracking-tight text-[#c20505]">
+            Patrocinadores
+          </h1>
+          <p className="mt-1 text-sm text-[#3d0000]">
             {data ? `${data.total} patrocinadores` : "—"}
           </p>
         </div>
@@ -129,7 +131,7 @@ function Page() {
             setEditing(null);
             setOpenForm(true);
           }}
-          className="gap-2"
+          className="gap-2 bg-[#c20505] text-white hover:bg-[#a30404]"
         >
           <Plus className="h-4 w-4" /> Adicionar patrocinador
         </Button>

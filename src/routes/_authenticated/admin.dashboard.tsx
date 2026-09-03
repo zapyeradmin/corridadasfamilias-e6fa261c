@@ -48,20 +48,20 @@ function Page() {
   return (
     <div className="space-y-8">
       <header>
-        <h1 className="text-2xl font-extrabold uppercase tracking-tight">Dashboard</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Visão geral das inscrições e pagamentos.
-        </p>
+        <h1 className="text-2xl font-extrabold uppercase tracking-tight text-[#c20505]">
+          Dashboard
+        </h1>
+        <p className="mt-1 text-sm text-[#3d0000]">Visão geral das inscrições e pagamentos.</p>
       </header>
 
       {isLoading ? (
-        <p className="text-sm text-muted-foreground">Carregando…</p>
+        <p className="text-sm text-[#3d0000]/60">Carregando…</p>
       ) : isError ? (
         <p className="rounded-xl border border-destructive/20 bg-destructive/10 p-4 text-sm text-destructive">
           {error instanceof Error ? error.message : "Não foi possível carregar o dashboard."}
         </p>
       ) : !data ? (
-        <p className="text-sm text-muted-foreground">Nenhum dado encontrado.</p>
+        <p className="text-sm text-[#3d0000]/60">Nenhum dado encontrado.</p>
       ) : (
         <>
           <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
@@ -73,19 +73,19 @@ function Page() {
 
           <section>
             <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-lg font-extrabold uppercase tracking-tight">
+              <h2 className="text-lg font-extrabold uppercase tracking-tight text-[#c20505]">
                 Últimas inscrições
               </h2>
               <Link
                 to="/admin/inscricoes"
-                className="text-sm font-semibold text-primary hover:underline"
+                className="text-sm font-semibold text-[#c20505] hover:underline"
               >
                 Ver todas →
               </Link>
             </div>
             <div className="overflow-x-auto rounded-xl border border-border">
               <table className="w-full text-sm">
-                <thead className="bg-muted text-left text-xs uppercase tracking-wider text-muted-foreground">
+                <thead className="bg-[#fbf6f5] text-left text-xs uppercase tracking-wider text-[#c20505] font-bold">
                   <tr>
                     <th className="px-4 py-3">Protocolo</th>
                     <th className="px-4 py-3">Nome</th>
@@ -184,9 +184,9 @@ function Page() {
 
 function Kpi({ title, value }: { title: string; value: string }) {
   return (
-    <div className="rounded-2xl border border-border bg-gradient-to-br from-white to-muted/40 p-5">
-      <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{title}</p>
-      <p className="mt-2 text-2xl font-extrabold text-foreground">{value}</p>
+    <div className="rounded-2xl border border-border bg-gradient-to-br from-white to-[#fbf6f5] p-5 shadow-soft">
+      <p className="text-xs font-bold uppercase tracking-wider text-[#c20505]">{title}</p>
+      <p className="mt-2 text-2xl font-extrabold text-[#3d0000]">{value}</p>
     </div>
   );
 }

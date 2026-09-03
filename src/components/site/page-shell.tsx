@@ -15,9 +15,7 @@ export function PageHeader({
     <section className="bg-gradient-hero text-white">
       <div className="mx-auto max-w-[1200px] px-5 py-20 md:px-8 md:py-28">
         {eyebrow && (
-          <p className="text-xs font-bold uppercase tracking-[0.35em] text-[color:var(--color-brand-orange)]">
-            {eyebrow}
-          </p>
+          <p className="text-xs font-bold uppercase tracking-[0.35em] text-white/85">{eyebrow}</p>
         )}
         <h1 className="heading-display mt-3 text-4xl text-white sm:text-6xl md:text-7xl">
           {title}

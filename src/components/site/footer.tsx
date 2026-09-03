@@ -52,23 +52,31 @@ export function SiteFooter() {
           <p className="text-xs font-bold uppercase tracking-[0.3em] text-white/70">Contato</p>
           <ul className="mt-4 space-y-3 text-sm text-white/90">
             <li className="flex items-start gap-3">
-              <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-white" />
-              <span>{contacts.local}</span>
+              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full border border-white bg-white text-[#c20505] shadow-sm">
+                <MapPin className="h-3.5 w-3.5" />
+              </span>
+              <span className="pt-0.5">{contacts.local}</span>
             </li>
             <li className="flex items-center gap-3">
-              <MessageCircle className="h-4 w-4 shrink-0 text-white" />
+              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full border border-white bg-white text-[#c20505] shadow-sm">
+                <MessageCircle className="h-3.5 w-3.5" />
+              </span>
               <a href={whatsappHref()} target="_blank" rel="noreferrer" className="hover:underline">
                 {whatsappLabel}
               </a>
             </li>
             <li className="flex items-center gap-3">
-              <Mail className="h-4 w-4 shrink-0 text-white" />
+              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full border border-white bg-white text-[#c20505] shadow-sm">
+                <Mail className="h-3.5 w-3.5" />
+              </span>
               <a href={`mailto:${contacts.email_oficial}`} className="hover:underline">
                 {contacts.email_oficial}
               </a>
             </li>
             <li className="flex items-center gap-3">
-              <Instagram className="h-4 w-4 shrink-0 text-white" />
+              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full border border-white bg-white text-[#c20505] shadow-sm">
+                <Instagram className="h-3.5 w-3.5" />
+              </span>
               <a href={igHref} target="_blank" rel="noreferrer" className="hover:underline">
                 @{contacts.instagram_usuario}
               </a>

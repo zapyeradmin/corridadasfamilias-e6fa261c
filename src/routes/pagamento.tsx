@@ -106,26 +106,22 @@ function Page() {
       />
       <ContentSection>
         <div className="mx-auto max-w-xl rounded-3xl border border-border bg-white p-8 text-center shadow-soft md:p-10">
-          <div className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-[color:var(--color-brand-soft)]">
-            <Loader2 className="h-7 w-7 animate-spin text-[color:var(--color-brand-orange)]" />
+          <div className="mx-auto grid h-14 w-14 place-items-center rounded-full border-2 border-[#c20505] bg-[#c20505] text-white shadow-sm">
+            <Loader2 className="h-7 w-7 animate-spin text-white" />
           </div>
-          <h2 className="heading-section mt-5 text-2xl text-[color:var(--color-brand-purple-title)]">
-            Validando seu pagamento
-          </h2>
-          <p className="mt-3 text-sm text-[color:var(--color-brand-purple-text)]">
+          <h2 className="heading-section mt-5 text-2xl text-[#c20505]">Validando seu pagamento</h2>
+          <p className="mt-3 text-sm text-[#3d0000]">
             Estamos verificando se o pagamento foi confirmado. Não feche esta página.
           </p>
           {protocol && (
             <div className="mt-6 rounded-2xl border border-border bg-[color:var(--color-brand-soft)]/40 p-4">
-              <p className="text-xs font-bold uppercase tracking-[0.3em] text-[color:var(--color-brand-orange)]">
+              <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#c20505]">
                 Protocolo
               </p>
-              <p className="mt-1 text-xl font-black text-[color:var(--color-brand-purple-title)]">
-                {protocol}
-              </p>
+              <p className="mt-1 text-xl font-black text-[#c20505]">{protocol}</p>
             </div>
           )}
-          <p className="mt-6 text-[11px] uppercase tracking-[0.25em] text-[color:var(--color-brand-purple-text)]/60">
+          <p className="mt-6 text-[11px] uppercase tracking-[0.25em] text-[#3d0000]/60">
             Tentativa {attempt + 1} de {MAX_ATTEMPTS}
           </p>
         </div>

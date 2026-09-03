@@ -6,7 +6,7 @@ export function HomeKit() {
   return (
     <section className="bg-white">
       <div className="mx-auto max-w-[1200px] px-5 py-20 md:px-8 md:py-28">
-        <p className="text-xs font-bold uppercase tracking-[0.35em] text-[color:var(--color-brand-orange)]">
+        <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#c20505]">
           Kit Exclusivo dos Atletas
         </p>
         <h2 className="heading-section mt-3 text-3xl text-[#c20505] md:text-5xl">
@@ -21,7 +21,7 @@ export function HomeKit() {
           <div className="relative aspect-square">
             <img
               src={kitExclusivo}
-              alt="Kit exclusivo do atleta da II Corrida das Famílias"
+              alt="Kit exclusivo do atleta da 2ª Corrida Natalina"
               loading="lazy"
               decoding="async"
               width={1024}
@@ -51,7 +51,7 @@ export function HomeKit() {
         <div className="mt-12 flex justify-center">
           <Link
             to="/inscricao"
-            className="inline-flex items-center justify-center rounded-full bg-[color:var(--color-brand-orange)] px-8 py-4 text-sm font-extrabold uppercase tracking-[0.18em] text-white shadow-card transition hover:brightness-110"
+            className="inline-flex items-center justify-center rounded-full bg-[#c20505] px-8 py-4 text-sm font-extrabold uppercase tracking-[0.18em] text-white shadow-[0_10px_30px_rgba(194,5,5,0.35)] transition duration-300 hover:scale-[1.03] hover:bg-[#a30404]"
           >
             Faça a sua Inscrição
           </Link>

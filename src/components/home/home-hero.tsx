@@ -39,9 +39,11 @@ export function HomeHero() {
           <motion.p
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.25em] text-white/80 backdrop-blur"
+            className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.25em] text-white backdrop-blur"
           >
-            <Calendar className="h-3.5 w-3.5 text-white" />
+            <span className="grid h-5 w-5 place-items-center rounded-full border border-white bg-white text-[#c20505]">
+              <Calendar className="h-3 w-3" />
+            </span>
             {SITE.eventDateLabel}
           </motion.p>
 
@@ -101,14 +103,18 @@ export function HomeHero() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.25 }}
-            className="mt-8 flex flex-wrap items-center gap-4 text-[13px] text-white/75 sm:mt-10 sm:gap-6 sm:text-sm"
+            className="mt-8 flex flex-wrap items-center gap-4 text-[13px] text-white/85 sm:mt-10 sm:gap-6 sm:text-sm"
           >
             <span className="flex items-center gap-2">
-              <MapPin className="h-4 w-4 text-white" />
+              <span className="grid h-6 w-6 place-items-center rounded-full border border-white bg-white text-[#c20505] shadow-sm">
+                <MapPin className="h-3.5 w-3.5" />
+              </span>
               {SITE.location}
             </span>
             <span className="flex items-center gap-2">
-              <Trophy className="h-4 w-4 text-[color:var(--color-brand-amber)]" />
+              <span className="grid h-6 w-6 place-items-center rounded-full border border-white bg-white text-[#c20505] shadow-sm">
+                <Trophy className="h-3.5 w-3.5" />
+              </span>
               Premiação geral e por categoria
             </span>
           </motion.div>
@@ -129,7 +135,7 @@ export function HomeHero() {
               <p className="text-[10px] font-bold uppercase tracking-[0.35em] text-white">
                 Contagem regressiva
               </p>
-              <span className="grid h-9 w-9 place-items-center rounded-full bg-white/10 text-white">
+              <span className="grid h-9 w-9 place-items-center rounded-full border border-white bg-white text-[#c20505] shadow-sm">
                 <Calendar className="h-4 w-4" />
               </span>
             </div>
@@ -139,7 +145,7 @@ export function HomeHero() {
             <Countdown className="mt-6" />
             <Link
               to="/inscricao"
-              className="group mt-8 flex w-full items-center justify-center gap-2 rounded-full bg-white px-5 py-3.5 text-sm font-extrabold uppercase tracking-wide text-[#e35602] shadow-md transition hover:bg-white/95"
+              className="group mt-8 flex w-full items-center justify-center gap-2 rounded-full bg-white px-5 py-3.5 text-sm font-extrabold uppercase tracking-wide text-[#c20505] shadow-md transition hover:bg-white/95"
             >
               Inscreva-se agora
               <ChevronRight className="h-4 w-4 transition group-hover:translate-x-0.5" />

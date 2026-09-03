@@ -20,7 +20,7 @@ const INFOS = [
 export function HomeInfoCorrida() {
   return (
     <ContentSection>
-      <p className="text-xs font-bold uppercase tracking-[0.35em] text-[color:var(--color-brand-orange)]">
+      <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#c20505]">
         Informações da Corrida
       </p>
       <h2 className="heading-section mt-3 text-3xl text-[#c20505] md:text-5xl">
@@ -42,7 +42,7 @@ export function HomeInfoCorrida() {
         >
           <div
             aria-hidden
-            className="absolute -inset-2 rounded-[2rem] bg-gradient-to-br from-[color:var(--color-brand-orange)]/30 via-transparent to-[#e70202]/25 blur-2xl"
+            className="absolute -inset-2 rounded-[2rem] bg-gradient-to-br from-[#c20505]/20 via-transparent to-[#730101]/20 blur-2xl"
           />
           <div className="relative aspect-square overflow-hidden rounded-3xl border border-border shadow-card">
             <img

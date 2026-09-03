@@ -35,7 +35,7 @@ export function SponsorsMarquee() {
   return (
     <section className="border-y border-[color:var(--color-brand-purple)]/10 bg-white py-8 md:py-12">
       <div className="mx-auto max-w-7xl">
-        <p className="mb-6 text-center text-xs font-bold uppercase tracking-[0.35em] text-[color:var(--color-brand-orange)] md:mb-8">
+        <p className="mb-6 text-center text-xs font-bold uppercase tracking-[0.35em] text-[#c20505] md:mb-8">
           Patrocínio Diamante
         </p>
 

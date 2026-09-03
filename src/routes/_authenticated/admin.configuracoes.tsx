@@ -19,8 +19,10 @@ function Page() {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-2xl font-extrabold uppercase tracking-tight">Configurações</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <h1 className="text-2xl font-extrabold uppercase tracking-tight text-[#c20505]">
+          Configurações
+        </h1>
+        <p className="mt-1 text-sm text-[#3d0000]">
           Pagamentos, contatos oficiais e gerenciamento de usuários.
         </p>
       </header>

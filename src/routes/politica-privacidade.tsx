@@ -17,7 +17,7 @@ function Page() {
     <>
       <PageHeader eyebrow="LGPD" title="Política de Privacidade" />
       <ContentSection>
-        <article className="prose prose-sm max-w-none rounded-3xl border border-border bg-white p-8 text-[color:var(--color-brand-purple-text)] shadow-soft">
+        <article className="prose prose-sm max-w-none rounded-3xl border border-border bg-white p-8 text-[#3d0000] shadow-soft prose-headings:font-extrabold prose-headings:text-[#c20505]">
           <h2>1. Dados coletados</h2>
           <p>
             Coletamos os dados necessários à inscrição: nome completo, CPF, data de nascimento,

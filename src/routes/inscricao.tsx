@@ -192,7 +192,7 @@ function Page() {
                 <button
                   type="button"
                   onClick={next}
-                  className="inline-flex items-center gap-2 rounded-full bg-gradient-orange px-6 py-3 text-sm font-extrabold uppercase tracking-wide text-white shadow-orange"
+                  className="inline-flex items-center gap-2 rounded-full bg-[#c20505] px-6 py-3 text-sm font-extrabold uppercase tracking-wide text-white shadow-[0_8px_24px_rgba(194,5,5,0.28)] transition duration-300 hover:bg-[#a30404] hover:scale-[1.02]"
                 >
                   Avançar <ArrowRight className="h-4 w-4" />
                 </button>
@@ -200,7 +200,7 @@ function Page() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="inline-flex items-center gap-2 rounded-full bg-gradient-orange px-6 py-3 text-sm font-extrabold uppercase tracking-wide text-white shadow-orange disabled:opacity-60"
+                  className="inline-flex items-center gap-2 rounded-full bg-[#c20505] px-6 py-3 text-sm font-extrabold uppercase tracking-wide text-white shadow-[0_8px_24px_rgba(194,5,5,0.28)] transition duration-300 hover:bg-[#a30404] hover:scale-[1.02] disabled:opacity-60"
                 >
                   {submitting ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -214,11 +214,9 @@ function Page() {
           </form>
 
           <aside className="rounded-3xl border border-border bg-[color:var(--color-brand-soft)] p-6 shadow-soft">
-            <p className="text-xs font-bold uppercase tracking-[0.3em] text-[color:var(--color-brand-orange)]">
-              Resumo
-            </p>
-            <h3 className="heading-section mt-2 text-2xl text-[color:var(--color-brand-purple-title)]">
-              {eventData?.event?.name ?? "II Corrida das Famílias"}
+            <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#c20505]">Resumo</p>
+            <h3 className="heading-section mt-2 text-2xl text-[#c20505]">
+              {eventData?.event?.name ?? "2ª Corrida Natalina | CORRE+"}
             </h3>
             {eventData?.currentLot ? (
               (() => {
@@ -230,18 +228,18 @@ function Page() {
                 const price = resolvePrice(birth, eventDate, lot);
                 return (
                   <>
-                    <p className="mt-3 text-sm text-[color:var(--color-brand-purple-text)]">
+                    <p className="mt-3 text-sm text-[#3d0000]">
                       Lote vigente: <strong>{lot.name}</strong>
                     </p>
-                    <p className="mt-1 text-3xl font-black text-[color:var(--color-brand-purple-title)]">
+                    <p className="mt-1 text-3xl font-black text-[#c20505]">
                       {formatBRL(price ?? lot.price_cents)}
                     </p>
                     {age != null && (
-                      <p className="mt-1 text-xs font-bold uppercase tracking-wide text-[color:var(--color-brand-orange)]">
+                      <p className="mt-1 text-xs font-bold uppercase tracking-wide text-[#c20505]">
                         {isChild ? "Valor infantil (até 9 anos)" : "Valor adulto"}
                       </p>
                     )}
-                    <p className="mt-3 text-xs text-[color:var(--color-brand-purple-text)]/80">
+                    <p className="mt-3 text-xs text-[#3d0000]/80">
                       Adulto {formatBRL(lot.price_cents)}
                       {lot.child_price_cents
                         ? ` · Criança até 9 anos ${formatBRL(lot.child_price_cents)}`
@@ -251,15 +249,13 @@ function Page() {
                 );
               })()
             ) : (
-              <p className="mt-3 text-sm text-[color:var(--color-brand-purple-text)]">
-                Carregando lote vigente...
-              </p>
+              <p className="mt-3 text-sm text-[#3d0000]">Carregando lote vigente...</p>
             )}
-            <ul className="mt-4 space-y-2 text-xs text-[color:var(--color-brand-purple-text)]/80">
+            <ul className="mt-4 space-y-2 text-xs text-[#3d0000]/85">
               <li>• Camisa oficial + número de peito</li>
+              <li>• Chip de cronometragem</li>
               <li>• Medalha de finisher</li>
-              <li>• Hidratação no percurso</li>
-              <li>• Bênção na largada</li>
+              <li>• Pontos de hidratação no percurso</li>
             </ul>
           </aside>
         </div>
@@ -276,17 +272,15 @@ function Stepper({ current }: { current: number }) {
           <span
             className={`grid h-8 w-8 shrink-0 place-items-center rounded-full text-xs font-bold ${
               i <= current
-                ? "bg-gradient-orange text-white"
-                : "bg-[color:var(--color-brand-soft)] text-[color:var(--color-brand-purple-text)]/60"
+                ? "border-2 border-[#c20505] bg-[#c20505] text-white shadow-sm"
+                : "border border-border bg-white text-[#3d0000]/60"
             }`}
           >
             {i + 1}
           </span>
           <span
             className={`hidden text-xs font-bold uppercase tracking-wide sm:inline ${
-              i === current
-                ? "text-[color:var(--color-brand-purple-title)]"
-                : "text-[color:var(--color-brand-purple-text)]/60"
+              i === current ? "text-[#c20505]" : "text-[#3d0000]/60"
             }`}
           >
             {s.title}
@@ -313,9 +307,7 @@ function Field({
 }) {
   return (
     <label className={`block ${className}`}>
-      <span className="text-xs font-bold uppercase tracking-[0.15em] text-[color:var(--color-brand-purple-text)]">
-        {label}
-      </span>
+      <span className="text-xs font-bold uppercase tracking-[0.15em] text-[#3d0000]">{label}</span>
       <div className="mt-1.5">{children}</div>
       {error && <span className="mt-1 block text-xs text-destructive">{error}</span>}
     </label>
@@ -323,7 +315,7 @@ function Field({
 }
 
 const inputClass =
-  "w-full rounded-xl border border-input bg-white px-4 py-3 text-sm text-[color:var(--color-brand-purple-text)] outline-none transition focus:border-[color:var(--color-brand-purple)] focus:ring-2 focus:ring-[color:var(--color-brand-purple)]/20";
+  "w-full rounded-xl border border-input bg-white px-4 py-3 text-sm text-[#3d0000] outline-none transition focus:border-[#c20505] focus:ring-2 focus:ring-[#c20505]/20";
 
 function StepPersonal({ form }: { form: ReturnType<typeof useForm<FormValues>> }) {
   const { register, formState, setValue, watch } = form;
@@ -461,7 +453,7 @@ function StepReview({
   const v = getValues();
   return (
     <div className="grid gap-5">
-      <div className="rounded-2xl border border-border bg-[color:var(--color-brand-soft)]/40 p-5 text-sm text-[color:var(--color-brand-purple-text)]">
+      <div className="rounded-2xl border border-border bg-[color:var(--color-brand-soft)]/40 p-5 text-sm text-[#3d0000]">
         <p>
           <strong>Nome:</strong> {v.full_name}
         </p>
@@ -480,22 +472,20 @@ function StepReview({
         {amount != null && (
           <p className="mt-3 text-base">
             <strong>Total:</strong>{" "}
-            <span className="font-black text-[color:var(--color-brand-purple-title)]">
-              {formatBRL(amount)}
-            </span>
+            <span className="font-black text-[#c20505]">{formatBRL(amount)}</span>
           </p>
         )}
       </div>
 
-      <label className="flex items-start gap-3 text-sm text-[color:var(--color-brand-purple-text)]">
+      <label className="flex items-start gap-3 text-sm text-[#3d0000]">
         <input
           type="checkbox"
-          className="mt-1 h-5 w-5 accent-[color:var(--color-brand-orange)]"
+          className="mt-1 h-5 w-5 accent-[#c20505]"
           {...register("accepted_terms")}
         />
         <span>
           Li e aceito o{" "}
-          <a className="font-bold underline" href="/regulamento" target="_blank">
+          <a className="font-bold text-[#c20505] underline" href="/regulamento" target="_blank">
             regulamento
           </a>{" "}
           da prova.
@@ -505,15 +495,19 @@ function StepReview({
         <span className="text-xs text-destructive">{formState.errors.accepted_terms.message}</span>
       )}
 
-      <label className="flex items-start gap-3 text-sm text-[color:var(--color-brand-purple-text)]">
+      <label className="flex items-start gap-3 text-sm text-[#3d0000]">
         <input
           type="checkbox"
-          className="mt-1 h-5 w-5 accent-[color:var(--color-brand-orange)]"
+          className="mt-1 h-5 w-5 accent-[#c20505]"
           {...register("accepted_lgpd")}
         />
         <span>
           Concordo com a{" "}
-          <a className="font-bold underline" href="/politica-privacidade" target="_blank">
+          <a
+            className="font-bold text-[#c20505] underline"
+            href="/politica-privacidade"
+            target="_blank"
+          >
             política de privacidade
           </a>{" "}
           e o tratamento dos meus dados conforme a LGPD.

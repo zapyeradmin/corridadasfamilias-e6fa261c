@@ -14,7 +14,7 @@ export function HomeCronograma() {
     <section className="bg-[color:var(--color-brand-soft)]">
       <div className="mx-auto max-w-[1200px] px-5 py-20 md:px-8 md:py-24">
         <div>
-          <p className="text-xs font-bold uppercase tracking-[0.35em] text-[color:var(--color-brand-orange)]">
+          <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#c20505]">
             Cronograma Oficial
           </p>
           <h2 className="heading-section mt-3 text-3xl text-[#c20505] md:text-5xl">
@@ -25,12 +25,12 @@ export function HomeCronograma() {
         <div ref={timelineRef} className="relative mt-16">
           <div
             aria-hidden
-            className="absolute left-6 top-0 h-full w-[3px] rounded-full bg-[color:var(--color-brand-purple)]/10 md:left-1/2 md:-translate-x-1/2"
+            className="absolute left-6 top-0 h-full w-[3px] rounded-full bg-[#c20505]/15 md:left-1/2 md:-translate-x-1/2"
           />
           <motion.div
             aria-hidden
             style={{ height: lineHeight }}
-            className="absolute left-6 top-0 w-[3px] rounded-full bg-gradient-to-b from-[color:var(--color-brand-orange)] via-[color:var(--color-brand-orange)] to-[color:var(--color-brand-purple)] md:left-1/2 md:-translate-x-1/2"
+            className="absolute left-6 top-0 w-[3px] rounded-full bg-gradient-to-b from-[#c20505] via-[#e70202] to-[#730101] md:left-1/2 md:-translate-x-1/2"
           />
 
           <ol className="space-y-12 md:space-y-20">
@@ -43,7 +43,7 @@ export function HomeCronograma() {
                     whileInView={{ scale: 1, opacity: 1 }}
                     viewport={{ once: true, margin: "-100px" }}
                     transition={{ type: "spring", stiffness: 200, damping: 18 }}
-                    className="absolute left-6 top-2 z-10 grid h-12 w-12 -translate-x-1/2 place-items-center rounded-full bg-gradient-orange text-sm font-extrabold text-white shadow-orange ring-4 ring-[color:var(--color-brand-soft)] md:left-1/2"
+                    className="absolute left-6 top-2 z-10 grid h-12 w-12 -translate-x-1/2 place-items-center rounded-full border-2 border-[#c20505] bg-[#c20505] text-sm font-extrabold text-white shadow-[0_6px_18px_rgba(194,5,5,0.3)] ring-4 ring-white md:left-1/2"
                   >
                     {String(i + 1).padStart(2, "0")}
                   </motion.span>

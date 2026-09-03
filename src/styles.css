@@ -43,16 +43,16 @@
   --color-ring: var(--ring);
 
   /* Tokens da marca */
-  --color-brand-purple: #431181;
+  --color-brand-purple: #c20505;
   --color-brand-orange: #ff5300;
-  --color-brand-dark: #16091f;
-  --color-brand-light: #e8e8e8;
-  --color-brand-purple-vivid: #761fab;
-  --color-brand-purple-title: #830bc2;
-  --color-brand-purple-text: #480c70;
+  --color-brand-dark: #730101;
+  --color-brand-light: #ffffff;
+  --color-brand-purple-vivid: #e70202;
+  --color-brand-purple-title: #c20505;
+  --color-brand-purple-text: #3d0000;
   --color-brand-orange-shirt: #e9591b;
   --color-brand-amber: #e9a521;
-  --color-brand-soft: #e3e3e4;
+  --color-brand-soft: #fbf6f5;
 
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
@@ -74,62 +74,62 @@
   --radius: 24px;
 
   --background: #ffffff;
-  --foreground: #16091f;
+  --foreground: #3d0000;
 
   --card: #ffffff;
-  --card-foreground: #16091f;
+  --card-foreground: #3d0000;
   --popover: #ffffff;
-  --popover-foreground: #16091f;
+  --popover-foreground: #3d0000;
 
-  --primary: #431181;
+  --primary: #c20505;
   --primary-foreground: #ffffff;
 
   --secondary: #ff5300;
   --secondary-foreground: #ffffff;
 
-  --muted: #e3e3e4;
-  --muted-foreground: #480c70;
+  --muted: #fbf6f5;
+  --muted-foreground: #7d3333;
 
-  --accent: #e9a521;
-  --accent-foreground: #16091f;
+  --accent: #ff5300;
+  --accent-foreground: #ffffff;
 
   --destructive: #c1121f;
   --destructive-foreground: #ffffff;
 
-  --border: #e3e3e4;
-  --input: #d8d4dc;
-  --ring: #761fab;
+  --border: #f0e6e4;
+  --input: #e8dbd8;
+  --ring: #c20505;
 
-  --chart-1: #431181;
+  --chart-1: #c20505;
   --chart-2: #ff5300;
-  --chart-3: #761fab;
-  --chart-4: #e9a521;
-  --chart-5: #16091f;
+  --chart-3: #e70202;
+  --chart-4: #730101;
+  --chart-5: #3d0000;
 
-  --sidebar: #16091f;
-  --sidebar-foreground: #ffffff;
-  --sidebar-primary: #ff5300;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #3d0000;
+  --sidebar-primary: #c20505;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #431181;
-  --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: rgba(255, 255, 255, 0.08);
-  --sidebar-ring: #ff5300;
+  --sidebar-accent: #fbf6f5;
+  --sidebar-accent-foreground: #c20505;
+  --sidebar-border: #f0e6e4;
+  --sidebar-ring: #c20505;
 
-  --gradient-hero: linear-gradient(135deg, #16091f 0%, #431181 48%, #761fab 100%);
+  --gradient-hero: linear-gradient(135deg, #730101 0%, #c20505 50%, #e70202 100%);
   --gradient-orange: linear-gradient(135deg, #ff5300 0%, #e9591b 100%);
   --gradient-premium:
     radial-gradient(circle at top left, rgba(255, 83, 0, 0.28), transparent 35%),
-    linear-gradient(135deg, #16091f 0%, #431181 100%);
+    linear-gradient(135deg, #730101 0%, #c20505 100%);
   --gradient-card: linear-gradient(
     180deg,
     rgba(255, 255, 255, 0.96) 0%,
-    rgba(232, 232, 232, 0.92) 100%
+    rgba(251, 246, 245, 0.92) 100%
   );
 
-  --shadow-soft: 0 16px 40px rgba(22, 9, 31, 0.1);
-  --shadow-card: 0 24px 60px rgba(67, 17, 129, 0.16);
+  --shadow-soft: 0 16px 40px rgba(194, 5, 5, 0.08);
+  --shadow-card: 0 24px 60px rgba(194, 5, 5, 0.12);
   --shadow-orange: 0 18px 42px rgba(255, 83, 0, 0.32);
-  --shadow-premium: 0 32px 90px rgba(22, 9, 31, 0.28);
+  --shadow-premium: 0 32px 90px rgba(115, 1, 1, 0.28);
 }
 
 .dark {
@@ -199,7 +199,25 @@
     background: var(--gradient-premium);
   }
   .bg-gradient-purple {
-    background: linear-gradient(135deg, #16091f 0%, #431181 55%, #761fab 100%);
+    background: linear-gradient(135deg, #730101 0%, #c20505 55%, #e70202 100%);
+  }
+  .icon-box-on-white {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    border: 2px solid #c20505;
+    background-color: #c20505;
+    color: #ffffff;
+  }
+  .icon-box-on-red {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    border: 2px solid #ffffff;
+    background-color: #ffffff;
+    color: #c20505;
   }
   .shadow-soft {
     box-shadow: var(--shadow-soft);

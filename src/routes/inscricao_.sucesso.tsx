@@ -91,53 +91,49 @@ function Page() {
         <div className="mx-auto max-w-2xl">
           <div className="rounded-3xl border border-border bg-white p-6 shadow-soft md:p-10">
             <div className="flex justify-center">
-              <div className="grid h-16 w-16 place-items-center rounded-full bg-emerald-100">
-                <CheckCircle2 className="h-9 w-9 text-emerald-600" />
+              <div className="grid h-16 w-16 place-items-center rounded-full border-4 border-[#c20505] bg-[#c20505] text-white shadow-[0_8px_24px_rgba(194,5,5,0.28)]">
+                <CheckCircle2 className="h-9 w-9 text-white" />
               </div>
             </div>
 
             {isLoading ? (
               <div className="mt-6 flex justify-center">
-                <Loader2 className="h-6 w-6 animate-spin text-[color:var(--color-brand-orange)]" />
+                <Loader2 className="h-6 w-6 animate-spin text-[#c20505]" />
               </div>
             ) : data ? (
               <div className="mt-6 rounded-2xl border border-border bg-[color:var(--color-brand-soft)]/40 p-5 text-center">
-                <p className="text-xs font-bold uppercase tracking-[0.3em] text-[color:var(--color-brand-orange)]">
+                <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#c20505]">
                   Protocolo
                 </p>
-                <p className="mt-1 text-2xl font-black text-[color:var(--color-brand-purple-title)]">
-                  {data.protocol}
-                </p>
-                <p className="mt-2 text-sm text-[color:var(--color-brand-purple-text)]">
-                  {data.full_name}
-                </p>
-                <p className="mt-3 text-lg font-black text-[color:var(--color-brand-purple-title)]">
+                <p className="mt-1 text-2xl font-black text-[#c20505]">{data.protocol}</p>
+                <p className="mt-2 text-sm text-[#3d0000]">{data.full_name}</p>
+                <p className="mt-3 text-lg font-black text-[#c20505]">
                   {formatBRL(data.amount_cents)}
                 </p>
               </div>
             ) : null}
 
-            <p className="mt-6 text-center text-sm text-[color:var(--color-brand-purple-text)]">
+            <p className="mt-6 text-center text-sm text-[#3d0000]">
               Sua inscrição foi registrada. A vaga só será confirmada após a aprovação do pagamento.
             </p>
 
             <div className="mt-8">
-              <p className="text-center text-xs font-bold uppercase tracking-[0.3em] text-[color:var(--color-brand-purple-text)]/60">
+              <p className="text-center text-xs font-bold uppercase tracking-[0.3em] text-[#3d0000]/70">
                 Formas de pagamento
               </p>
               <ul className="mt-4 grid gap-3 sm:grid-cols-3">
                 <PayMethod
-                  icon={<QrCode className="h-5 w-5" />}
+                  icon={<QrCode className="h-5 w-5 text-white" />}
                   label="PIX"
                   hint="Aprovação imediata"
                 />
                 <PayMethod
-                  icon={<CreditCard className="h-5 w-5" />}
+                  icon={<CreditCard className="h-5 w-5 text-white" />}
                   label="Cartão à vista"
                   hint="Crédito em 1x"
                 />
                 <PayMethod
-                  icon={<CreditCard className="h-5 w-5" />}
+                  icon={<CreditCard className="h-5 w-5 text-white" />}
                   label="Cartão parcelado"
                   hint="Até 12x"
                 />
@@ -149,7 +145,7 @@ function Page() {
                 type="button"
                 onClick={handleCheckout}
                 disabled={redirecting}
-                className="inline-flex items-center gap-2 rounded-full bg-gradient-orange px-8 py-4 text-sm font-extrabold uppercase tracking-wide text-white shadow-orange disabled:cursor-not-allowed disabled:opacity-70"
+                className="inline-flex items-center gap-2 rounded-full bg-[#c20505] px-8 py-4 text-sm font-extrabold uppercase tracking-wide text-white shadow-[0_8px_24px_rgba(194,5,5,0.28)] transition duration-300 hover:bg-[#a30404] hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-70"
               >
                 {redirecting ? (
                   <Loader2 className="h-5 w-5 animate-spin" />
@@ -160,18 +156,18 @@ function Page() {
               </button>
               <a
                 href={whatsappHref(
-                  `Olá! Preciso de ajuda com o pagamento da minha inscrição. Protocolo: ${protocol}`,
+                  `Olá! Preciso de ajuda com o pagamento da minha inscrição na 2ª Corrida Natalina. Protocolo: ${protocol}`,
                 )}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-[color:var(--color-brand-purple-text)] underline-offset-4 hover:underline"
+                className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-[#c20505] underline-offset-4 hover:underline"
               >
                 <MessageCircle className="h-4 w-4" /> Falar no WhatsApp
               </a>
             </div>
           </div>
 
-          <p className="mt-6 text-center text-xs text-[color:var(--color-brand-purple-text)]/70">
+          <p className="mt-6 text-center text-xs text-[#3d0000]/70">
             Guarde seu protocolo. Ele identifica sua inscrição em todo o atendimento.
           </p>
         </div>
@@ -182,14 +178,12 @@ function Page() {
 
 function PayMethod({ icon, label, hint }: { icon: React.ReactNode; label: string; hint: string }) {
   return (
-    <li className="flex flex-col items-center gap-1 rounded-2xl border border-border bg-white p-4 text-center">
-      <span className="grid h-9 w-9 place-items-center rounded-full bg-[color:var(--color-brand-soft)] text-[color:var(--color-brand-purple-title)]">
+    <li className="flex flex-col items-center gap-2 rounded-2xl border border-border bg-white p-4 text-center">
+      <span className="grid h-10 w-10 place-items-center rounded-full border-2 border-[#c20505] bg-[#c20505] text-white shadow-sm">
         {icon}
       </span>
-      <span className="text-sm font-bold text-[color:var(--color-brand-purple-title)]">
-        {label}
-      </span>
-      <span className="text-[11px] text-[color:var(--color-brand-purple-text)]/70">{hint}</span>
+      <span className="text-sm font-bold text-[#c20505]">{label}</span>
+      <span className="text-[11px] text-[#3d0000]/70">{hint}</span>
     </li>
   );
 }

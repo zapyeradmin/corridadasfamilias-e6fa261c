@@ -69,11 +69,13 @@ function Page() {
   return (
     <div className="space-y-6">
       <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-2xl font-extrabold uppercase tracking-tight">Logs de acesso</h1>
+        <h1 className="text-2xl font-extrabold uppercase tracking-tight text-[#c20505]">
+          Logs de acesso
+        </h1>
         <Button
           onClick={handleExport}
           disabled={isExporting || !data || data.length === 0}
-          className="gap-2"
+          className="gap-2 bg-[#c20505] text-white hover:bg-[#a30404]"
         >
           {isExporting ? (
             <Loader2 className="h-4 w-4 animate-spin" />
@@ -84,11 +86,11 @@ function Page() {
         </Button>
       </header>
 
-      {isLoading && <p className="text-sm text-muted-foreground">Carregando…</p>}
+      {isLoading && <p className="text-sm text-[#3d0000]/60">Carregando…</p>}
 
       <div className="overflow-x-auto rounded-xl border border-border">
         <table className="w-full text-sm">
-          <thead className="bg-muted text-left text-xs uppercase tracking-wider text-muted-foreground">
+          <thead className="bg-[#fbf6f5] text-left text-xs uppercase tracking-wider text-[#c20505] font-bold">
             <tr>
               <th className="px-4 py-3">Quando</th>
               <th className="px-4 py-3">Ator</th>

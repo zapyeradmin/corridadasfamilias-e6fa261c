@@ -6,7 +6,7 @@ export function HomePercurso() {
     <section className="bg-white">
       <div className="mx-auto max-w-[1200px] px-5 py-20 md:px-8 md:py-28">
         <div className="text-left">
-          <p className="text-xs font-bold uppercase tracking-[0.35em] text-[color:var(--color-brand-orange)]">
+          <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#c20505]">
             Percurso completo da corrida
           </p>
           <h2 className="heading-section mt-3 text-3xl text-[#c20505] md:text-5xl">
@@ -22,7 +22,7 @@ export function HomePercurso() {
           <div className="aspect-[4/3] w-full">
             <img
               src={percursoMapa}
-              alt="Mapa do percurso oficial da II Corrida das Famílias em Serra Talhada"
+              alt="Mapa do percurso oficial da 2ª Corrida Natalina em Serra Talhada"
               loading="lazy"
               decoding="async"
               width={1024}

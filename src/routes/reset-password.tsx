@@ -63,7 +63,12 @@ function Page() {
           ) : (
             <>
               <div className="space-y-2">
-                <Label htmlFor="password">Nova senha</Label>
+                <Label
+                  htmlFor="password"
+                  className="text-xs font-bold uppercase tracking-wider text-[#3d0000]"
+                >
+                  Nova senha
+                </Label>
                 <Input
                   id="password"
                   type="password"
@@ -72,9 +77,14 @@ function Page() {
                   minLength={8}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  className="text-[#3d0000]"
                 />
               </div>
-              <Button type="submit" className="w-full" disabled={loading}>
+              <Button
+                type="submit"
+                className="w-full bg-[#c20505] text-white font-extrabold uppercase tracking-wide hover:bg-[#a30404]"
+                disabled={loading}
+              >
                 {loading ? "Salvando..." : "Salvar nova senha"}
               </Button>
             </>
