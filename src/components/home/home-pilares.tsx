@@ -1,8 +1,19 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
+import { Play } from "lucide-react";
 import { ContentSection } from "@/components/site/page-shell";
-import { PILARES } from "./data";
+import { parseYoutubeId } from "@/lib/youtube";
+import capaVideoLancamento from "@/assets/capa-video-lancamento.jpg?w=1280&quality=75&format=webp";
+
+// Insira aqui futuramente o link do vídeo do YouTube da 2ª Edição da Corrida Natalina:
+// Ex.: "https://www.youtube.com/watch?v=SEU_CODIGO" ou "https://youtu.be/SEU_CODIGO"
+const YOUTUBE_VIDEO_URL = "";
+const FALLBACK_VIDEO_ID = "TE_hIXiN544";
 
 export function HomePilares() {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const videoId = parseYoutubeId(YOUTUBE_VIDEO_URL) || FALLBACK_VIDEO_ID;
+
   return (
     <ContentSection>
       <p className="text-xs font-bold uppercase tracking-[0.35em] text-[color:var(--color-brand-orange)]">
@@ -23,28 +34,53 @@ export function HomePilares() {
         o espírito de união entre atletas, equipes, famílias e toda a cidade.
       </p>
 
-      <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-        {PILARES.map((p, i) => (
-          <motion.div
-            key={p.title}
-            initial={{ opacity: 0, y: 18 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: i * 0.06 }}
-            className="flex flex-col items-center rounded-3xl border border-border bg-white p-6 text-center shadow-soft transition hover:-translate-y-1 hover:shadow-card"
-          >
-            <span className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-orange text-white shadow-orange">
-              <p.icon className="h-6 w-6" />
-            </span>
-            <h3 className="mt-5 text-lg font-extrabold uppercase tracking-tight text-[color:var(--color-brand-purple-title)]">
-              {p.title}
-            </h3>
-            <p className="mt-2 text-sm leading-relaxed text-[color:var(--color-brand-purple-text)]/85">
-              {p.desc}
-            </p>
-          </motion.div>
-        ))}
-      </div>
+      {/* Player de Vídeo Oficial da 2ª Edição */}
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5 }}
+        className="mt-10 md:mt-14"
+      >
+        <div className="relative mx-auto aspect-video w-full max-w-[960px] overflow-hidden rounded-3xl border border-black/10 bg-black shadow-[0_16px_40px_rgba(194,5,5,0.14)] ring-1 ring-black/5">
+          {isPlaying ? (
+            <iframe
+              src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`}
+              title="2ª Edição da Corrida Natalina — Vídeo Oficial"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="absolute inset-0 h-full w-full border-0"
+            />
+          ) : (
+            <button
+              type="button"
+              onClick={() => setIsPlaying(true)}
+              aria-label="Reproduzir vídeo da 2ª Edição da Corrida Natalina"
+              className="group absolute inset-0 flex h-full w-full items-center justify-center"
+            >
+              <img
+                src={capaVideoLancamento}
+                alt="Capa do vídeo da 2ª Edição da Corrida Natalina"
+                loading="lazy"
+                decoding="async"
+                width={1280}
+                height={720}
+                className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+              />
+              <span
+                aria-hidden
+                className="absolute inset-0 bg-black/25 transition group-hover:bg-black/35"
+              />
+              <span
+                aria-hidden
+                className="relative grid h-20 w-20 place-items-center rounded-full bg-white/95 text-[#c20505] shadow-[0_12px_32px_rgba(194,5,5,0.4)] transition group-hover:scale-110 md:h-24 md:w-24"
+              >
+                <Play className="h-8 w-8 translate-x-0.5 fill-current md:h-10 md:w-10" />
+              </span>
+            </button>
+          )}
+        </div>
+      </motion.div>
     </ContentSection>
   );
 }
