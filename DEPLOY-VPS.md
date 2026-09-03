@@ -1,8 +1,7 @@
-# Deploy em VPS Hetzner (Ubuntu) — SSR Node + Nginx + PM2
+# Deploy em VPS Hetzner (Ubuntu) — 2ª Corrida Natalina | Corre +
 
-Guia passo a passo para subir o **Corrida das Famílias** em uma VPS Hetzner
-CX33 (4 vCPU / 8 GB RAM / Ubuntu) com Node 20, Nginx (reverse proxy),
-PM2 (cluster, zero-downtime) e SSL Let's Encrypt.
+Guia passo a passo para subir a **2ª Corrida Natalina | Corre +** em uma VPS Hetzner
+com Node 20, Python 3.13 / FastAPI, Nginx (reverse proxy), PM2 (cluster, zero-downtime) e SSL Let's Encrypt para os 3 domínios.
 
 ---
 
@@ -104,17 +103,29 @@ curl -I http://127.0.0.1:3000
 
 ---
 
-## 6. Nginx (reverse proxy)
+### 6. Nginx (reverse proxy com redirecionamento de domínios)
 
-Crie `/etc/nginx/sites-available/corridadasfamilias`:
+Crie `/etc/nginx/sites-available/corridascorremais`:
 
 ```nginx
+# 1. Redirecionamento de domínios secundários e www para o domínio principal (HTTPS)
 server {
     listen 80;
-    server_name corridadasfamilias.com.br www.corridadasfamilias.com.br;
+    listen [::]:80;
+    server_name www.corridascorremais.com.br
+                corridascorremais.com www.corridascorremais.com
+                corridascorremais.online www.corridascorremais.online;
+
+    return 301 https://corridascorremais.com.br$request_uri;
+}
+
+# 2. Servidor da Aplicação Principal
+server {
+    listen 80;
+    listen [::]:80;
+    server_name corridascorremais.com.br;
 
     root /home/deploy/app/dist/client;
-
     client_max_body_size 20m;
 
     # Cache agressivo para assets versionados
@@ -124,6 +135,18 @@ server {
         add_header Cache-Control "public, immutable";
     }
 
+    # API FastAPI (Backend Python na porta 8000)
+    location /api/ {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_read_timeout 60s;
+    }
+
+    # Frontend SSR (TanStack Start na porta 3000)
     location / {
         try_files $uri @ssr;
     }
@@ -145,7 +168,7 @@ server {
 Ativar:
 
 ```bash
-sudo ln -s /etc/nginx/sites-available/corridadasfamilias /etc/nginx/sites-enabled/
+sudo ln -s /etc/nginx/sites-available/corridascorremais /etc/nginx/sites-enabled/
 sudo rm -f /etc/nginx/sites-enabled/default
 sudo nginx -t
 sudo systemctl reload nginx
@@ -155,80 +178,65 @@ sudo systemctl reload nginx
 
 ## 7. DNS
 
-> Este projeto usa **Cloudflare** como DNS. IP da VPS: **`178.104.101.145`**.
+> VPS Hetzner IP: **`2.29.30.46`**
 
-No painel da Cloudflare → DNS → Records, crie/edite:
+No painel de DNS de cada domínio (Cloudflare, Registro.br, etc.), configure os registros tipo `A`:
 
-| Tipo | Nome | Valor             | Proxy          |
-| ---- | ---- | ----------------- | -------------- |
-| A    | @    | `178.104.101.145` | 🟠 ver passo 8 |
-| A    | www  | `178.104.101.145` | 🟠 ver passo 8 |
+### Domínio Principal: `corridascorremais.com.br`
+| Tipo | Nome | Valor |
+| :--- | :--- | :--- |
+| **A** | `@` | `2.29.30.46` |
+| **A** | `www` | `2.29.30.46` |
 
-Aguarde propagação (5–30 min). Confirme com:
+### Domínio Secundário: `corridascorremais.com`
+| Tipo | Nome | Valor |
+| :--- | :--- | :--- |
+| **A** | `@` | `2.29.30.46` |
+| **A** | `www` | `2.29.30.46` |
+
+### Domínio Terceiro: `corridascorremais.online`
+| Tipo | Nome | Valor |
+| :--- | :--- | :--- |
+| **A** | `@` | `2.29.30.46` |
+| **A** | `www` | `2.29.30.46` |
+
+---
+
+## 8. SSL com Let's Encrypt (Certbot)
+
+Emita o certificado SSL gratuito para todos os domínios de uma só vez:
 
 ```bash
-dig +short corridadasfamilias.com.br
-dig +short www.corridadasfamilias.com.br
+sudo apt install -y certbot python3-certbot-nginx
+sudo certbot --nginx \
+  -d corridascorremais.com.br \
+  -d www.corridascorremais.com.br \
+  -d corridascorremais.com \
+  -d www.corridascorremais.com \
+  -d corridascorremais.online \
+  -d www.corridascorremais.online
 ```
+
+Selecione a opção de redirecionar todo o tráfego HTTP para HTTPS quando solicitado.
 
 ---
 
-## 8. SSL com Let's Encrypt (atrás da Cloudflare)
+## 9. URLs Oficiais da InfinitePay
 
-Como o domínio está atrás da Cloudflare, o certbot HTTP-01 só consegue validar
-se o **proxy estiver desligado** (nuvem cinza) durante a emissão.
+Configure no painel da **InfinitePay**:
 
-**Opção A — recomendada (HTTP-01, simples):**
-
-1. Na Cloudflare, **desligue o proxy** dos dois A records (clique na nuvem
-   laranja → fica cinza / "DNS only"). Aguarde ~1 min para o DNS atualizar.
-2. Emita o certificado na VPS:
-   ```bash
-   sudo apt install -y certbot python3-certbot-nginx
-   sudo certbot --nginx \
-     -d corridadasfamilias.com.br \
-     -d www.corridadasfamilias.com.br
-   ```
-   Aceite redirecionamento HTTP→HTTPS quando perguntado.
-3. (Opcional) Religue o proxy da Cloudflare (nuvem laranja) para ganhar
-   cache/CDN/WAF. Se religar, vá em **SSL/TLS → Overview** no painel da
-   Cloudflare e selecione **Full (strict)** — qualquer outro modo causa loop
-   de redirect ou erro de certificado.
-4. Renovação automática já vem configurada via timer systemd
-   (`systemctl list-timers | grep certbot`). Para a renovação funcionar com
-   proxy ligado, ative o desafio HTTP-01 via `.well-known` na Cloudflare
-   (Rules → Page Rules: `*.corridadasfamilias.com.br/.well-known/*` → Cache
-   Level: Bypass) **ou** use a Opção B abaixo.
-
-**Opção B — DNS-01 via API da Cloudflare (sem desligar proxy):**
-
-1. No painel Cloudflare → My Profile → API Tokens → "Create Token", template
-   **Edit zone DNS**, escopo apenas `corridadasfamilias.com.br`.
-2. Na VPS:
-   ```bash
-   sudo apt install -y certbot python3-certbot-dns-cloudflare
-   sudo mkdir -p /etc/letsencrypt
-   echo "dns_cloudflare_api_token = SEU_TOKEN_AQUI" | \
-     sudo tee /etc/letsencrypt/cloudflare.ini
-   sudo chmod 600 /etc/letsencrypt/cloudflare.ini
-   sudo certbot certonly --dns-cloudflare \
-     --dns-cloudflare-credentials /etc/letsencrypt/cloudflare.ini \
-     -d corridadasfamilias.com.br -d www.corridadasfamilias.com.br
-   ```
-3. Depois ajuste seu site Nginx para apontar `ssl_certificate` /
-   `ssl_certificate_key` para `/etc/letsencrypt/live/corridadasfamilias.com.br/`
-   e adicione `listen 443 ssl;` (o `certbot --nginx` da Opção A faz isso
-   automaticamente; aqui é manual).
-
----
-
-## 9. Webhook InfinitePay
-
-Configure no painel InfinitePay:
-
-```
-https://www.corridadasfamilias.com.br/api/webhooks/infinitepay
-```
+- **URL do Webhook InfinitePay:**
+  ```text
+  https://corridascorremais.com.br/api/webhooks/infinitepay
+  ```
+- **URL de Redirecionamento InfinitePay:**
+  ```text
+  https://corridascorremais.com.br/pagamento
+  ```
+- **URL de Redirecionamento de Sucesso InfinitePay:**
+  ```text
+  https://corridascorremais.com.br/sucesso
+  ```
 
 Esse endpoint é uma server route do TanStack Start (`src/routes/api/webhooks/infinitepay.ts`)
 e roda nativamente no Node SSR. Não é necessário usar a Edge Function do Supabase.

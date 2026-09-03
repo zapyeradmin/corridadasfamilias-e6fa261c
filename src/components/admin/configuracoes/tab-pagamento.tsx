@@ -28,15 +28,15 @@ export function TabPagamento() {
     staleTime: 5 * 60_000,
   });
 
-  const origin = siteUrlData?.publicSiteUrl ?? "https://www.corridadasfamilias.com.br";
+  const origin = siteUrlData?.publicSiteUrl ?? "https://corridascorremais.com.br";
 
   return (
     <div className="space-y-8">
       <section className="space-y-4 rounded-2xl border border-border bg-card p-6">
         <header>
-          <h2 className="text-lg font-extrabold">InfinitePay — URLs do Projeto</h2>
-          <p className="text-sm text-muted-foreground">
-            Use estas URLs ao configurar o Checkout no painel da InfinitePay.
+          <h2 className="text-lg font-extrabold text-[#c20505]">InfinitePay — URLs do Projeto</h2>
+          <p className="text-sm text-[#3d0000]">
+            Use estas URLs oficiais ao configurar o Checkout e os Webhooks no painel da InfinitePay.
           </p>
         </header>
         <ReadOnlyField
@@ -52,20 +52,14 @@ export function TabPagamento() {
 
       <section className="space-y-4">
         <header>
-          <h2 className="text-lg font-extrabold">Links dos Checkouts InfinitePay</h2>
-          <p className="text-sm text-muted-foreground">
-            Cadastre, edite e salve os links dos checkouts. Eles serão usados automaticamente em{" "}
-            <code>/inscricao</code>.
+          <h2 className="text-lg font-extrabold text-[#c20505]">Link do Checkout InfinitePay</h2>
+          <p className="text-sm text-[#3d0000]">
+            Cadastre, edite e salve o link do checkout da InfinitePay. Ele será usado automaticamente na página de inscrição (<code>/inscricao</code>).
           </p>
         </header>
-        <div className="grid gap-6 lg:grid-cols-2">
-          <CheckoutCard title="Checkout Adulto" tipo="adulto" initial={data?.adulto} />
-          <CheckoutCard title="Checkout Criança" tipo="crianca" initial={data?.crianca} />
+        <div className="max-w-2xl">
+          <CheckoutCard title="Checkout Oficial (Lote 1 Promocional)" tipo="adulto" initial={data?.adulto} />
         </div>
-        <p className="rounded-xl border border-dashed border-border bg-muted/30 p-4 text-xs text-muted-foreground">
-          <strong>Regra de idade:</strong> inscritos com até 9 anos (inclusive) são redirecionados
-          para o Checkout Criança. Acima disso, Checkout Adulto.
-        </p>
       </section>
     </div>
   );
@@ -165,7 +159,7 @@ function CheckoutCard({
             className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
             value={nome}
             onChange={(e) => setNome(e.target.value)}
-            placeholder="Inscrição (Adulto)"
+            placeholder="Inscrição - 2ª Corrida Natalina | Corre +"
           />
         </Field>
         <div className="grid grid-cols-2 gap-3">
@@ -185,7 +179,7 @@ function CheckoutCard({
               className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
               value={valorBR}
               onChange={(e) => setValorBR(e.target.value.replace(/[^\d,]/g, ""))}
-              placeholder="68,00"
+              placeholder="83,60"
               inputMode="decimal"
             />
           </Field>

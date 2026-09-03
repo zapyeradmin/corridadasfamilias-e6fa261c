@@ -30,9 +30,9 @@ export const getCheckoutUrlForRegistration = createServerFn({ method: "POST" })
     if (!reg) {
       return { ok: false as const, error: "Inscrição não encontrada." };
     }
-    const type = (reg.participant_type ?? "adulto") as "adulto" | "crianca";
-    const key = type === "crianca" ? SETTING_CRIANCA : SETTING_ADULTO;
-    const baseUrl = await readSettingString(key);
+    const baseUrl =
+      (await readSettingString(SETTING_ADULTO)) ||
+      (await readSettingString("checkout_adulto"));
 
     let checkoutUrl: string | null = null;
     if (baseUrl) {
@@ -42,9 +42,10 @@ export const getCheckoutUrlForRegistration = createServerFn({ method: "POST" })
         const publicSiteUrl = (
           process.env.PUBLIC_SITE_URL ||
           process.env.VITE_PUBLIC_SITE_URL ||
-          "https://www.corridadasfamilias.com.br"
+          "https://corridascorremais.com.br"
         ).replace(/\/+$/, "");
         url.searchParams.set("redirect_url", `${publicSiteUrl}/pagamento?protocol=${reg.protocol}`);
+        url.searchParams.set("success_url", `${publicSiteUrl}/sucesso?protocol=${reg.protocol}`);
 
         if (reg.full_name) url.searchParams.set("customer_name", reg.full_name);
         if (reg.email) url.searchParams.set("customer_email", reg.email);
@@ -58,7 +59,7 @@ export const getCheckoutUrlForRegistration = createServerFn({ method: "POST" })
 
     return {
       ok: true as const,
-      participantType: type,
+      participantType: (reg.participant_type ?? "adulto") as "adulto" | "crianca",
       amountCents: reg.amount_cents,
       checkoutUrl,
       status: reg.status,

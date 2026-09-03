@@ -33,8 +33,6 @@ const payloadSchema = z
   })
   .passthrough();
 
-const EXPECTED_AMOUNT = { adulto: 6800, crianca: 4800 } as const;
-
 export const Route = createFileRoute("/api/webhooks/infinitepay")({
   server: {
     handlers: {
@@ -93,7 +91,7 @@ export const Route = createFileRoute("/api/webhooks/infinitepay")({
         if (orderNsu) {
           const { data: reg } = await supabaseAdmin
             .from("registrations")
-            .select("id, participant_type, status")
+            .select("id, participant_type, status, amount_cents")
             .eq("order_nsu", orderNsu)
             .maybeSingle();
           if (reg) {
@@ -101,8 +99,8 @@ export const Route = createFileRoute("/api/webhooks/infinitepay")({
             participantType = (reg.participant_type as "adulto" | "crianca" | null) ?? null;
             matchStatus = "matched";
 
-            const expected = participantType ? EXPECTED_AMOUNT[participantType] : null;
-            if (expected && amount !== expected) {
+            const expected = reg.amount_cents;
+            if (expected && amount && amount !== expected) {
               matchStatus = "unmatched";
               notes = `Valor divergente: recebido ${amount}, esperado ${expected}`;
             }

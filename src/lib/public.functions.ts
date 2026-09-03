@@ -127,11 +127,11 @@ export const getCheckoutConfig = createServerFn({ method: "GET" }).handler(async
   const adultoRow = findRow("checkout_adulto") ?? findRow("infinitepay_checkout_adulto_url");
   const criancaRow = findRow("checkout_crianca") ?? findRow("infinitepay_checkout_crianca_url");
   const adulto: CheckoutConfig = {
-    ...pickCheckout(adultoRow?.value, "Inscrição (Adulto)", 6800),
+    ...pickCheckout(adultoRow?.value, "Inscrição (Lote 1 Promocional)", 8360),
     updated_at: adultoRow?.updated_at ?? null,
   };
   const crianca: CheckoutConfig = {
-    ...pickCheckout(criancaRow?.value, "Inscrição (Criança)", 4800),
+    ...pickCheckout(criancaRow?.value, "Inscrição (Lote 1 Promocional)", 8360),
     updated_at: criancaRow?.updated_at ?? null,
   };
   return { adulto, crianca };
@@ -179,6 +179,6 @@ export const getHomeVideo = createServerFn({ method: "GET" }).handler(async () =
  */
 export const getPublicSiteUrl = createServerFn({ method: "GET" }).handler(async () => {
   const fromEnv = process.env.PUBLIC_SITE_URL || process.env.VITE_PUBLIC_SITE_URL || "";
-  const url = (fromEnv || "https://www.corridadasfamilias.com.br").replace(/\/+$/, "");
+  const url = (fromEnv || "https://corridascorremais.com.br").replace(/\/+$/, "");
   return { publicSiteUrl: url };
 });
