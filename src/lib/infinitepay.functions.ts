@@ -30,30 +30,85 @@ export const getCheckoutUrlForRegistration = createServerFn({ method: "POST" })
     if (!reg) {
       return { ok: false as const, error: "Inscrição não encontrada." };
     }
-    const baseUrl =
-      (await readSettingString(SETTING_ADULTO)) ||
-      (await readSettingString("checkout_adulto"));
+    const publicSiteUrl = (
+      process.env.PUBLIC_SITE_URL ||
+      process.env.VITE_PUBLIC_SITE_URL ||
+      "https://corridascorremais.com.br"
+    ).replace(/\/+$/, "");
 
     let checkoutUrl: string | null = null;
-    if (baseUrl) {
-      try {
-        const url = new URL(baseUrl);
-        if (reg.order_nsu) url.searchParams.set("order_nsu", reg.order_nsu);
-        const publicSiteUrl = (
-          process.env.PUBLIC_SITE_URL ||
-          process.env.VITE_PUBLIC_SITE_URL ||
-          "https://corridascorremais.com.br"
-        ).replace(/\/+$/, "");
-        url.searchParams.set("redirect_url", `${publicSiteUrl}/pagamento?protocol=${reg.protocol}`);
-        url.searchParams.set("success_url", `${publicSiteUrl}/sucesso?protocol=${reg.protocol}`);
+    const handle =
+      process.env.INFINITEPAY_HANDLE ||
+      (await readSettingString("infinitepay_handle")) ||
+      "edna-maria-4gu";
 
-        if (reg.full_name) url.searchParams.set("customer_name", reg.full_name);
-        if (reg.email) url.searchParams.set("customer_email", reg.email);
-        if (reg.whatsapp)
-          url.searchParams.set("customer_cellphone", reg.whatsapp.replace(/\D/g, ""));
-        checkoutUrl = url.toString();
-      } catch {
-        checkoutUrl = baseUrl;
+    // 1. Tenta gerar via API oficial da InfinitePay (garante order_nsu e webhook_url embutidos)
+    if (handle && reg.order_nsu) {
+      try {
+        const body: Record<string, unknown> = {
+          handle,
+          order_nsu: reg.order_nsu,
+          redirect_url: `${publicSiteUrl}/pagamento?protocol=${reg.protocol}`,
+          webhook_url: `${publicSiteUrl}/api/webhooks/infinitepay`,
+          items: [
+            {
+              quantity: 1,
+              price: reg.amount_cents || 8360,
+              description: "Inscrição 2ª Corrida Natalina | Corre +",
+            },
+          ],
+        };
+        if (reg.full_name || reg.email) {
+          const customer: Record<string, string> = {};
+          if (reg.full_name) customer.name = reg.full_name;
+          if (reg.email) customer.email = reg.email;
+          if (reg.whatsapp) {
+            const cleanPhone = reg.whatsapp.replace(/\D/g, "");
+            if (cleanPhone) customer.phone_number = `+${cleanPhone}`;
+          }
+          body.customer = customer;
+        }
+
+        const res = await fetch("https://api.checkout.infinitepay.io/links", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+          signal: AbortSignal.timeout(4000),
+        });
+
+        if (res.ok) {
+          const json = (await res.json()) as { url?: string };
+          if (json.url) {
+            checkoutUrl = json.url;
+          }
+        }
+      } catch (err) {
+        console.warn("Falha ao gerar link dinâmico InfinitePay, usando fallback:", err);
+      }
+    }
+
+    // 2. Fallback para URL estática cadastrada
+    if (!checkoutUrl) {
+      const baseUrl =
+        (await readSettingString(SETTING_ADULTO)) ||
+        (await readSettingString("checkout_adulto")) ||
+        "https://checkout.infinitepay.io/edna-maria-4gu/N21HTRtmjN";
+
+      if (baseUrl) {
+        try {
+          const url = new URL(baseUrl);
+          if (reg.order_nsu) url.searchParams.set("order_nsu", reg.order_nsu);
+          url.searchParams.set("redirect_url", `${publicSiteUrl}/pagamento?protocol=${reg.protocol}`);
+          url.searchParams.set("success_url", `${publicSiteUrl}/sucesso?protocol=${reg.protocol}`);
+
+          if (reg.full_name) url.searchParams.set("customer_name", reg.full_name);
+          if (reg.email) url.searchParams.set("customer_email", reg.email);
+          if (reg.whatsapp)
+            url.searchParams.set("customer_cellphone", reg.whatsapp.replace(/\D/g, ""));
+          checkoutUrl = url.toString();
+        } catch {
+          checkoutUrl = baseUrl;
+        }
       }
     }
 
