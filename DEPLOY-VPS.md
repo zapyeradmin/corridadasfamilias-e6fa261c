@@ -36,6 +36,7 @@ cp ~/.ssh/authorized_keys /home/deploy/.ssh/
 chown -R deploy:deploy /home/deploy/.ssh
 chmod 700 /home/deploy/.ssh
 chmod 600 /home/deploy/.ssh/authorized_keys
+chmod 755 /home/deploy # Garante acesso de leitura para o Nginx (www-data)
 ```
 
 A partir daqui faça SSH como `deploy@<ip>`.
