@@ -2,6 +2,11 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import {
+  sendRegistrationConfirmationEmail,
+  sendTestEmail,
+  getResendConfig,
+} from "@/lib/email.service";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -918,4 +923,130 @@ export const deleteAdminUser = createServerFn({ method: "POST" })
       entityId: data.id,
     });
     return { ok: true };
+  });
+
+// ─────────────────────────────────────────────────────────
+// E-mail (Resend) Management
+// ─────────────────────────────────────────────────────────
+
+export const getEmailSettingsAdmin = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context.supabase, context.userId, context.claims as { email?: string });
+    const { apiKey, fromEmail } = await getResendConfig();
+    return {
+      hasApiKey: !!apiKey,
+      apiKeyMasked: apiKey ? `${apiKey.slice(0, 5)}...${apiKey.slice(-4)}` : "",
+      fromEmail,
+    };
+  });
+
+export const updateEmailSettingsAdmin = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z
+      .object({
+        apiKey: z.string().trim().optional(),
+        fromEmail: z.string().trim().min(3).max(160),
+      })
+      .parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    const admin = await assertAdmin(
+      context.supabase,
+      context.userId,
+      context.claims as { email?: string },
+    );
+
+    if (data.apiKey !== undefined && data.apiKey !== "") {
+      await context.supabase.from("settings").upsert(
+        {
+          key: "resend_api_key",
+          value: data.apiKey as never,
+          is_public: false,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "key" },
+      );
+    }
+
+    if (data.fromEmail) {
+      await context.supabase.from("settings").upsert(
+        {
+          key: "resend_from_email",
+          value: data.fromEmail as never,
+          is_public: true,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "key" },
+      );
+    }
+
+    await logAction(context.supabase, {
+      actorId: admin.userId,
+      actorEmail: admin.email,
+      action: "settings.email.update",
+      entityType: "settings",
+      entityId: "resend",
+    });
+
+    return { ok: true };
+  });
+
+export const sendTestEmailAdmin = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z.object({ to: z.string().email("E-mail inválido") }).parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    await assertAdmin(context.supabase, context.userId, context.claims as { email?: string });
+    const result = await sendTestEmail(data.to);
+    if (!result.ok) {
+      throw new Error(result.error || "Falha ao enviar e-mail de teste.");
+    }
+    return { ok: true, id: result.id };
+  });
+
+export const resendConfirmationEmailAdmin = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z.object({ registrationId: z.string().uuid("ID de inscrição inválido") }).parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    const admin = await assertAdmin(
+      context.supabase,
+      context.userId,
+      context.claims as { email?: string },
+    );
+
+    const { data: reg, error } = await supabaseAdmin
+      .from("registrations")
+      .select("id, full_name, email, protocol")
+      .eq("id", data.registrationId)
+      .maybeSingle();
+
+    if (error || !reg) {
+      throw new Error("Inscrição não encontrada.");
+    }
+
+    const result = await sendRegistrationConfirmationEmail({
+      to: reg.email,
+      athleteName: reg.full_name,
+      protocol: reg.protocol,
+    });
+
+    if (!result.ok) {
+      throw new Error(result.error || "Falha ao reenviar e-mail.");
+    }
+
+    await logAction(context.supabase, {
+      actorId: admin.userId,
+      actorEmail: admin.email,
+      action: "registration.resend_email",
+      entityType: "registrations",
+      entityId: reg.id,
+      details: { to: reg.email, protocol: reg.protocol },
+    });
+
+    return { ok: true, id: result.id };
   });

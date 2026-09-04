@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { isValidCpf, normalizeCpf } from "@/lib/cpf";
+import { sendRegistrationConfirmationEmail } from "@/lib/email.service";
 
 const GENDER_DB = { male: "M", female: "F" } as const;
 const SHIRT_DB = { pp: "PP", p: "P", m: "M", g: "G", gg: "GG", xgg: "XGG" } as const;
@@ -157,6 +158,15 @@ export const createRegistration = createServerFn({ method: "POST" })
         external_reference: orderNsu,
       });
       if (payErr) return fail(payErr.message);
+
+      // Envia o e-mail de confirmação de inscrição via Resend (em segundo plano para não travar a resposta)
+      sendRegistrationConfirmationEmail({
+        to: data.email.trim().toLowerCase(),
+        athleteName: data.full_name.trim(),
+        protocol: registration.protocol,
+      }).catch((err) => {
+        console.error("[registrations] Erro no envio de e-mail de confirmação:", err);
+      });
 
       return {
         ok: true,

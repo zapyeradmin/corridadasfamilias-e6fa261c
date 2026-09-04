@@ -64,9 +64,10 @@ Preencha:
 
 - `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`, `VITE_SUPABASE_PROJECT_ID`
 - `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SERVICE_ROLE_KEY`
-- `PUBLIC_SITE_URL` e `VITE_PUBLIC_SITE_URL` (ex.: `https://www.corridadasfamilias.com.br`)
-- `INFINITEPAY_HANDLE`, `INFINITEPAY_WEBHOOK_SECRET`
-- `LOVABLE_API_KEY` (se usar Lovable AI)
+- `PUBLIC_SITE_URL` e `VITE_PUBLIC_SITE_URL` (`https://corridascorremais.com.br`)
+- `INFINITEPAY_HANDLE`, `INFINITEPAY_CHECKOUT_URL`
+- `RESEND_API_KEY` e `RESEND_FROM_EMAIL` (para envio automático dos e-mails de confirmação de inscrição)
+- `LOVABLE_API_KEY` (opcional)
 
 > **Importante:** o `SUPABASE_SERVICE_ROLE_KEY` é secreto. Nunca commite o `.env`
 > e guarde um backup em local seguro fora da VPS.

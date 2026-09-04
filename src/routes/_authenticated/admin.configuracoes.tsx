@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TabPagamento } from "@/components/admin/configuracoes/tab-pagamento";
+import { TabEmail } from "@/components/admin/configuracoes/tab-email";
 import { TabContatos } from "@/components/admin/configuracoes/tab-contatos";
 import { TabUsuarios } from "@/components/admin/configuracoes/tab-usuarios";
 
@@ -23,7 +24,7 @@ function Page() {
           Configurações
         </h1>
         <p className="mt-1 text-sm text-[#3d0000]">
-          Pagamentos, contatos oficiais e gerenciamento de usuários.
+          Pagamentos, e-mails (Resend), contatos oficiais e gerenciamento de usuários.
         </p>
       </header>
 
@@ -34,11 +35,15 @@ function Page() {
       >
         <TabsList className="h-auto flex-wrap">
           <TabsTrigger value="pagamento">Configuração de Pagamento</TabsTrigger>
+          <TabsTrigger value="email">E-mail (Resend)</TabsTrigger>
           <TabsTrigger value="contatos">Configuração de Contatos</TabsTrigger>
           <TabsTrigger value="usuarios">Usuários</TabsTrigger>
         </TabsList>
         <TabsContent value="pagamento" className="mt-6">
           <TabPagamento />
+        </TabsContent>
+        <TabsContent value="email" className="mt-6">
+          <TabEmail />
         </TabsContent>
         <TabsContent value="contatos" className="mt-6">
           <TabContatos />
