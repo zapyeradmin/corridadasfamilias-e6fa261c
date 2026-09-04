@@ -39,7 +39,7 @@ const LotesTable = () => (
         <TableRow>
           <TableHead>Lote</TableHead>
           <TableHead>Valor</TableHead>
-          <TableHead>Benefício Especial</TableHead>
+          <TableHead>Período / Benefício Especial</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -48,6 +48,20 @@ const LotesTable = () => (
           <TableCell className="font-extrabold text-[#c20505]">R$ 83,60 (Valor Único)</TableCell>
           <TableCell className="font-medium text-[#3d0000]">
             🎁 <strong>Brinde Exclusivo:</strong> Os primeiros 335 inscritos com pagamento confirmado receberão 1 Coqueteleira Personalizada da Corrida + 1 Chaveiro Personalizado.
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell className="font-bold text-[#c20505]">Lote 2</TableCell>
+          <TableCell className="font-extrabold text-[#c20505]">R$ 96,00 (Valor Único)</TableCell>
+          <TableCell className="font-medium text-[#3d0000]">
+            Data a ser definida pela Organização.
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell className="font-bold text-[#c20505]">Lote 3</TableCell>
+          <TableCell className="font-extrabold text-[#c20505]">R$ 105,60 (Valor Único)</TableCell>
+          <TableCell className="font-medium text-[#3d0000]">
+            Data a ser definida pela Organização.
           </TableCell>
         </TableRow>
       </TableBody>
@@ -146,11 +160,12 @@ const SECTIONS: Section[] = [
       "3.1. O pagamento da inscrição será realizado exclusivamente online, por meio do checkout integrado ao site oficial do evento.",
       "3.2. As formas de pagamento aceitas serão: PIX, cartão de crédito à vista e cartão de crédito parcelado, conforme disponibilidade do gateway de pagamento.",
       "3.3. O valor da inscrição obedecerá aos lotes oficiais estabelecidos pela Organização. O primeiro lote é o Lote 1 (Promocional) no valor de R$ 83,60 (oitenta e três reais e sessenta centavos).",
-      "3.4. Todos os valores dos lotes de pagamento são de valor único. Não haverá inscrição criança ou lote para criança.",
-      "3.5. Como benefício promocional exclusivo, os primeiros 335 (trezentos e trinta e cinco) inscritos com pagamento confirmado receberão de brinde uma Coqueteleira Personalizada da Corrida + um Chaveiro Personalizado.",
+      "3.4. Os próximos lotes serão: Lote 2 no valor de R$ 96,00 (noventa e seis reais) com data a ser definida pela Organização, e Lote 3 no valor de R$ 105,60 (cento e cinco reais e sessenta centavos) com data a ser definida pela Organização.",
+      "3.5. Todos os valores dos lotes de pagamento são de valor único. Não haverá inscrição criança ou lote para criança.",
+      "3.6. Como benefício promocional exclusivo, os primeiros 335 (trezentos e trinta e cinco) inscritos com pagamento confirmado no Lote 1 receberão de brinde uma Coqueteleira Personalizada da Corrida + um Chaveiro Personalizado.",
       { type: "table", render: LotesTable },
-      "3.6. A inscrição somente será considerada confirmada após a validação definitiva do pagamento pelo sistema financeiro.",
-      "3.7. O preenchimento do formulário de inscrição sem a conclusão do pagamento não garante a vaga nem o direito aos brindes promocionais.",
+      "3.7. A inscrição somente será considerada confirmada após a validação definitiva do pagamento pelo sistema financeiro.",
+      "3.8. O preenchimento do formulário de inscrição sem a conclusão do pagamento não garante a vaga nem o direito aos brindes promocionais.",
     ],
   },
   {
