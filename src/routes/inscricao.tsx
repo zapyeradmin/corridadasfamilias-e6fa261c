@@ -8,7 +8,11 @@ import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, ArrowRight, CheckCircle2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { ContentSection, PageHeader } from "@/components/site/page-shell";
-import { createRegistration } from "@/lib/registrations.functions";
+import {
+  createRegistration,
+  CATEGORY_OPTIONS,
+  type CategoryValue,
+} from "@/lib/registrations.functions";
 import { getActiveEvent } from "@/lib/public.functions";
 import { isValidCpf, maskCpf, maskPhone, normalizeCpf, formatBRL } from "@/lib/cpf";
 
@@ -27,39 +31,95 @@ export const Route = createFileRoute("/inscricao")({
   component: Page,
 });
 
-const formSchema = z.object({
-  full_name: z.string().min(3, "Informe seu nome completo"),
-  cpf: z.string().refine((v) => isValidCpf(v), "CPF inválido"),
-  email: z.string().email("E-mail inválido"),
-  whatsapp: z.string().refine((v) => v.replace(/\D/g, "").length >= 10, "WhatsApp inválido"),
-  birth_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Data inválida"),
-  gender: z.enum(["male", "female"], { message: "Selecione" }),
-  category: z.enum(
-    [
-      "geral_masculino",
-      "geral_feminino",
-      "infanto_juvenil_masculino",
-      "infanto_juvenil_feminino",
-      "60_masculino",
-      "60_feminino",
-    ],
-    { message: "Selecione a categoria" },
-  ),
-  shirt_size: z.enum(["pp", "p", "m", "g", "gg", "xgg"], { message: "Selecione" }),
-  emergency_contact_name: z.string().min(2, "Informe o contato"),
-  emergency_contact_phone: z
-    .string()
-    .refine((v) => v.replace(/\D/g, "").length >= 10, "Telefone inválido"),
-  medical_notes: z.string().max(500).optional(),
-  accepted_terms: z.literal(true, { message: "Aceite o regulamento" }),
-  accepted_lgpd: z.literal(true, { message: "Aceite a política de privacidade" }),
-});
+const formSchema = z
+  .object({
+    full_name: z.string().min(3, "Informe seu nome completo"),
+    cpf: z.string().refine((v) => isValidCpf(v), "CPF inválido"),
+    email: z.string().email("E-mail inválido"),
+    whatsapp: z.string().refine((v) => v.replace(/\D/g, "").length >= 10, "WhatsApp inválido"),
+    birth_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Data inválida"),
+    gender: z.enum(["male", "female"], { message: "Selecione o gênero" }),
+    category: z.enum(CATEGORY_OPTIONS, { message: "Selecione a categoria" }),
+    shirt_size: z.enum(["pp", "p", "m", "g", "gg", "xgg"], { message: "Selecione" }),
+    emergency_contact_name: z.string().min(2, "Informe o contato"),
+    emergency_contact_phone: z
+      .string()
+      .refine((v) => v.replace(/\D/g, "").length >= 10, "Telefone inválido"),
+    medical_notes: z.string().max(500).optional(),
+    accepted_terms: z.literal(true, { message: "Aceite o regulamento" }),
+    accepted_lgpd: z.literal(true, { message: "Aceite a política de privacidade" }),
+  })
+  .superRefine((data, ctx) => {
+    if (!data.birth_date || !data.category) return;
+    const age = ageOn(data.birth_date, "2026-12-20");
+    const cat = data.category;
+
+    // Validação de Gênero
+    if (data.gender === "male" && cat.includes("FEMININO")) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Categoria feminina incompatível com o gênero masculino selecionado.",
+        path: ["category"],
+      });
+    }
+    if (data.gender === "female" && cat.includes("MASCULINO")) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Categoria masculina incompatível com o gênero feminino selecionado.",
+        path: ["category"],
+      });
+    }
+
+    // Validação de Faixa Etária condicionada à idade em 20/12/2026
+    if (cat.includes("14 A 29 ANOS")) {
+      if (age < 14 || age > 29) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `Esta categoria é exclusiva para atletas de 14 a 29 anos em 20/12/2026 (sua idade calculada: ${age} anos).`,
+          path: ["category"],
+        });
+      }
+    } else if (cat.includes("30 A 39 ANOS")) {
+      if (age < 30 || age > 39) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `Esta categoria é exclusiva para atletas de 30 a 39 anos em 20/12/2026 (sua idade calculada: ${age} anos).`,
+          path: ["category"],
+        });
+      }
+    } else if (cat.includes("40 A 49 ANOS")) {
+      if (age < 40 || age > 49) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `Esta categoria é exclusiva para atletas de 40 a 49 anos em 20/12/2026 (sua idade calculada: ${age} anos).`,
+          path: ["category"],
+        });
+      }
+    } else if (cat.includes("50 A 59 ANOS")) {
+      if (age < 50 || age > 59) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `Esta categoria é exclusiva para atletas de 50 a 59 anos em 20/12/2026 (sua idade calculada: ${age} anos).`,
+          path: ["category"],
+        });
+      }
+    } else if (cat.includes("60+")) {
+      if (age < 60) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `Esta categoria é exclusiva para atletas com 60 anos ou mais em 20/12/2026 (sua idade calculada: ${age} anos).`,
+          path: ["category"],
+        });
+      }
+    }
+  });
 
 type FormValues = z.infer<typeof formSchema>;
 
-function ageOn(birthIso: string, refIso: string): number {
-  const b = new Date(birthIso);
-  const r = new Date(refIso);
+function ageOn(birthIso: string, refIso: string = "2026-12-20"): number {
+  if (!birthIso || !/^\d{4}-\d{2}-\d{2}$/.test(birthIso)) return 0;
+  const b = new Date(birthIso + "T00:00:00");
+  const r = new Date(refIso + "T00:00:00");
   let a = r.getFullYear() - b.getFullYear();
   const m = r.getMonth() - b.getMonth();
   if (m < 0 || (m === 0 && r.getDate() < b.getDate())) a--;
@@ -179,8 +239,8 @@ function Page() {
               <button
                 type="button"
                 onClick={back}
-                disabled={step === 0}
-                className="inline-flex items-center gap-2 rounded-full border border-border px-5 py-3 text-sm font-bold uppercase tracking-wide text-[color:var(--color-brand-purple-text)] disabled:opacity-40"
+                disabled={step === 0 || submitting}
+                className="inline-flex items-center gap-2 rounded-full border border-border px-6 py-3 text-xs font-bold uppercase tracking-wider text-[#3d0000] transition hover:bg-[color:var(--color-brand-soft)] disabled:opacity-40"
               >
                 <ArrowLeft className="h-4 w-4" /> Voltar
               </button>
@@ -188,7 +248,7 @@ function Page() {
                 <button
                   type="button"
                   onClick={next}
-                  className="inline-flex items-center gap-2 rounded-full bg-[#c20505] px-6 py-3 text-sm font-extrabold uppercase tracking-wide text-white shadow-[0_8px_24px_rgba(194,5,5,0.28)] transition duration-300 hover:bg-[#a30404] hover:scale-[1.02]"
+                  className="inline-flex items-center gap-2 rounded-full bg-[#c20505] px-7 py-3 text-xs font-extrabold uppercase tracking-wider text-white shadow-premium transition hover:scale-[1.02]"
                 >
                   Avançar <ArrowRight className="h-4 w-4" />
                 </button>
@@ -196,24 +256,26 @@ function Page() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="inline-flex items-center gap-2 rounded-full bg-[#c20505] px-6 py-3 text-sm font-extrabold uppercase tracking-wide text-white shadow-[0_8px_24px_rgba(194,5,5,0.28)] transition duration-300 hover:bg-[#a30404] hover:scale-[1.02] disabled:opacity-60"
+                  className="inline-flex items-center gap-2 rounded-full bg-[#c20505] px-8 py-3.5 text-xs font-black uppercase tracking-wider text-white shadow-premium transition hover:scale-[1.02] disabled:opacity-60"
                 >
                   {submitting ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" /> Registrando...
+                    </>
                   ) : (
-                    <CheckCircle2 className="h-4 w-4" />
+                    <>
+                      <CheckCircle2 className="h-4 w-4" /> Finalizar Inscrição
+                    </>
                   )}
-                  Confirmar inscrição
                 </button>
               )}
             </div>
           </form>
 
-          <aside className="rounded-3xl border border-border bg-[color:var(--color-brand-soft)] p-6 shadow-soft">
-            <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#c20505]">Resumo</p>
-            <h3 className="heading-section mt-2 text-2xl text-[#c20505]">
-              {eventData?.event?.name ?? "2ª Corrida Natalina | Corre +"}
-            </h3>
+          <aside className="h-fit rounded-3xl border border-border bg-white p-6 shadow-soft">
+            <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-[#3d0000]">
+              Resumo da Inscrição
+            </h2>
             {eventData?.currentLot ? (
               (() => {
                 const lot = eventData.currentLot;
@@ -313,12 +375,93 @@ function StepPersonal({ form }: { form: ReturnType<typeof useForm<FormValues>> }
   const { register, formState, setValue, watch } = form;
   const cpf = watch("cpf");
   const wpp = watch("whatsapp");
+  const birthDate = watch("birth_date");
+  const gender = watch("gender");
+  const category = watch("category");
+
   useEffect(() => {
     setValue("cpf", maskCpf(cpf || ""), { shouldValidate: false });
   }, [cpf, setValue]);
   useEffect(() => {
     setValue("whatsapp", maskPhone(wpp || ""), { shouldValidate: false });
   }, [wpp, setValue]);
+
+  // Idade apurada na data oficial da prova (20/12/2026)
+  const ageAtEvent =
+    birthDate && /^\d{4}-\d{2}-\d{2}$/.test(birthDate) ? ageOn(birthDate, "2026-12-20") : null;
+
+  // Auto-limpeza de categoria selecionada caso o atleta mude nascimento ou gênero para algo incompatível
+  useEffect(() => {
+    if (!category) return;
+    const isMasc = category.includes("MASCULINO");
+    const isFem = category.includes("FEMININO");
+
+    if ((gender === "male" && isFem) || (gender === "female" && isMasc)) {
+      setValue("category", "" as any, { shouldValidate: true });
+      return;
+    }
+
+    if (ageAtEvent !== null) {
+      if (category.includes("14 A 29 ANOS") && (ageAtEvent < 14 || ageAtEvent > 29)) {
+        setValue("category", "" as any, { shouldValidate: true });
+      } else if (category.includes("30 A 39 ANOS") && (ageAtEvent < 30 || ageAtEvent > 39)) {
+        setValue("category", "" as any, { shouldValidate: true });
+      } else if (category.includes("40 A 49 ANOS") && (ageAtEvent < 40 || ageAtEvent > 49)) {
+        setValue("category", "" as any, { shouldValidate: true });
+      } else if (category.includes("50 A 59 ANOS") && (ageAtEvent < 50 || ageAtEvent > 59)) {
+        setValue("category", "" as any, { shouldValidate: true });
+      } else if (category.includes("60+") && ageAtEvent < 60) {
+        setValue("category", "" as any, { shouldValidate: true });
+      }
+    }
+  }, [ageAtEvent, gender, category, setValue]);
+
+  const getOptionStatus = (catOption: string): { disabled: boolean; reason?: string } => {
+    const isMasc = catOption.includes("MASCULINO");
+    const isFem = catOption.includes("FEMININO");
+
+    // Validação de Gênero
+    if (gender === "male" && isFem) {
+      return { disabled: true, reason: "(Exclusivo Feminino)" };
+    }
+    if (gender === "female" && isMasc) {
+      return { disabled: true, reason: "(Exclusivo Masculino)" };
+    }
+
+    // Categorias de Idade Livre são sempre elegíveis (se o gênero for compatível)
+    if (catOption.includes("IDADE LIVRE")) {
+      return { disabled: false };
+    }
+
+    // Categorias de Faixa Etária condicionadas à idade em 20/12/2026
+    if (ageAtEvent === null) {
+      return { disabled: true, reason: "(Informe a data de nascimento)" };
+    }
+
+    if (catOption.includes("14 A 29 ANOS")) {
+      if (ageAtEvent < 14 || ageAtEvent > 29) {
+        return { disabled: true, reason: "(Exclusivo 14 a 29 anos)" };
+      }
+    } else if (catOption.includes("30 A 39 ANOS")) {
+      if (ageAtEvent < 30 || ageAtEvent > 39) {
+        return { disabled: true, reason: "(Exclusivo 30 a 39 anos)" };
+      }
+    } else if (catOption.includes("40 A 49 ANOS")) {
+      if (ageAtEvent < 40 || ageAtEvent > 49) {
+        return { disabled: true, reason: "(Exclusivo 40 a 49 anos)" };
+      }
+    } else if (catOption.includes("50 A 59 ANOS")) {
+      if (ageAtEvent < 50 || ageAtEvent > 59) {
+        return { disabled: true, reason: "(Exclusivo 50 a 59 anos)" };
+      }
+    } else if (catOption.includes("60+")) {
+      if (ageAtEvent < 60) {
+        return { disabled: true, reason: "(Exclusivo 60+ anos)" };
+      }
+    }
+
+    return { disabled: false };
+  };
 
   return (
     <div className="grid gap-5 md:grid-cols-2">
@@ -343,6 +486,11 @@ function StepPersonal({ form }: { form: ReturnType<typeof useForm<FormValues>> }
       </Field>
       <Field label="Data de nascimento" error={formState.errors.birth_date?.message}>
         <input type="date" className={inputClass} {...register("birth_date")} />
+        {ageAtEvent !== null && (
+          <p className="mt-1.5 text-xs font-semibold text-[#c20505]">
+            🎂 Idade na data da prova (20/12/2026): <strong>{ageAtEvent} anos</strong>
+          </p>
+        )}
       </Field>
       <Field label="E-mail" error={formState.errors.email?.message}>
         <input
@@ -363,24 +511,38 @@ function StepPersonal({ form }: { form: ReturnType<typeof useForm<FormValues>> }
       <Field label="Gênero" error={formState.errors.gender?.message}>
         <select className={inputClass} {...register("gender")} defaultValue="">
           <option value="" disabled>
-            Selecione
+            Selecione o gênero
           </option>
           <option value="female">Feminino</option>
           <option value="male">Masculino</option>
         </select>
       </Field>
-      <Field label="Categoria" error={formState.errors.category?.message}>
+      <Field
+        label="Categoria"
+        error={formState.errors.category?.message}
+        className="md:col-span-2"
+      >
         <select className={inputClass} {...register("category")} defaultValue="">
           <option value="" disabled>
-            Selecione
+            Selecione a categoria
           </option>
-          <option value="geral_masculino">Geral Masculino (idade livre)</option>
-          <option value="geral_feminino">Geral Feminino (idade livre)</option>
-          <option value="infanto_juvenil_masculino">Infanto-Juvenil Masculino (9–17 anos)</option>
-          <option value="infanto_juvenil_feminino">Infanto-Juvenil Feminino (9–17 anos)</option>
-          <option value="60_masculino">60+ Masculino</option>
-          <option value="60_feminino">60+ Feminino</option>
+          {CATEGORY_OPTIONS.map((opt) => {
+            const status = getOptionStatus(opt);
+            return (
+              <option key={opt} value={opt} disabled={status.disabled}>
+                {opt} {status.disabled && status.reason ? `— ${status.reason}` : ""}
+              </option>
+            );
+          })}
         </select>
+        <div className="mt-2.5 rounded-xl border border-[#c20505]/15 bg-[color:var(--color-brand-soft)]/50 p-3 text-xs text-[#3d0000]">
+          <p className="font-bold text-[#c20505]">Regras de seleção da categoria:</p>
+          <p className="mt-1 leading-relaxed">
+            • O atleta poderá se inscrever em <strong>apenas 1 categoria</strong>.
+            <br />
+            • Você pode selecionar qualquer categoria de <strong>"Idade Livre"</strong> correspondente ao seu gênero, ou a categoria de <strong>"Faixa Etária"</strong> estritamente compatível com a sua idade apurada na data oficial da prova (<strong>20/12/2026</strong>).
+          </p>
+        </div>
       </Field>
     </div>
   );

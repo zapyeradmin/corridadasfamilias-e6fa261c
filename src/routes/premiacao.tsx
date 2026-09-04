@@ -9,13 +9,13 @@ export const Route = createFileRoute("/premiacao")({
       {
         name: "description",
         content:
-          "Premiação da 2ª Corrida Natalina | Corre +: prêmios em dinheiro, troféus por categoria e medalha finisher.",
+          "Premiação da 2ª Corrida Natalina | Corre +: prêmios em dinheiro e troféus no Geral (1º ao 5º), troféus e medalhas nas faixas etárias e categorias especiais (1º ao 3º), e medalha finisher para todos os concluintes.",
       },
       { property: "og:title", content: "Premiação — 2ª Corrida Natalina | Corre +" },
       {
         property: "og:description",
         content:
-          "Prêmios em dinheiro, troféus por categoria (Geral, Infanto-Juvenil e 60+) e medalha finisher para todos os participantes.",
+          "Prêmios em dinheiro no Geral (1º ao 3º), troféus até o 5º lugar no Geral, troféus por faixa etária e categorias especiais até o 3º lugar, e medalha finisher para todos.",
       },
     ],
   }),
@@ -28,11 +28,11 @@ function Page() {
       <PageHeader
         eyebrow="Reconhecimento"
         title="Premiação"
-        description="Premiação em dinheiro no Geral, troféus por categoria e medalha finisher para todos que cruzarem a linha de chegada."
+        description="Premiação em dinheiro para os 3 primeiros colocados do Geral, troféus até o 5º lugar no Geral, troféus do 1º ao 3º em todas as faixas etárias e categorias especiais, e medalha finisher para todos os atletas que concluírem o percurso."
       />
 
       <section className="relative bg-white">
-        <div className="mx-auto max-w-[1200px] px-5 pt-6 pb-20 md:px-8 md:pt-8 md:pb-28">
+        <div className="mx-auto max-w-[1280px] px-5 pt-6 pb-20 md:px-8 md:pt-8 md:pb-28">
           <CategoriasGrid />
         </div>
       </section>

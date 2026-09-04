@@ -9,13 +9,14 @@ export const Route = createFileRoute("/percurso")({
       { title: "Percurso 6km — 2ª Corrida Natalina | Corre +" },
       {
         name: "description",
-        content: "Percurso oficial de 6km com largada e chegada no Beach Garden · Shopping Serra Talhada. 2ª Corrida Natalina | Corre +.",
+        content:
+          "Percurso oficial de 6km com largada e chegada no portão do Shopping Serra Talhada na Av. Adriano Duque de Godoy Sousa. 2ª Corrida Natalina | Corre +.",
       },
       { property: "og:title", content: "Percurso 6km — 2ª Corrida Natalina | Corre +" },
       {
         property: "og:description",
         content:
-          "Trajeto pelas principais vias de Serra Talhada — largada e chegada no Beach Garden · Shopping Serra Talhada.",
+          "Trajeto pelas principais vias de Serra Talhada — largada e chegada no portão do Shopping Serra Talhada na Av. Adriano Duque de Godoy Sousa.",
       },
       { property: "og:image", content: percursoMapa },
       { name: "twitter:image", content: percursoMapa },
@@ -30,25 +31,27 @@ function Page() {
       <PageHeader
         eyebrow="6 quilômetros"
         title="Percurso oficial"
-        description="Largada e chegada no Beach Garden · Shopping Serra Talhada, com trajeto sinalizado pelas principais ruas."
+        description="Largada e chegada no portão do Shopping Serra Talhada na Av. Adriano Duque de Godoy Sousa, com trajeto sinalizado pelas principais ruas da cidade."
       />
 
       <section className="bg-white">
         <div className="mx-auto max-w-[1200px] px-5 pt-6 pb-20 md:px-8 md:pt-8 md:pb-28">
-          <div className="mt-12 grid items-center gap-10 md:grid-cols-2 md:gap-12 my-[20px] border-0 py-0">
-            <div className="aspect-[4/3] w-full">
-              <img
-                src={percursoMapa}
-                alt="Mapa do percurso oficial da 2ª Corrida Natalina | Corre + em Serra Talhada"
-                loading="lazy"
-                decoding="async"
-                width={1024}
-                height={768}
-                className="h-full w-full object-contain"
-              />
+          <div className="mt-8 grid items-start gap-10 lg:grid-cols-12 lg:gap-12">
+            <div className="flex justify-center lg:col-span-5 lg:sticky lg:top-28">
+              <div className="relative w-full max-w-[420px] lg:max-w-[460px]">
+                <img
+                  src={percursoMapa}
+                  alt="Mapa e estatísticas do percurso oficial da 2ª Corrida Natalina | Corre + em Serra Talhada"
+                  loading="lazy"
+                  decoding="async"
+                  width={1122}
+                  height={1402}
+                  className="mx-auto h-auto w-full object-contain drop-shadow-[0_16px_36px_rgba(194,5,5,0.18)] transition-transform duration-500 hover:scale-[1.02]"
+                />
+              </div>
             </div>
 
-            <div>
+            <div className="lg:col-span-7">
               <h3 className="text-2xl font-extrabold leading-tight text-[#c20505] md:text-3xl">
                 O trajeto passa pelas principais ruas da Cidade
               </h3>

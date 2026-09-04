@@ -72,7 +72,7 @@ const LotesTable = () => (
 const PremiacaoGeralTable = () => (
   <div className="overflow-x-auto">
     <p className="mb-2 text-sm font-semibold uppercase tracking-wide text-[#c20505]">
-      Premiação — Geral Masculina e Geral Feminina
+      Premiação — Geral Masculino (Idade Livre) e Geral Feminino (Idade Livre)
     </p>
     <Table>
       <TableHeader>
@@ -84,15 +84,23 @@ const PremiacaoGeralTable = () => (
       <TableBody>
         <TableRow>
           <TableCell className="font-semibold">1º lugar</TableCell>
-          <TableCell>R$ 500,00 + Troféu de Primeiro Lugar + Medalha</TableCell>
+          <TableCell>R$ 500,00 + Troféu + Medalha</TableCell>
         </TableRow>
         <TableRow>
           <TableCell className="font-semibold">2º lugar</TableCell>
-          <TableCell>R$ 300,00 + Troféu de Segundo Lugar + Medalha</TableCell>
+          <TableCell>R$ 350,00 + Troféu + Medalha</TableCell>
         </TableRow>
         <TableRow>
           <TableCell className="font-semibold">3º lugar</TableCell>
-          <TableCell>R$ 200,00 + Troféu de Terceiro Lugar + Medalha</TableCell>
+          <TableCell>R$ 150,00 + Troféu + Medalha</TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell className="font-semibold">4º lugar</TableCell>
+          <TableCell>Troféu + Medalha</TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell className="font-semibold">5º lugar</TableCell>
+          <TableCell>Troféu + Medalha</TableCell>
         </TableRow>
       </TableBody>
     </Table>
@@ -102,7 +110,7 @@ const PremiacaoGeralTable = () => (
 const PremiacaoCategoriasTable = () => (
   <div className="overflow-x-auto">
     <p className="mb-2 text-sm font-semibold uppercase tracking-wide text-[#c20505]">
-      Premiação — Infanto-Juvenil (Masc./Fem.) e 60+ (Masc./Fem.)
+      Premiação — Faixas Etárias, Atletas Corre+, Atletas PCD e Segurança Pública (Masc./Fem.)
     </p>
     <Table>
       <TableHeader>
@@ -114,15 +122,15 @@ const PremiacaoCategoriasTable = () => (
       <TableBody>
         <TableRow>
           <TableCell className="font-semibold">1º lugar</TableCell>
-          <TableCell>Troféu de Primeiro Lugar + Medalha</TableCell>
+          <TableCell>Troféu + Medalha</TableCell>
         </TableRow>
         <TableRow>
           <TableCell className="font-semibold">2º lugar</TableCell>
-          <TableCell>Troféu de Segundo Lugar + Medalha</TableCell>
+          <TableCell>Troféu + Medalha</TableCell>
         </TableRow>
         <TableRow>
           <TableCell className="font-semibold">3º lugar</TableCell>
-          <TableCell>Troféu de Terceiro Lugar + Medalha</TableCell>
+          <TableCell>Troféu + Medalha</TableCell>
         </TableRow>
       </TableBody>
     </Table>
@@ -171,11 +179,12 @@ const SECTIONS: Section[] = [
   {
     title: "4. Percurso",
     items: [
-      "4.1. O percurso oficial da 2ª Corrida Natalina | Corre + terá distância de 6 km.",
-      "4.2. A largada e a chegada ocorrerão no Beach Garden · Shopping Serra Talhada, em Serra Talhada/PE.",
-      "4.3. O percurso será predominantemente asfaltado, com sinalização clara em todo o trajeto.",
-      "4.4. Haverá pontos de hidratação distribuídos estrategicamente durante todo o percurso.",
-      "4.5. O participante que cortar caminho, utilizar meios externos de locomoção ou descumprir as orientações dos fiscais será desclassificado.",
+      "4.1. O percurso oficial da 2ª Corrida Natalina | Corre + terá distância oficial de 6 km cronometrados.",
+      "4.2. A largada e a chegada ocorrerão no portão do Shopping Serra Talhada na Av. Adriano Duque de Godoy Sousa, em Serra Talhada/PE.",
+      "4.3. Percurso Oficial: Largada no portão do Shopping Serra Talhada na Av. Adriano Duque de Godoy Sousa, Avenida do Assaí, Retorno na esquina do Senac, Retorno até o Terminal das Vans, Retorno pelo Posto do Shopping, Segue reto até a Pracinha do Lampião, Passa pelo Hospam, Fazer a meia volta na Praça Barão do Pajeú, Segue para a Rua dos Correios, Espetinho do Feitosa, Nara Calçados, Segue na Rua 15 sentido bairro Alto do Bom Jesus, segue até o Cristo no bairro Alto do Bom Jesus, siga até a CEDAN Rações, Retorno até Cristo no bairro Alto do Bom Jesus, siga até o Terminal das Vans, Segue reto até a Pracinha do COVID, Faz o retorno na rotatória próximo ao Shopping Serra Talhada, Chegada no portão do Shopping Serra Talhada na Av. Adriano Duque de Godoy Sousa.",
+      "4.4. O percurso será predominantemente asfaltado, com sinalização clara em todo o trajeto.",
+      "4.5. Haverá pontos de hidratação distribuídos estrategicamente durante todo o percurso.",
+      "4.6. O participante que cortar caminho, utilizar meios externos de locomoção ou descumprir as orientações dos fiscais será desclassificado.",
     ],
   },
   {
@@ -193,19 +202,20 @@ const SECTIONS: Section[] = [
   {
     title: "6. Das Categorias e Premiações",
     items: [
-      "6.1. A 2ª Corrida Natalina | Corre + contará com categorias masculinas e femininas, conforme faixa etária e regras estabelecidas neste Regulamento.",
-      "6.2. As categorias oficiais previstas são: Geral Masculina; Geral Feminina; Infanto-Juvenil Masculina (9–17 anos); Infanto-Juvenil Feminina (9–17 anos); Categoria 60+ Masculina; Categoria 60+ Feminina.",
-      "6.3. A idade do participante poderá ser apurada com base na data do evento, podendo a Organização solicitar documento oficial para conferência da categoria.",
-      "6.4. A premiação da Categoria Geral Masculina e da Categoria Geral Feminina será:",
+      "6.1. A 2ª Corrida Natalina | Corre + contará com categorias masculinas e femininas, divididas em Geral, Faixas Etárias e Categorias Especiais, conforme regras estabelecidas neste Regulamento.",
+      "6.2. As categorias oficiais da prova são:\n• GERAL MASCULINO (IDADE LIVRE)\n• GERAL FEMININO (IDADE LIVRE)\n• FAIXA ETÁRIA | 14 A 29 ANOS MASCULINO\n• FAIXA ETÁRIA | 14 A 29 ANOS FEMININO\n• FAIXA ETÁRIA | 30 A 39 ANOS MASCULINO\n• FAIXA ETÁRIA | 30 A 39 ANOS FEMININO\n• FAIXA ETÁRIA | 40 A 49 ANOS MASCULINO\n• FAIXA ETÁRIA | 40 A 49 ANOS FEMININO\n• FAIXA ETÁRIA | 50 A 59 ANOS MASCULINO\n• FAIXA ETÁRIA | 50 A 59 ANOS FEMININO\n• FAIXA ETÁRIA | 60+ MASCULINO\n• FAIXA ETÁRIA | 60+ FEMININO\n• ATLETAS CORRE+ MASCULINO (IDADE LIVRE)\n• ATLETAS CORRE+ FEMININO (IDADE LIVRE)\n• ATLETAS PCD MASCULINO (IDADE LIVRE)\n• ATLETAS PCD FEMININO (IDADE LIVRE)\n• SEGURANÇA PÚBLICA MASCULINO (IDADE LIVRE)\n• SEGURANÇA PÚBLICA FEMININO (IDADE LIVRE)",
+      "6.3. Regras Lógicas de Inscrição e Seleção de Categoria:\n• O atleta poderá se inscrever (selecionar) em apenas 1 (uma) única categoria no evento.\n• O atleta poderá optar por se inscrever em qualquer categoria definida como 'IDADE LIVRE' (Geral, Atletas Corre+, Atletas PCD ou Segurança Pública), respeitando a correspondência com o gênero informado.\n• Caso opte por concorrer em uma categoria de 'FAIXA ETÁRIA', a seleção é estritamente condicionada à idade informada e comprovada do atleta. Um atleta com determinada idade não poderá selecionar uma categoria de faixa etária fora do seu intervalo etário. Ele apenas poderá selecionar uma categoria de 'Idade Livre' ou a categoria de 'Faixa Etária' exatamente compatível com a sua respectiva idade.\n• A idade válida e oficial do atleta para fins de enquadramento na categoria será rigorosamente a que ele tiver na data de 20 de dezembro de 2026 (20/12/2026), momento em que estará com idade apta para a prova.",
+      "6.4. A premiação da Categoria Geral Masculino (Idade Livre) e da Categoria Geral Feminino (Idade Livre) será concedida do 1º ao 5º colocado, com premiação em dinheiro exclusiva para o 1º, 2º e 3º lugares:",
       { type: "table", render: PremiacaoGeralTable },
-      "6.5. Nas categorias Infanto-Juvenil Masculina, Infanto-Juvenil Feminina, 60+ Masculina e 60+ Feminina, a premiação será:",
+      "6.5. Nas categorias de Faixa Etária (14 a 29 anos, 30 a 39 anos, 40 a 49 anos, 50 a 59 anos e 60+), Atletas Corre+, Atletas PCD e Segurança Pública (Masculino e Feminino), a premiação será destinada exclusivamente do 1º ao 3º colocado:",
       { type: "table", render: PremiacaoCategoriasTable },
-      "6.6. Todos os participantes que concluírem o percurso completo receberão medalha de participação (finisher), independentemente de colocação.",
-      "6.7. A corrida contará com chip de cronometragem, garantindo mais precisão, segurança e agilidade na apuração dos resultados oficiais de cada atleta.",
-      "6.8. A Organização utilizará os dados da cronometragem eletrônica por chip, combinados com fiscais de percurso e equipe de chegada para validação oficial das colocações.",
-      "6.9. O participante chamado ao pódio deverá apresentar documento oficial, se solicitado, para confirmação de identidade, idade, categoria e regularidade da inscrição.",
-      "6.10. A premiação não será cumulativa, salvo decisão expressa da Organização. Caso um participante faça jus a mais de uma premiação, a Organização definirá a regra de prioridade.",
-      "6.11. Haverá sorteio de brindes de parceiros e patrocinadores após a entrega das premiações para os atletas presentes no local.",
+      "6.6. Todos os participantes devidamente inscritos que concluírem o percurso completo receberão a medalha oficial de participação (finisher), independentemente de sua colocação.",
+      "6.7. A idade do participante será apurada com base na data do evento ou ano de nascimento, podendo a Organização solicitar documento oficial com foto para conferência da categoria.",
+      "6.8. A corrida contará com chip de cronometragem eletrônica, fiscais de percurso e equipe de arbitragem para validação oficial das colocações e tempos líquidos/brutos.",
+      "6.9. A premiação não será cumulativa. Os atletas premiados na classificação Geral não concorrerão à premiação por Faixa Etária ou Categorias Especiais.",
+      "6.10. O atleta convocado ao pódio deverá apresentar documento oficial com foto para confirmação de identidade, categoria e regularidade da inscrição.",
+      "6.11. A premiação em dinheiro da Categoria Geral será paga aos atletas contemplados mediante conferência da arbitragem e fornecimento dos dados bancários do titular.",
+      "6.12. Haverá sorteio de brindes especiais de parceiros e patrocinadores após a entrega das premiações para os atletas presentes no local.",
     ],
   },
   {
@@ -224,9 +234,9 @@ const SECTIONS: Section[] = [
       "8.1. A concentração dos participantes terá início às 5h00, no Beach Garden · Shopping Serra Talhada.",
       "8.2. O aquecimento oficial está previsto para as 5h30.",
       "8.3. As instruções finais e posicionamento no pórtico de largada ocorrerão às 5h50.",
-      "8.4. A largada será realizada pontualmente às 6h00 (sem atrasos), salvo alteração excepcional por determinação de segurança pública.",
+      "8.4. A largada será realizada pontualmente às 6h00 (sem atrasos), no portão do Shopping Serra Talhada na Av. Adriano Duque de Godoy Sousa, salvo alteração excepcional por determinação de segurança pública.",
       "8.5. O participante deverá chegar com antecedência suficiente para se posicionar, utilizar a estrutura de apoio, fixar corretamente o número de peito e chip e receber as orientações da equipe organizadora.",
-      "8.6. A chegada ocorrerá no mesmo local da largada, no Beach Garden · Shopping Serra Talhada.",
+      "8.6. A chegada ocorrerá no mesmo local da largada, no portão do Shopping Serra Talhada na Av. Adriano Duque de Godoy Sousa.",
       "8.7. O funil de chegada, a área de dispersão e a área de premiação deverão ser respeitados por todos os participantes e público presente.",
     ],
   },

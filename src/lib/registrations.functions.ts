@@ -7,6 +7,29 @@ import { sendRegistrationConfirmationEmail } from "@/lib/email.service";
 const GENDER_DB = { male: "M", female: "F" } as const;
 const SHIRT_DB = { pp: "PP", p: "P", m: "M", g: "G", gg: "GG", xgg: "XGG" } as const;
 
+export const CATEGORY_OPTIONS = [
+  "GERAL MASCULINO (IDADE LIVRE)",
+  "GERAL FEMININO (IDADE LIVRE)",
+  "FAIXA ETÁRIA | 14 A 29 ANOS MASCULINO",
+  "FAIXA ETÁRIA | 14 A 29 ANOS FEMININO",
+  "FAIXA ETÁRIA | 30 A 39 ANOS MASCULINO",
+  "FAIXA ETÁRIA | 30 A 39 ANOS FEMININO",
+  "FAIXA ETÁRIA | 40 A 49 ANOS MASCULINO",
+  "FAIXA ETÁRIA | 40 A 49 ANOS FEMININO",
+  "FAIXA ETÁRIA | 50 A 59 ANOS MASCULINO",
+  "FAIXA ETÁRIA | 50 A 59 ANOS FEMININO",
+  "FAIXA ETÁRIA | 60+ MASCULINO",
+  "FAIXA ETÁRIA | 60+ FEMININO",
+  "ATLETAS CORRE+ MASCULINO (IDADE LIVRE)",
+  "ATLETAS CORRE+ FEMININO (IDADE LIVRE)",
+  "ATLETAS PCD MASCULINO (IDADE LIVRE)",
+  "ATLETAS PCD FEMININO (IDADE LIVRE)",
+  "SEGURANÇA PÚBLICA MASCULINO (IDADE LIVRE)",
+  "SEGURANÇA PÚBLICA FEMININO (IDADE LIVRE)",
+] as const;
+
+export type CategoryValue = (typeof CATEGORY_OPTIONS)[number];
+
 const registrationSchema = z.object({
   full_name: z.string().min(3).max(120),
   cpf: z.string().refine(isValidCpf, "CPF inválido"),
@@ -15,14 +38,7 @@ const registrationSchema = z.object({
   birth_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Data inválida"),
   gender: z.enum(["male", "female"]),
   shirt_size: z.enum(["pp", "p", "m", "g", "gg", "xgg"]),
-  category: z.enum([
-    "geral_masculino",
-    "geral_feminino",
-    "infanto_juvenil_masculino",
-    "infanto_juvenil_feminino",
-    "60_masculino",
-    "60_feminino",
-  ]),
+  category: z.enum(CATEGORY_OPTIONS),
   emergency_contact_name: z.string().min(2).max(120),
   emergency_contact_phone: z.string().min(10).max(20),
   medical_notes: z.string().max(500).optional().nullable(),
@@ -31,8 +47,8 @@ const registrationSchema = z.object({
 });
 
 function yearsBetween(birthIso: string, refIso: string): number {
-  const birth = new Date(birthIso);
-  const ref = new Date(refIso);
+  const birth = new Date(birthIso + "T00:00:00");
+  const ref = new Date(refIso + "T00:00:00");
   let age = ref.getFullYear() - birth.getFullYear();
   const m = ref.getMonth() - birth.getMonth();
   if (m < 0 || (m === 0 && ref.getDate() < birth.getDate())) age--;
@@ -76,27 +92,47 @@ export const createRegistration = createServerFn({ method: "POST" })
       if (!lot) return fail("Não há lote de inscrições aberto no momento.");
 
       // Preço único para todos os participantes (sem lote infantil)
-      const ageAtEvent = yearsBetween(data.birth_date, event.event_date);
+      const eventRefDate = event.event_date || "2026-12-20";
+      const ageAtEvent = yearsBetween(data.birth_date, eventRefDate);
       const amountCents = lot.price_cents;
 
-      // Validações de categoria por idade/gênero
+      // Validações de categoria por idade/gênero considerando data da prova (20/12/2026)
       const g = GENDER_DB[data.gender];
       const cat = data.category;
-      if (cat === "infanto_juvenil_masculino" || cat === "infanto_juvenil_feminino") {
-        if (ageAtEvent < 9 || ageAtEvent > 17) {
-          return fail("Categoria Infanto-Juvenil é destinada a participantes de 9 a 17 anos.");
-        }
+
+      // Validação de Gênero
+      if (cat.includes("MASCULINO") && g === "F") {
+        return fail("Categoria masculina incompatível com o gênero feminino selecionado.");
       }
-      if (cat === "60_masculino" || cat === "60_feminino") {
-        if (ageAtEvent < 60) {
-          return fail("Categoria 60+ é destinada a participantes com 60 anos ou mais.");
-        }
+      if (cat.includes("FEMININO") && g === "M") {
+        return fail("Categoria feminina incompatível com o gênero masculino selecionado.");
       }
-      if (cat.endsWith("_masculino") && g === "F") {
-        return fail("Categoria masculina não disponível para o gênero informado.");
+
+      // Validações de Faixa Etária na data da prova (20/12/2026)
+      if (cat.includes("14 A 29 ANOS") && (ageAtEvent < 14 || ageAtEvent > 29)) {
+        return fail(
+          `A categoria de Faixa Etária (14 a 29 anos) é exclusiva para atletas dessa idade em 20/12/2026 (sua idade calculada: ${ageAtEvent} anos).`,
+        );
       }
-      if (cat.endsWith("_feminino") && g === "M") {
-        return fail("Categoria feminina não disponível para o gênero informado.");
+      if (cat.includes("30 A 39 ANOS") && (ageAtEvent < 30 || ageAtEvent > 39)) {
+        return fail(
+          `A categoria de Faixa Etária (30 a 39 anos) é exclusiva para atletas dessa idade em 20/12/2026 (sua idade calculada: ${ageAtEvent} anos).`,
+        );
+      }
+      if (cat.includes("40 A 49 ANOS") && (ageAtEvent < 40 || ageAtEvent > 49)) {
+        return fail(
+          `A categoria de Faixa Etária (40 a 49 anos) é exclusiva para atletas dessa idade em 20/12/2026 (sua idade calculada: ${ageAtEvent} anos).`,
+        );
+      }
+      if (cat.includes("50 A 59 ANOS") && (ageAtEvent < 50 || ageAtEvent > 59)) {
+        return fail(
+          `A categoria de Faixa Etária (50 a 59 anos) é exclusiva para atletas dessa idade em 20/12/2026 (sua idade calculada: ${ageAtEvent} anos).`,
+        );
+      }
+      if (cat.includes("60+") && ageAtEvent < 60) {
+        return fail(
+          `A categoria de Faixa Etária (60+) é exclusiva para atletas com 60 anos ou mais em 20/12/2026 (sua idade calculada: ${ageAtEvent} anos).`,
+        );
       }
 
       // Checagem de duplicidade por CPF + status ativo

@@ -1,27 +1,29 @@
 import { Flag, MapPin, Route as RouteIcon, Mountain } from "lucide-react";
 
+export const PERCURSO_OFICIAL_DETALHADO =
+  "Largada no portão do Shopping Serra Talhada na Av. Adriano Duque de Godoy Sousa, Avenida do Assaí, Retorno na esquina do Senac, Retorno até o Terminal das Vans, Retorno pelo Posto do Shopping, Segue reto até a Pracinha do Lampião, Passa pelo Hospam, Fazer a meia volta na Praça Barão do Pajeú, Segue para a Rua dos Correios, Espetinho do Feitosa, Nara Calçados, Segue na Rua 15 sentido bairro Alto do Bom Jesus, segue até o Cristo no bairro Alto do Bom Jesus, siga até a CEDAN Rações, Retorno até Cristo no bairro Alto do Bom Jesus, siga até o Terminal das Vans, Segue reto até a Pracinha do COVID, Faz o retorno na rotatória próximo ao Shopping Serra Talhada, Chegada no portão do Shopping Serra Talhada na Av. Adriano Duque de Godoy Sousa.";
+
 export const PERCURSO_INFOS: { icon: typeof Flag; titulo: string; texto: string }[] = [
   {
     icon: Flag,
     titulo: "Percurso Oficial",
-    texto:
-      "Largada e chegada no Beach Garden no Shopping Serra Talhada, passando pelas principais vias da cidade com retorno e chegada no Beach Garden · Shopping Serra Talhada.",
+    texto: PERCURSO_OFICIAL_DETALHADO,
   },
   {
     icon: MapPin,
     titulo: "Sinalização e Apoio",
-    texto: "Percurso sinalizado, com staff dedicados e pontos de hidratação durante todo percurso.",
+    texto: "Percurso sinalizado, com staff dedicado e pontos de hidratação durante todo o trajeto.",
   },
   {
     icon: RouteIcon,
     titulo: "Distância",
-    texto: "6km de percurso oficial cronometrado.",
+    texto: "6km de percurso oficial cronometrado com largada e chegada no portão do Shopping Serra Talhada.",
   },
   {
     icon: Mountain,
     titulo: "Altimetria",
     texto:
-      "Percurso 100% asfaltado, com poucas elevações, ideal para uma corrida sem grandes dificuldades.",
+      "Percurso 100% asfaltado com passagem pelo Cristo no bairro Alto do Bom Jesus, unindo desafio e velocidade.",
   },
 ];
 
