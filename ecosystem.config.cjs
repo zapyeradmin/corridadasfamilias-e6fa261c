@@ -7,13 +7,15 @@ module.exports = {
   apps: [
     {
       name: "corridadasfamilias",
-      script: "./server-node.mjs",
+      script: "./.output/server/index.mjs",
+      node_args: "--env-file=.env",
       instances: 2, // cluster mode, 2 workers (CX33 has 4 vCPU)
       exec_mode: "cluster",
       max_memory_restart: "1G",
       env: {
         NODE_ENV: "production",
         PORT: 3000,
+        HOST: "0.0.0.0",
       },
     },
   ],

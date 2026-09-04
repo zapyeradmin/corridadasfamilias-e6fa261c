@@ -79,7 +79,7 @@ Preencha:
 npm run build:node
 ```
 
-Saída: `dist/server/server.js` (entry SSR) + assets estáticos.
+Saída: `.output/server/index.mjs` (entry SSR standalone em Node) e `.output/public` (assets estáticos).
 
 ---
 
@@ -125,28 +125,17 @@ server {
     listen [::]:80;
     server_name corridascorremais.com.br;
 
-    root /home/deploy/app/dist/client;
+    root /home/deploy/app/.output/public;
     client_max_body_size 20m;
 
-    # Cache agressivo para assets versionados
+    # Cache agressivo para assets estáticos e versionados
     location /assets/ {
         try_files $uri @ssr;
         expires 1y;
         add_header Cache-Control "public, immutable";
     }
 
-    # API FastAPI (Backend Python na porta 8000)
-    location /api/ {
-        proxy_pass http://127.0.0.1:8000;
-        proxy_http_version 1.1;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_read_timeout 60s;
-    }
-
-    # Frontend SSR (TanStack Start na porta 3000)
+    # Toda a aplicação (SSR + Server Functions + Webhook /api/webhooks/infinitepay)
     location / {
         try_files $uri @ssr;
     }

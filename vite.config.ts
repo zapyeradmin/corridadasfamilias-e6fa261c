@@ -9,6 +9,9 @@ import { imagetools } from "vite-imagetools";
 
 export default defineConfig({
   tanstackStart: { server: { entry: "server" } },
+  nitro: {
+    preset: process.env.NITRO_PRESET || "node-server",
+  },
   plugins: [
     // Build-time image optimization. Used via query strings on imports:
     //   import url from "./img.jpg?format=webp&quality=78"
