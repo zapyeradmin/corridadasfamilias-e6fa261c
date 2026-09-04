@@ -9,9 +9,12 @@ module.exports = {
       name: "corridadasfamilias",
       script: "./.output/server/index.mjs",
       node_args: "--env-file=.env",
-      instances: 2, // cluster mode, 2 workers (CX33 has 4 vCPU)
-      exec_mode: "cluster",
+      instances: 1,
+      exec_mode: "fork",
       max_memory_restart: "1G",
+      autorestart: true,
+      exp_backoff_restart_delay: 100,
+      kill_timeout: 3000,
       env: {
         NODE_ENV: "production",
         PORT: 3000,
