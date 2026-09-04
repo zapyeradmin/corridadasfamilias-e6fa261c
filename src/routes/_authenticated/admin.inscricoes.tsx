@@ -299,7 +299,6 @@ function RegistrationDetailDialog({
               <Field label="Gênero" value={data.registration.gender} />
               <Field label="Categoria" value={data.registration.category} />
               <Field label="Camiseta" value={data.registration.shirt_size} />
-              <Field label="Tipo participante" value={data.registration.participant_type ?? "—"} />
               <Field
                 label="Contato emergência"
                 value={`${data.registration.emergency_contact_name} — ${data.registration.emergency_contact_phone}`}

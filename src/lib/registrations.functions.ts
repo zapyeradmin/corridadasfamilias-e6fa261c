@@ -141,7 +141,6 @@ export const createRegistration = createServerFn({ method: "POST" })
           status: "pending",
           amount_cents: amountCents,
           order_nsu: orderNsu,
-          participant_type: participantType,
         })
         .select("id, protocol, amount_cents")
         .single();

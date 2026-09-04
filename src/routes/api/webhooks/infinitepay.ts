@@ -91,12 +91,12 @@ export const Route = createFileRoute("/api/webhooks/infinitepay")({
         if (orderNsu) {
           const { data: reg } = await supabaseAdmin
             .from("registrations")
-            .select("id, participant_type, status, amount_cents")
+            .select("id, status, amount_cents")
             .eq("order_nsu", orderNsu)
             .maybeSingle();
           if (reg) {
             registrationId = reg.id;
-            participantType = (reg.participant_type as "adulto" | "crianca" | null) ?? null;
+            participantType = "adulto";
             matchStatus = "matched";
 
             const expected = reg.amount_cents;

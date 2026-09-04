@@ -23,7 +23,7 @@ export const getCheckoutUrlForRegistration = createServerFn({ method: "POST" })
     const { data: reg } = await supabaseAdmin
       .from("registrations")
       .select(
-        "id, protocol, participant_type, amount_cents, status, order_nsu, full_name, email, whatsapp",
+        "id, protocol, amount_cents, status, order_nsu, full_name, email, whatsapp",
       )
       .eq("protocol", data.protocol)
       .maybeSingle();
@@ -114,7 +114,7 @@ export const getCheckoutUrlForRegistration = createServerFn({ method: "POST" })
 
     return {
       ok: true as const,
-      participantType: (reg.participant_type ?? "adulto") as "adulto" | "crianca",
+      participantType: "adulto" as "adulto" | "crianca",
       amountCents: reg.amount_cents,
       checkoutUrl,
       status: reg.status,
