@@ -95,8 +95,27 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       {
         property: "og:image",
-        content:
-          "https://storage.googleapis.com/gpt-engineer-file-uploads/24NXY8uInCbJ0YtSRcez5EU2T9E3/social-images/social-1778899143554-banner-1.webp",
+        content: "https://corridascorremais.com.br/capa-video-lancamento.jpg",
+      },
+      {
+        property: "og:image:secure_url",
+        content: "https://corridascorremais.com.br/capa-video-lancamento.jpg",
+      },
+      {
+        property: "og:image:type",
+        content: "image/jpeg",
+      },
+      {
+        property: "og:image:width",
+        content: "1200",
+      },
+      {
+        property: "og:image:height",
+        content: "675",
+      },
+      {
+        property: "og:image:alt",
+        content: "2ª Corrida Natalina | Corre +",
       },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "2ª Corrida Natalina | Corre +" },
@@ -107,8 +126,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       {
         name: "twitter:image",
-        content:
-          "https://storage.googleapis.com/gpt-engineer-file-uploads/24NXY8uInCbJ0YtSRcez5EU2T9E3/social-images/social-1778899143554-banner-1.webp",
+        content: "https://corridascorremais.com.br/capa-video-lancamento.jpg",
       },
     ],
     links: [

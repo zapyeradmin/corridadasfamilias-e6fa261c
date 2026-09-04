@@ -45,6 +45,35 @@ export const Route = createFileRoute("/")({
         property: "og:description",
         content: `Corrida de 6km em ${SITE.city}. ${SITE.eventDateLabel}.`,
       },
+      {
+        property: "og:image",
+        content: "https://corridascorremais.com.br/capa-video-lancamento.jpg",
+      },
+      {
+        property: "og:image:secure_url",
+        content: "https://corridascorremais.com.br/capa-video-lancamento.jpg",
+      },
+      {
+        property: "og:image:type",
+        content: "image/jpeg",
+      },
+      {
+        property: "og:image:width",
+        content: "1200",
+      },
+      {
+        property: "og:image:height",
+        content: "675",
+      },
+      {
+        property: "og:image:alt",
+        content: "2ª Corrida Natalina | Corre +",
+      },
+      { name: "twitter:card", content: "summary_large_image" },
+      {
+        name: "twitter:image",
+        content: "https://corridascorremais.com.br/capa-video-lancamento.jpg",
+      },
     ],
     links: [
       {
