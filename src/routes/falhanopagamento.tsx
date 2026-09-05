@@ -67,7 +67,7 @@ const PASSOS = [
 
 function Page() {
   const { protocol, reason } = Route.useSearch();
-  const { whatsappHref, whatsappLabel } = useSiteContacts();
+  const { contacts, whatsappHref, whatsappLabel } = useSiteContacts();
 
   const waText = protocol
     ? `Olá! Tive um problema ao concluir o pagamento da minha inscrição na 2ª Corrida Natalina | Corre +. Protocolo: ${protocol}`
@@ -210,10 +210,10 @@ function Page() {
               <MessageCircle className="h-4 w-4" /> WhatsApp {whatsappLabel}
             </a>
             <a
-              href={`mailto:${SITE.email}`}
+              href={`mailto:${contacts.email_oficial}`}
               className="inline-flex items-center gap-2 rounded-full bg-white/10 px-5 py-2.5 text-sm font-semibold text-white ring-1 ring-white/20 backdrop-blur transition hover:bg-white/15"
             >
-              <Mail className="h-4 w-4" /> {SITE.email}
+              <Mail className="h-4 w-4" /> {contacts.email_oficial}
             </a>
           </div>
         </div>

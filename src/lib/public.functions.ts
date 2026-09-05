@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
+import { SITE } from "@/lib/site-config";
 
 function publicClient() {
   const url = process.env.SUPABASE_URL!;
@@ -146,11 +147,26 @@ export const getSiteContacts = createServerFn({ method: "GET" }).handler(async (
     .maybeSingle();
   const v = (data?.value ?? null) as Record<string, unknown> | null;
   const contacts: SiteContacts = {
-    local: typeof v?.local === "string" ? v.local : "",
-    email_oficial: typeof v?.email_oficial === "string" ? v.email_oficial : "",
-    whatsapp_oficial: typeof v?.whatsapp_oficial === "string" ? v.whatsapp_oficial : "",
-    instagram_url: typeof v?.instagram_url === "string" ? v.instagram_url : "",
-    instagram_usuario: typeof v?.instagram_usuario === "string" ? v.instagram_usuario : "",
+    local:
+      typeof v?.local === "string" && v.local.trim()
+        ? v.local
+        : `${SITE.location} em ${SITE.city}`,
+    email_oficial:
+      typeof v?.email_oficial === "string" && v.email_oficial.trim()
+        ? v.email_oficial
+        : SITE.email,
+    whatsapp_oficial:
+      typeof v?.whatsapp_oficial === "string" && v.whatsapp_oficial.trim()
+        ? v.whatsapp_oficial
+        : SITE.whatsapp,
+    instagram_url:
+      typeof v?.instagram_url === "string" && v.instagram_url.trim()
+        ? v.instagram_url
+        : SITE.instagramUrl,
+    instagram_usuario:
+      typeof v?.instagram_usuario === "string" && v.instagram_usuario.trim()
+        ? v.instagram_usuario
+        : SITE.instagramUser,
   };
   return contacts;
 });

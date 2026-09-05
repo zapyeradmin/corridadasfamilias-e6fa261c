@@ -150,7 +150,7 @@ export function TabContatos() {
               className={inputCls}
               value={igUser}
               onChange={(e) => setIgUser(e.target.value)}
-              placeholder="corridadasfamilias"
+              placeholder="corremaisst"
             />
           </Field>
           <Field label="URL do Instagram" className="md:col-span-2">

@@ -10,10 +10,11 @@ export const SITE = {
   promoSlotsBonus: 335,
   city: "Serra Talhada/PE",
   location: "Beach Garden · Shopping Serra Talhada",
-  organizer: "Corre +",
-  whatsapp: "5587996289326",
-  whatsappLabel: "(87) 99628-9326",
-  email: "corridadasfamiliaseccdorosario@gmail.com",
+  whatsapp: "5587992017978",
+  whatsappLabel: "(87) 99201-7978",
+  email: "corridascorremais@gmail.com",
+  instagramUrl: "https://www.instagram.com/corremaisst/",
+  instagramUser: "corremaisst",
 } as const;
 
 export const NAV_LINKS = [

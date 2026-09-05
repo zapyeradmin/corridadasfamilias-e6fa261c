@@ -1,14 +1,16 @@
-import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getSiteContacts, type SiteContacts } from "@/lib/public.functions";
 import { SITE } from "@/lib/site-config";
+import { supabase } from "@/integrations/supabase/client";
 
 const FALLBACK: SiteContacts = {
   local: `${SITE.location} em ${SITE.city}`,
   email_oficial: SITE.email,
   whatsapp_oficial: SITE.whatsapp,
-  instagram_url: "https://www.instagram.com/corridadasfamilias",
-  instagram_usuario: "corridadasfamilias",
+  instagram_url: SITE.instagramUrl,
+  instagram_usuario: SITE.instagramUser,
 };
 
 function formatWhatsappLabel(digits: string): string {
@@ -20,12 +22,28 @@ function formatWhatsappLabel(digits: string): string {
 }
 
 export function useSiteContacts() {
+  const queryClient = useQueryClient();
   const fetchContacts = useServerFn(getSiteContacts);
+
+  // Assina alterações em tempo real na tabela settings para refletir mudanças instantaneamente em todos os dispositivos
+  useEffect(() => {
+    const channelName = `site-contacts-changes-${Math.random().toString(36).slice(2)}`;
+    const channel = supabase
+      .channel(channelName)
+      .on("postgres_changes", { event: "*", schema: "public", table: "settings" }, () => {
+        queryClient.invalidateQueries({ queryKey: ["public", "site-contacts"] });
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
+
   const { data } = useQuery({
     queryKey: ["public", "site-contacts"],
     queryFn: () => fetchContacts(),
-    staleTime: 60 * 1000,
-    initialData: FALLBACK,
+    staleTime: 10 * 1000,
     placeholderData: FALLBACK,
   });
   const merged: SiteContacts = {
