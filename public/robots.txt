@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /login
+Disallow: /pagamento
+Disallow: /sucesso
+Disallow: /falhanopagamento
+Disallow: /reset-password
+
+Sitemap: https://corridascorremais.com.br/sitemap.xml

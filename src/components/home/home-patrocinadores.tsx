@@ -7,7 +7,7 @@ import { LOGO_ASSETS, slugFromUrl, FALLBACK_DIAMOND } from "@/lib/sponsors-asset
 import { useSponsorsRealtime } from "@/hooks/use-sponsors-realtime";
 import { useSiteContacts } from "@/hooks/use-site-contacts";
 
-const TOTAL = 28;
+const TOTAL = 38;
 
 type CardItem = {
   id: string;
@@ -33,7 +33,11 @@ export function HomePatrocinadores() {
   const all = mounted ? (data ?? []) : [];
 
   const diamondRows = all.filter((s) => s.tier === "diamond");
-  const othersRows = all.filter((s) => s.tier !== "diamond");
+  const goldRows = all.filter((s) => s.tier === "gold");
+  const silverRows = all.filter((s) => s.tier === "silver");
+  const otherRows = all.filter(
+    (s) => s.tier !== "diamond" && s.tier !== "gold" && s.tier !== "silver",
+  );
 
   const diamondCards: CardItem[] =
     diamondRows.length > 0
@@ -43,21 +47,28 @@ export function HomePatrocinadores() {
           src: LOGO_ASSETS[slugFromUrl(s.logo_url)] ?? s.logo_url,
           website_url: s.website_url,
         }))
-      : FALLBACK_DIAMOND.map((s) => ({
-          id: s.id,
-          name: s.name,
-          src: LOGO_ASSETS[s.slug] ?? "",
-          website_url: s.website_url,
-        }));
+      : all.length === 0
+        ? FALLBACK_DIAMOND.map((s) => ({
+            id: s.id,
+            name: s.name,
+            src: LOGO_ASSETS[s.slug] ?? "",
+            website_url: s.website_url,
+          }))
+        : [];
 
-  const otherCards: CardItem[] = othersRows.map((s) => ({
+  const toCard = (s: (typeof all)[number]): CardItem => ({
     id: s.id,
     name: s.name,
     src: LOGO_ASSETS[slugFromUrl(s.logo_url)] ?? s.logo_url,
     website_url: s.website_url,
-  }));
+  });
 
-  const cards = [...diamondCards, ...otherCards].slice(0, TOTAL);
+  const goldCards: CardItem[] = goldRows.map(toCard);
+  const silverCards: CardItem[] = silverRows.map(toCard);
+  const otherCards: CardItem[] = otherRows.map(toCard);
+
+  // Ordem oficial: Diamante primeiro, depois Ouro e por último Prata
+  const cards = [...diamondCards, ...goldCards, ...silverCards, ...otherCards].slice(0, TOTAL);
   const placeholders = Array.from(
     { length: Math.max(0, TOTAL - cards.length) },
     (_, i) => i + cards.length + 1,

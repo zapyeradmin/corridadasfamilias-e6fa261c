@@ -68,6 +68,12 @@ const TIER_LABEL: Record<string, string> = {
   silver: "Patrocínio Prata",
   standard: "Apoiador",
 };
+const TIER_BADGE_CLASS: Record<string, string> = {
+  diamond: "bg-cyan-50 text-cyan-800 border-cyan-300",
+  gold: "bg-amber-50 text-amber-800 border-amber-300",
+  silver: "bg-slate-100 text-slate-800 border-slate-300",
+  standard: "bg-gray-100 text-gray-700 border-gray-300",
+};
 
 type SponsorRow = {
   id: string;
@@ -190,9 +196,15 @@ function Page() {
               />
             </div>
             <p className="mt-3 truncate text-sm font-bold">{s.name}</p>
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-              {TIER_LABEL[s.tier] ?? s.tier}
-            </p>
+            <div className="mt-1">
+              <span
+                className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
+                  TIER_BADGE_CLASS[s.tier] ?? "bg-gray-100 text-gray-700 border-gray-300"
+                }`}
+              >
+                {TIER_LABEL[s.tier] ?? s.tier}
+              </span>
+            </div>
             <div className="mt-3 flex items-center gap-1">
               <Button
                 size="sm"
@@ -329,13 +341,57 @@ function SponsorFormDialog({
     const url = URL.createObjectURL(f);
     const img = new Image();
     img.onload = () => {
-      if (img.naturalWidth !== 960 || img.naturalHeight !== 540) {
-        toast.error(
-          `Dimensão inválida (${img.naturalWidth}×${img.naturalHeight}). Use exatamente 960×540.`,
-        );
-        URL.revokeObjectURL(url);
-        if (fileRef.current) fileRef.current.value = "";
+      if (img.naturalWidth === 960 && img.naturalHeight === 540) {
+        setFile(f);
+        setPreview(url);
         return;
+      }
+      try {
+        const canvas = document.createElement("canvas");
+        canvas.width = 960;
+        canvas.height = 540;
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.fillStyle = "#ffffff";
+          ctx.fillRect(0, 0, 960, 540);
+          const hRatio = 960 / img.naturalWidth;
+          const vRatio = 540 / img.naturalHeight;
+          const ratio = Math.min(hRatio, vRatio);
+          const centerShiftX = (960 - img.naturalWidth * ratio) / 2;
+          const centerShiftY = (540 - img.naturalHeight * ratio) / 2;
+          ctx.drawImage(
+            img,
+            0,
+            0,
+            img.naturalWidth,
+            img.naturalHeight,
+            centerShiftX,
+            centerShiftY,
+            img.naturalWidth * ratio,
+            img.naturalHeight * ratio,
+          );
+          canvas.toBlob(
+            (blob) => {
+              if (blob) {
+                const resizedFile = new File([blob], f.name.replace(/\.[^.]+$/, ".jpg"), {
+                  type: "image/jpeg",
+                });
+                const resizedUrl = URL.createObjectURL(blob);
+                setFile(resizedFile);
+                setPreview(resizedUrl);
+                toast.success("Imagem adaptada automaticamente para 960×540.");
+              } else {
+                setFile(f);
+                setPreview(url);
+              }
+            },
+            "image/jpeg",
+            0.92,
+          );
+          return;
+        }
+      } catch {
+        // Fallback
       }
       setFile(f);
       setPreview(url);

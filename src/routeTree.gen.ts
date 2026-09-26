@@ -28,6 +28,7 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/
 import { Route as InscricaoSucessoRouteImport } from './routes/inscricao_.sucesso'
 import { Route as AuthenticatedAdminConfiguracoesRouteImport } from './routes/_authenticated/admin.configuracoes'
 import { Route as AuthenticatedAdminDashboardRouteImport } from './routes/_authenticated/admin.dashboard'
+import { Route as AuthenticatedAdminFinanceiroRouteImport } from './routes/_authenticated/admin.financeiro'
 import { Route as AuthenticatedAdminInscricoesRouteImport } from './routes/_authenticated/admin.inscricoes'
 import { Route as AuthenticatedAdminLogsRouteImport } from './routes/_authenticated/admin.logs'
 import { Route as AuthenticatedAdminPagamentosRouteImport } from './routes/_authenticated/admin.pagamentos'
@@ -131,6 +132,12 @@ const AuthenticatedAdminDashboardRoute =
     path: '/dashboard',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminFinanceiroRoute =
+  AuthenticatedAdminFinanceiroRouteImport.update({
+    id: '/financeiro',
+    path: '/financeiro',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminInscricoesRoute =
   AuthenticatedAdminInscricoesRouteImport.update({
     id: '/inscricoes',
@@ -185,6 +192,7 @@ export interface FileRoutesByFullPath {
   '/inscricao/sucesso': typeof InscricaoSucessoRoute
   '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
+  '/admin/financeiro': typeof AuthenticatedAdminFinanceiroRoute
   '/admin/inscricoes': typeof AuthenticatedAdminInscricoesRouteWithChildren
   '/admin/logs': typeof AuthenticatedAdminLogsRoute
   '/admin/pagamentos': typeof AuthenticatedAdminPagamentosRoute
@@ -211,6 +219,7 @@ export interface FileRoutesByTo {
   '/inscricao/sucesso': typeof InscricaoSucessoRoute
   '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
+  '/admin/financeiro': typeof AuthenticatedAdminFinanceiroRoute
   '/admin/inscricoes': typeof AuthenticatedAdminInscricoesRouteWithChildren
   '/admin/logs': typeof AuthenticatedAdminLogsRoute
   '/admin/pagamentos': typeof AuthenticatedAdminPagamentosRoute
@@ -239,6 +248,7 @@ export interface FileRoutesById {
   '/inscricao_/sucesso': typeof InscricaoSucessoRoute
   '/_authenticated/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/_authenticated/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
+  '/_authenticated/admin/financeiro': typeof AuthenticatedAdminFinanceiroRoute
   '/_authenticated/admin/inscricoes': typeof AuthenticatedAdminInscricoesRouteWithChildren
   '/_authenticated/admin/logs': typeof AuthenticatedAdminLogsRoute
   '/_authenticated/admin/pagamentos': typeof AuthenticatedAdminPagamentosRoute
@@ -267,6 +277,7 @@ export interface FileRouteTypes {
     | '/inscricao/sucesso'
     | '/admin/configuracoes'
     | '/admin/dashboard'
+    | '/admin/financeiro'
     | '/admin/inscricoes'
     | '/admin/logs'
     | '/admin/pagamentos'
@@ -293,6 +304,7 @@ export interface FileRouteTypes {
     | '/inscricao/sucesso'
     | '/admin/configuracoes'
     | '/admin/dashboard'
+    | '/admin/financeiro'
     | '/admin/inscricoes'
     | '/admin/logs'
     | '/admin/pagamentos'
@@ -320,6 +332,7 @@ export interface FileRouteTypes {
     | '/inscricao_/sucesso'
     | '/_authenticated/admin/configuracoes'
     | '/_authenticated/admin/dashboard'
+    | '/_authenticated/admin/financeiro'
     | '/_authenticated/admin/inscricoes'
     | '/_authenticated/admin/logs'
     | '/_authenticated/admin/pagamentos'
@@ -483,6 +496,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminDashboardRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/financeiro': {
+      id: '/_authenticated/admin/financeiro'
+      path: '/financeiro'
+      fullPath: '/admin/financeiro'
+      preLoaderRoute: typeof AuthenticatedAdminFinanceiroRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/inscricoes': {
       id: '/_authenticated/admin/inscricoes'
       path: '/inscricoes'
@@ -545,6 +565,7 @@ const AuthenticatedAdminInscricoesRouteWithChildren =
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminConfiguracoesRoute: typeof AuthenticatedAdminConfiguracoesRoute
   AuthenticatedAdminDashboardRoute: typeof AuthenticatedAdminDashboardRoute
+  AuthenticatedAdminFinanceiroRoute: typeof AuthenticatedAdminFinanceiroRoute
   AuthenticatedAdminInscricoesRoute: typeof AuthenticatedAdminInscricoesRouteWithChildren
   AuthenticatedAdminLogsRoute: typeof AuthenticatedAdminLogsRoute
   AuthenticatedAdminPagamentosRoute: typeof AuthenticatedAdminPagamentosRoute
@@ -554,6 +575,7 @@ interface AuthenticatedAdminRouteChildren {
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminConfiguracoesRoute: AuthenticatedAdminConfiguracoesRoute,
   AuthenticatedAdminDashboardRoute: AuthenticatedAdminDashboardRoute,
+  AuthenticatedAdminFinanceiroRoute: AuthenticatedAdminFinanceiroRoute,
   AuthenticatedAdminInscricoesRoute:
     AuthenticatedAdminInscricoesRouteWithChildren,
   AuthenticatedAdminLogsRoute: AuthenticatedAdminLogsRoute,

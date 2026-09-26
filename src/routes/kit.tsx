@@ -18,8 +18,9 @@ export const Route = createFileRoute("/kit")({
         content:
           "Conheça todos os itens do kit oficial: camiseta, número, chip de cronometragem, coqueteleira, chaveiro e medalha finisher.",
       },
-      { property: "og:image", content: kitExclusivo },
-      { name: "twitter:image", content: kitExclusivo },
+      { property: "og:image", content: "https://corridascorremais.com.br/og-image.jpg" },
+      { property: "og:image:secure_url", content: "https://corridascorremais.com.br/og-image.jpg" },
+      { name: "twitter:image", content: "https://corridascorremais.com.br/og-image.jpg" },
     ],
   }),
   component: Page,

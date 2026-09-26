@@ -18,8 +18,9 @@ export const Route = createFileRoute("/percurso")({
         content:
           "Trajeto pelas principais vias de Serra Talhada — largada e chegada no portão do Shopping Serra Talhada na Av. Adriano Duque de Godoy Sousa.",
       },
-      { property: "og:image", content: percursoMapa },
-      { name: "twitter:image", content: percursoMapa },
+      { property: "og:image", content: "https://corridascorremais.com.br/og-image.jpg" },
+      { property: "og:image:secure_url", content: "https://corridascorremais.com.br/og-image.jpg" },
+      { name: "twitter:image", content: "https://corridascorremais.com.br/og-image.jpg" },
     ],
   }),
   component: Page,

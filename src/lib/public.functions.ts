@@ -47,6 +47,12 @@ export const getActiveEvent = createServerFn({ method: "GET" }).handler(async ()
   return { event, currentLot: (lots?.[0] as ActiveLot | undefined) ?? null };
 });
 
+const SPONSOR_TIER_RANK: Record<string, number> = {
+  diamond: 1,
+  gold: 2,
+  silver: 3,
+};
+
 export const getPublishedSponsors = createServerFn({ method: "GET" }).handler(async () => {
   const supabase = publicClient();
   const { data } = await supabase
@@ -55,7 +61,17 @@ export const getPublishedSponsors = createServerFn({ method: "GET" }).handler(as
     .eq("is_published", true)
     .order("sort_order", { ascending: true })
     .order("created_at", { ascending: true });
-  return data ?? [];
+
+  const rows = data ?? [];
+  return [...rows].sort((a, b) => {
+    const tierA = SPONSOR_TIER_RANK[a.tier] ?? 99;
+    const tierB = SPONSOR_TIER_RANK[b.tier] ?? 99;
+    if (tierA !== tierB) return tierA - tierB;
+    const sortA = a.sort_order ?? 0;
+    const sortB = b.sort_order ?? 0;
+    if (sortA !== sortB) return sortA - sortB;
+    return (a.created_at || "").localeCompare(b.created_at || "");
+  });
 });
 
 export const getPublicSettings = createServerFn({ method: "GET" }).handler(async () => {

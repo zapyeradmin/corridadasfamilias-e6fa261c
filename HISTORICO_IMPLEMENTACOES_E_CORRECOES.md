@@ -92,8 +92,17 @@ Este documento consolida todas as implementações, decisões de arquitetura, co
 ## 4. Identidade Visual, Banners e Assets
 
 - **Banner de Compartilhamento Social (OG Image / Twitter Card):**
-  - Configurada a imagem oficial `capa-video-lancamento.jpg` localizada em `src/assets/`.
-  - As tags `<meta property="og:image">` e `<meta name="twitter:image">` apontam para a URL absoluta `https://corridascorremais.com.br/capa-video-lancamento.jpg`.
+  - Configurada a imagem oficial de alta fidelidade `og-image.jpg` (1200x630px, aspect ratio 1.91:1, otimizada em ~207 KB para carregamento instantâneo no WhatsApp, Facebook, LinkedIn e Twitter/X).
+  - Imagem oficial com arte da 2ª Corrida Natalina | Corre +: medalha, camiseta, troféu de 6km, coqueteleira e chaveiro para os 335 primeiros inscritos, data do evento (20 de Dezembro) e local (Shopping Serra Talhada - Beach Garden).
+  - Arquivos disponíveis em `public/og-image.jpg`, `public/og-image-2026.jpg`, `public/og-image-1024.jpg`, `public/capa-video-lancamento.jpg` e `src/assets/og-image.jpg`.
+  - As tags `<meta property="og:image">`, `<meta property="og:image:secure_url">` e `<meta name="twitter:image">` apontam para a URL absoluta `https://corridascorremais.com.br/og-image.jpg`.
+  - Metadados Open Graph enriquecidos com `og:site_name`, `og:locale (pt_BR)`, `og:image:width (1200)`, `og:image:height (630)`, `og:image:alt` e `og:url`.
+- **SEO & Otimização para Buscas (Google / Bing):**
+  - Meta tags configuradas: `description`, `keywords`, `author`, `robots (index, follow, max-image-preview:large)`, `googlebot` e `format-detection`.
+  - Link canônico `<link rel="canonical" href="https://corridascorremais.com.br/">`.
+  - Arquivo `public/robots.txt` permitindo indexação de páginas públicas e resguardando rotas privadas/admin.
+  - Arquivo `public/sitemap.xml` estruturado com todas as rotas públicas, frequências de atualização e prioridades.
+  - Dados Estruturados em JSON-LD (`https://schema.org`): Schemas de `SportsEvent` e `Organization` integrados no cabeçalho SSR para exibição rica no Google (Rich Snippets).
 - **Favicons & Ícones:**
   - Gerados e configurados na raiz estática (`.output/public` e `public/`):
     - `favicon.ico`

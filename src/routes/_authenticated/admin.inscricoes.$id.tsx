@@ -1,11 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import { useState } from "react";
 import { getRegistrationDetail, resendConfirmationEmailAdmin } from "@/lib/admin.functions";
 import { formatCents, formatDateTimeBR } from "@/lib/format";
 import { Button } from "@/components/ui/button";
-import { Mail } from "lucide-react";
+import { Mail, Pencil } from "lucide-react";
 import { toast } from "sonner";
+import { useRegistrationsRealtime } from "@/hooks/use-registrations-realtime";
+import { RegistrationEditDialog } from "@/components/admin/registration-edit-dialog";
 
 export const Route = createFileRoute("/_authenticated/admin/inscricoes/$id")({
   head: () => ({ meta: [{ title: "Admin · Detalhe da inscrição" }] }),
@@ -13,7 +16,9 @@ export const Route = createFileRoute("/_authenticated/admin/inscricoes/$id")({
 });
 
 function Page() {
+  useRegistrationsRealtime();
   const { id } = Route.useParams();
+  const [editOpen, setEditOpen] = useState(false);
   const fetchDetail = useServerFn(getRegistrationDetail);
   const resendEmail = useServerFn(resendConfirmationEmailAdmin);
   const { data, isLoading } = useQuery({
@@ -52,15 +57,26 @@ function Page() {
           <p className="mt-1 font-mono text-xs text-muted-foreground">Protocolo {r.protocol}</p>
         </div>
 
-        <Button
-          onClick={() => resendMutation.mutate()}
-          disabled={resendMutation.isPending}
-          variant="outline"
-          className="border-[#c20505] text-[#c20505] hover:bg-[#c20505] hover:text-white font-bold gap-2 self-start sm:self-auto"
-        >
-          <Mail className="h-4 w-4" />
-          {resendMutation.isPending ? "Reenviando..." : "Reenviar E-mail de Confirmação"}
-        </Button>
+        <div className="flex flex-wrap items-center gap-2.5 self-start sm:self-auto">
+          <Button
+            onClick={() => setEditOpen(true)}
+            variant="outline"
+            className="border-[#c20505] text-[#c20505] hover:bg-[#c20505] hover:text-white font-bold gap-2"
+          >
+            <Pencil className="h-4 w-4" />
+            Editar Inscrição
+          </Button>
+
+          <Button
+            onClick={() => resendMutation.mutate()}
+            disabled={resendMutation.isPending}
+            variant="outline"
+            className="border-border text-foreground hover:bg-muted font-bold gap-2"
+          >
+            <Mail className="h-4 w-4" />
+            {resendMutation.isPending ? "Reenviando..." : "Reenviar E-mail"}
+          </Button>
+        </div>
       </div>
 
       <section className="grid gap-4 md:grid-cols-2">
@@ -119,6 +135,12 @@ function Page() {
           </table>
         </div>
       </section>
+
+      <RegistrationEditDialog
+        id={id}
+        open={editOpen}
+        onOpenChange={setEditOpen}
+      />
     </div>
   );
 }

@@ -9,6 +9,7 @@ import {
 } from "@/lib/email.service";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
+import { normalizeCpf } from "@/lib/cpf";
 
 type RegistrationStatus = "pending" | "processing" | "paid" | "canceled" | "refunded";
 type SponsorTier = "diamond" | "gold" | "silver" | "standard";
@@ -70,36 +71,130 @@ export const getDashboardKPIs = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     await assertAdmin(context.supabase, context.userId, context.claims as { email?: string });
 
-    const [regsRes, paymentsRes, recentRes, lotsRes] = await Promise.all([
-      context.supabase.from("registrations").select("status, amount_cents"),
-      context.supabase.from("payments").select("status, amount_cents, paid_at"),
-      context.supabase
+    const [regsRes, paymentsRes, lotsRes] = await Promise.all([
+      supabaseAdmin
         .from("registrations")
-        .select("id, protocol, full_name, status, amount_cents, created_at")
-        .order("created_at", { ascending: false })
-        .limit(50),
-      context.supabase.from("lots").select("id, name, price_cents"),
+        .select(
+          "id, protocol, full_name, email, whatsapp, status, amount_cents, category, gender, shirt_size, created_at",
+        )
+        .order("created_at", { ascending: false }),
+      supabaseAdmin.from("payments").select("id, status, amount_cents, paid_at"),
+      supabaseAdmin.from("lots").select("id, name, price_cents"),
     ]);
+
+    if (regsRes.error) {
+      console.error("[getDashboardKPIs] Erro ao buscar registrations:", regsRes.error);
+    }
+    if (paymentsRes.error) {
+      console.error("[getDashboardKPIs] Erro ao buscar payments:", paymentsRes.error);
+    }
 
     const regs = regsRes.data ?? [];
     const payments = paymentsRes.data ?? [];
 
-    const byStatus: Record<string, number> = {};
-    for (const r of regs) byStatus[r.status] = (byStatus[r.status] ?? 0) + 1;
+    const byStatus: Record<string, number> = {
+      paid: 0,
+      pending: 0,
+      processing: 0,
+      canceled: 0,
+      refunded: 0,
+    };
+    const byCategory: Record<string, number> = {};
+    const byGender: Record<string, number> = { M: 0, F: 0, Outro: 0 };
+    const byShirtSize: Record<string, number> = { PP: 0, P: 0, M: 0, G: 0, GG: 0, XGG: 0 };
+    const byDate: Record<string, { total: number; paid: number; pending: number }> = {};
 
-    // Receita confirmada = soma das INSCRIÇÕES com status = 'paid' (fonte de verdade).
-    const revenueCents = regs
-      .filter((r) => r.status === "paid")
-      .reduce((sum, r) => sum + (r.amount_cents ?? 0), 0);
+    let revenueCents = 0;
+    let pendingRevenueCents = 0;
+
+    for (const r of regs) {
+      const st = r.status ?? "pending";
+      byStatus[st] = (byStatus[st] ?? 0) + 1;
+
+      if (st === "paid") {
+        revenueCents += r.amount_cents ?? 0;
+      } else if (st === "pending" || st === "processing") {
+        pendingRevenueCents += r.amount_cents ?? 0;
+      }
+
+      if (r.category) {
+        byCategory[r.category] = (byCategory[r.category] ?? 0) + 1;
+      }
+      if (r.gender) {
+        if (r.gender === "M") byGender["M"] = (byGender["M"] ?? 0) + 1;
+        else if (r.gender === "F") byGender["F"] = (byGender["F"] ?? 0) + 1;
+        else byGender["Outro"] = (byGender["Outro"] ?? 0) + 1;
+      }
+      if (r.shirt_size) {
+        byShirtSize[r.shirt_size] = (byShirtSize[r.shirt_size] ?? 0) + 1;
+      }
+
+      if (r.created_at) {
+        const d = r.created_at.slice(0, 10);
+        if (!byDate[d]) {
+          byDate[d] = { total: 0, paid: 0, pending: 0 };
+        }
+        byDate[d].total += 1;
+        if (st === "paid") byDate[d].paid += 1;
+        if (st === "pending") byDate[d].pending += 1;
+      }
+    }
+
+    const timeline = Object.entries(byDate)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([date, counts]) => ({
+        date,
+        total: counts.total,
+        paid: counts.paid,
+        pending: counts.pending,
+      }));
+
+    const pendingAthletes = regs
+      .filter((r) => r.status === "pending")
+      .map((r) => ({
+        id: r.id,
+        protocol: r.protocol,
+        full_name: r.full_name,
+        email: r.email,
+        whatsapp: r.whatsapp,
+        amount_cents: r.amount_cents,
+        category: r.category,
+        shirt_size: r.shirt_size,
+        created_at: r.created_at,
+      }));
+
+    const recent = regs.slice(0, 50).map((r) => ({
+      id: r.id,
+      protocol: r.protocol,
+      full_name: r.full_name,
+      status: r.status,
+      amount_cents: r.amount_cents,
+      created_at: r.created_at,
+      category: r.category,
+      gender: r.gender,
+      whatsapp: r.whatsapp,
+    }));
+
+    const paidCount = byStatus.paid ?? 0;
+    const ticketMedioCents = paidCount > 0 ? Math.round(revenueCents / paidCount) : 0;
+    const conversionRate = regs.length > 0 ? Math.round((paidCount / regs.length) * 100) : 0;
 
     return {
       totalRegistrations: regs.length,
       byStatus,
+      byCategory,
+      byGender,
+      byShirtSize,
+      timeline,
       revenueCents,
+      pendingRevenueCents,
+      ticketMedioCents,
+      conversionRate,
       paymentsPaid: payments.filter((p) => p.status === "paid").length,
       paymentsPending: payments.filter((p) => p.status === "pending").length,
       lotCount: (lotsRes.data ?? []).length,
-      recent: recentRes.data ?? [],
+      recent,
+      pendingAthletes,
     };
   });
 
@@ -120,7 +215,7 @@ export const listRegistrations = createServerFn({ method: "GET" })
     const from = (data.page - 1) * data.pageSize;
     const to = from + data.pageSize - 1;
 
-    let query = context.supabase
+    let query = supabaseAdmin
       .from("registrations")
       .select(
         "id, protocol, full_name, email, whatsapp, cpf, category, shirt_size, status, amount_cents, created_at",
@@ -147,14 +242,14 @@ export const getRegistrationDetail = createServerFn({ method: "GET" })
   .inputValidator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
   .handler(async ({ context, data }) => {
     await assertAdmin(context.supabase, context.userId, context.claims as { email?: string });
-    const { data: reg, error } = await context.supabase
+    const { data: reg, error } = await supabaseAdmin
       .from("registrations")
       .select("*")
       .eq("id", data.id)
       .maybeSingle();
     if (error) throw new Error(error.message);
     if (!reg) throw new Error("Inscrição não encontrada.");
-    const { data: payments } = await context.supabase
+    const { data: payments } = await supabaseAdmin
       .from("payments")
       .select("*")
       .eq("registration_id", data.id)
@@ -207,6 +302,97 @@ export const updateRegistrationStatus = createServerFn({ method: "POST" })
       entityId: data.id,
       details: { status: data.status },
     });
+    return { ok: true };
+  });
+
+export const updateRegistrationAdmin = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z
+      .object({
+        id: z.string().uuid(),
+        full_name: z.string().trim().min(2, "Nome deve ter no mínimo 2 caracteres").max(120),
+        cpf: z.string().trim().min(11, "CPF inválido").max(20),
+        email: z.string().trim().email("E-mail inválido").max(160),
+        whatsapp: z.string().trim().min(8, "WhatsApp inválido").max(25),
+        birth_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Data de nascimento inválida (AAAA-MM-DD)"),
+        gender: z.enum(["M", "F", "male", "female"]),
+        shirt_size: z.enum(["PP", "P", "M", "G", "GG", "XGG", "pp", "p", "m", "g", "gg", "xgg"]),
+        category: z.string().min(2, "Selecione a categoria"),
+        emergency_contact_name: z.string().trim().min(2, "Nome do contato de emergência obrigatório").max(120),
+        emergency_contact_phone: z.string().trim().min(8, "Telefone de emergência inválido").max(25),
+        medical_notes: z.string().max(500).nullable().optional(),
+        status: z.enum(["pending", "processing", "paid", "canceled", "refunded"]).optional(),
+        amount_cents: z.number().int().min(0).optional(),
+      })
+      .parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    const admin = await assertAdmin(
+      context.supabase,
+      context.userId,
+      context.claims as { email?: string },
+    );
+
+    const normCpf = normalizeCpf(data.cpf);
+    const dbGender = data.gender === "male" || data.gender === "M" ? "M" : "F";
+    const dbShirt = data.shirt_size.toUpperCase() as "PP" | "P" | "M" | "G" | "GG" | "XGG";
+
+    const patch: Database["public"]["Tables"]["registrations"]["Update"] = {
+      full_name: data.full_name,
+      cpf: data.cpf,
+      cpf_normalized: normCpf,
+      email: data.email,
+      whatsapp: data.whatsapp,
+      birth_date: data.birth_date,
+      gender: dbGender,
+      shirt_size: dbShirt,
+      category: data.category,
+      emergency_contact_name: data.emergency_contact_name,
+      emergency_contact_phone: data.emergency_contact_phone,
+      medical_notes: data.medical_notes ?? null,
+      updated_at: new Date().toISOString(),
+    };
+
+    if (data.status) {
+      patch.status = data.status;
+    }
+    if (data.amount_cents !== undefined) {
+      patch.amount_cents = data.amount_cents;
+    }
+
+    const { error } = await context.supabase
+      .from("registrations")
+      .update(patch)
+      .eq("id", data.id);
+
+    if (error) throw new Error(error.message);
+
+    // Se o status foi atualizado, sincroniza com pagamentos
+    if (data.status) {
+      const paymentPatch: { status: typeof data.status; paid_at?: string | null } = {
+        status: data.status,
+      };
+      if (data.status === "paid") {
+        paymentPatch.paid_at = new Date().toISOString();
+      } else {
+        paymentPatch.paid_at = null;
+      }
+      await context.supabase
+        .from("payments")
+        .update(paymentPatch)
+        .eq("registration_id", data.id);
+    }
+
+    await logAction(context.supabase, {
+      actorId: admin.userId,
+      actorEmail: admin.email,
+      action: "registration.update_admin",
+      entityType: "registration",
+      entityId: data.id,
+      details: { ...data, cpf_normalized: normCpf, gender: dbGender, shirt_size: dbShirt },
+    });
+
     return { ok: true };
   });
 
@@ -314,16 +500,18 @@ export const listSponsorsAdmin = createServerFn({ method: "GET" })
     const to = from + data.pageSize - 1;
     let query = context.supabase
       .from("sponsors")
-      .select("*", { count: "exact" })
-      .order("sort_order", { ascending: true })
-      .order("created_at", { ascending: false })
-      .range(from, to);
+      .select("*", { count: "exact" });
     if (data.tier && data.tier !== "all") {
       query = query.eq("tier", data.tier);
     }
     if (data.search && data.search.trim()) {
       query = query.ilike("name", `%${data.search.trim()}%`);
     }
+    query = query
+      .order("tier", { ascending: true })
+      .order("sort_order", { ascending: true })
+      .order("created_at", { ascending: false })
+      .range(from, to);
     const { data: rows, count, error } = await query;
     if (error) throw new Error(error.message);
     return { rows: rows ?? [], total: count ?? 0, page: data.page, pageSize: data.pageSize };

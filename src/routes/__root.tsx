@@ -73,33 +73,110 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   );
 }
 
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "SportsEvent",
+      "@id": "https://corridascorremais.com.br/#event",
+      "name": "2ª Corrida Natalina | Corre +",
+      "description":
+        "2ª Corrida Natalina em Serra Talhada/PE (20 de Dezembro de 2026). Percurso de 6km com largada no Shopping Serra Talhada (Beach Garden), kits exclusivos, premiação em dinheiro e troféus.",
+      "startDate": "2026-12-20T06:00:00-03:00",
+      "endDate": "2026-12-20T11:00:00-03:00",
+      "eventStatus": "https://schema.org/EventScheduled",
+      "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+      "location": {
+        "@type": "Place",
+        "name": "Beach Garden · Shopping Serra Talhada",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Av. Adriano Duque de Godoy Sousa",
+          "addressLocality": "Serra Talhada",
+          "addressRegion": "PE",
+          "postalCode": "56900-000",
+          "addressCountry": "BR",
+        },
+      },
+      "image": ["https://corridascorremais.com.br/og-image.jpg"],
+      "organizer": {
+        "@type": "Organization",
+        "@id": "https://corridascorremais.com.br/#organization",
+        "name": "Corre +",
+        "url": "https://corridascorremais.com.br",
+      },
+      "offers": {
+        "@type": "Offer",
+        "url": "https://corridascorremais.com.br/inscricao",
+        "price": "83.60",
+        "priceCurrency": "BRL",
+        "availability": "https://schema.org/InStock",
+        "validFrom": "2026-09-01T00:00:00-03:00",
+      },
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://corridascorremais.com.br/#organization",
+      "name": "Corre +",
+      "url": "https://corridascorremais.com.br",
+      "logo": "https://corridascorremais.com.br/favicon.png",
+      "sameAs": ["https://www.instagram.com/corremaisst/"],
+      "contactPoint": [
+        {
+          "@type": "ContactPoint",
+          "telephone": "+55-87-99201-7978",
+          "contactType": "customer service",
+          "areaServed": "BR",
+          "availableLanguage": "Portuguese",
+        },
+      ],
+    },
+  ],
+};
+
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { name: "theme-color", content: "#e70202" },
-      { title: "2ª Corrida Natalina | Corre +" },
+      { title: "2ª Corrida Natalina | Corre + — Serra Talhada/PE" },
       {
         name: "description",
         content:
-          "2ª Corrida Natalina em Serra Talhada/PE. Corre + — Saúde, esporte, celebração e confraternização.",
+          "2ª Corrida Natalina em Serra Talhada/PE no dia 20 de Dezembro de 2026. Percurso de 6km, kits exclusivos com coqueteleira e chaveiro para os 335 primeiros inscritos, troféus e medalha finisher. Inscrições abertas!",
       },
+      {
+        name: "keywords",
+        content:
+          "2ª Corrida Natalina, Corrida Natalina, Corre +, Serra Talhada, corrida 6km, corrida de rua, atletismo sertão pernambucano, inscrições corrida natalina, Shopping Serra Talhada, Beach Garden",
+      },
+      { name: "author", content: "Corre +" },
+      {
+        name: "robots",
+        content: "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+      },
+      { name: "googlebot", content: "index, follow, max-image-preview:large" },
+      { name: "format-detection", content: "telephone=no" },
+
+      // Open Graph (WhatsApp, Facebook, LinkedIn, Telegram, etc.)
+      { property: "og:site_name", content: "2ª Corrida Natalina | Corre +" },
       { property: "og:type", content: "website" },
       { property: "og:locale", content: "pt_BR" },
-      { property: "og:title", content: "2ª Corrida Natalina | Corre +" },
+      { property: "og:url", content: "https://corridascorremais.com.br/" },
+      { property: "og:title", content: "2ª Corrida Natalina | Corre + — Inscrições Abertas!" },
       {
         property: "og:description",
         content:
-          "2ª Corrida Natalina em Serra Talhada/PE. Corre + — Saúde, esporte, celebração e confraternização.",
+          "20 de Dezembro em Serra Talhada/PE. Percurso de 6km, kit exclusivo completo com coqueteleira e chaveiro para os 335 primeiros atletas. Inscreva-se já!",
       },
       {
         property: "og:image",
-        content: "https://corridascorremais.com.br/capa-video-lancamento.jpg",
+        content: "https://corridascorremais.com.br/og-image.jpg",
       },
       {
         property: "og:image:secure_url",
-        content: "https://corridascorremais.com.br/capa-video-lancamento.jpg",
+        content: "https://corridascorremais.com.br/og-image.jpg",
       },
       {
         property: "og:image:type",
@@ -111,25 +188,35 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       {
         property: "og:image:height",
-        content: "675",
+        content: "630",
       },
       {
         property: "og:image:alt",
-        content: "2ª Corrida Natalina | Corre +",
+        content:
+          "2ª Corrida Natalina em Serra Talhada/PE - Inscrições Abertas - 20 de Dezembro de 2026",
       },
+
+      // Twitter / X
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "2ª Corrida Natalina | Corre +" },
+      { name: "twitter:site", content: "@corremaisst" },
+      { name: "twitter:creator", content: "@corremaisst" },
+      { name: "twitter:title", content: "2ª Corrida Natalina | Corre + — Inscrições Abertas!" },
       {
         name: "twitter:description",
         content:
-          "2ª Corrida Natalina (Edição 2026) | Corre +. Uma corrida de 6km em Serra Talhada/PE no dia 20 de dezembro de 2026.",
+          "20 de Dezembro em Serra Talhada/PE. Percurso de 6km, kit exclusivo completo com brindes para os 335 primeiros inscritos. Garanta sua vaga!",
       },
       {
         name: "twitter:image",
-        content: "https://corridascorremais.com.br/capa-video-lancamento.jpg",
+        content: "https://corridascorremais.com.br/og-image.jpg",
+      },
+      {
+        name: "twitter:image:alt",
+        content: "2ª Corrida Natalina | Corre + — Inscrições Abertas",
       },
     ],
     links: [
+      { rel: "canonical", href: "https://corridascorremais.com.br/" },
       { rel: "icon", href: "/favicon.ico", sizes: "any" },
       { rel: "icon", type: "image/png", sizes: "32x32", href: "/favicon-32x32.png" },
       { rel: "icon", type: "image/png", sizes: "16x16", href: "/favicon-16x16.png" },
@@ -160,6 +247,10 @@ function RootShell({ children }: { children: React.ReactNode }) {
     <html lang="pt-BR">
       <head>
         <HeadContent />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
       </head>
       <body>
         {children}

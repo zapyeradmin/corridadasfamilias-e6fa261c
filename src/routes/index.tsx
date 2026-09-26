@@ -35,23 +35,23 @@ const HomeFaq = lazy(() =>
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "2ª Corrida Natalina | Corre +" },
+      { title: "2ª Corrida Natalina | Corre + — Inscrições Abertas" },
       {
         name: "description",
-        content: `Inscrições abertas para a ${SITE.name}, ${SITE.eventDateLabel}, em ${SITE.city}. Corrida de 6km com largada no ${SITE.location}.`,
+        content: `Inscrições abertas para a ${SITE.name}, ${SITE.eventDateLabel}, em ${SITE.city}. Corrida de 6km com largada no ${SITE.location}. Brindes exclusivos (coqueteleira + chaveiro) para os 335 primeiros atletas inscritos!`,
       },
-      { property: "og:title", content: "2ª Corrida Natalina | Corre +" },
+      { property: "og:title", content: "2ª Corrida Natalina | Corre + — Inscrições Abertas" },
       {
         property: "og:description",
-        content: `Corrida de 6km em ${SITE.city}. ${SITE.eventDateLabel}.`,
+        content: `Corrida de 6km em ${SITE.city} no dia ${SITE.eventDateLabel}. Garanta já a sua vaga e kit com coqueteleira e chaveiro para os 335 primeiros inscritos!`,
       },
       {
         property: "og:image",
-        content: "https://corridascorremais.com.br/capa-video-lancamento.jpg",
+        content: "https://corridascorremais.com.br/og-image.jpg",
       },
       {
         property: "og:image:secure_url",
-        content: "https://corridascorremais.com.br/capa-video-lancamento.jpg",
+        content: "https://corridascorremais.com.br/og-image.jpg",
       },
       {
         property: "og:image:type",
@@ -63,16 +63,24 @@ export const Route = createFileRoute("/")({
       },
       {
         property: "og:image:height",
-        content: "675",
+        content: "630",
       },
       {
         property: "og:image:alt",
-        content: "2ª Corrida Natalina | Corre +",
+        content: "2ª Corrida Natalina | Corre + — Inscrições Abertas — 20 de Dezembro de 2026",
       },
       { name: "twitter:card", content: "summary_large_image" },
       {
+        name: "twitter:title",
+        content: "2ª Corrida Natalina | Corre + — Inscrições Abertas",
+      },
+      {
+        name: "twitter:description",
+        content: `Corrida de 6km em ${SITE.city} no dia ${SITE.eventDateLabel}. Garanta sua vaga com lote promocional e brindes exclusivos.`,
+      },
+      {
         name: "twitter:image",
-        content: "https://corridascorremais.com.br/capa-video-lancamento.jpg",
+        content: "https://corridascorremais.com.br/og-image.jpg",
       },
     ],
     links: [

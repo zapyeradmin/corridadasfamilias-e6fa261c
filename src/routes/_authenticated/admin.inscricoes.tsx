@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Eye, Pencil } from "lucide-react";
 import { toast } from "sonner";
 import {
   listRegistrations,
@@ -26,6 +26,8 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import { useRegistrationsRealtime } from "@/hooks/use-registrations-realtime";
+import { RegistrationEditDialog } from "@/components/admin/registration-edit-dialog";
 
 export const Route = createFileRoute("/_authenticated/admin/inscricoes")({
   head: () => ({ meta: [{ title: "Admin · Inscrições — 2ª Corrida Natalina | Corre +" }] }),
@@ -44,6 +46,7 @@ const STATUS_LABEL: Record<string, string> = {
 const PAGE_SIZE = 10;
 
 function Page() {
+  useRegistrationsRealtime();
   const fetchList = useServerFn(listRegistrations);
   const updateStatus = useServerFn(updateRegistrationStatus);
   const qc = useQueryClient();
@@ -53,6 +56,7 @@ function Page() {
   const [page, setPage] = useState(1);
   const [pageInput, setPageInput] = useState("1");
   const [detailId, setDetailId] = useState<string | null>(null);
+  const [editId, setEditId] = useState<string | null>(null);
 
   const { data, isLoading } = useQuery({
     queryKey: ["admin", "registrations", status, search, page],
@@ -179,13 +183,24 @@ function Page() {
                   {formatDateTimeBR(r.created_at)}
                 </td>
                 <td className="px-4 py-3">
-                  <button
-                    type="button"
-                    onClick={() => setDetailId(r.id)}
-                    className="text-xs font-semibold text-primary hover:underline"
-                  >
-                    Detalhes
-                  </button>
+                  <div className="flex items-center gap-1.5">
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="h-7 gap-1 px-2 text-xs font-semibold text-primary hover:text-primary hover:bg-primary/10"
+                      onClick={() => setDetailId(r.id)}
+                    >
+                      <Eye className="h-3.5 w-3.5" /> Detalhes
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-7 gap-1 px-2 text-xs font-semibold text-[#c20505] border-[#c20505]/40 hover:bg-[#c20505] hover:text-white"
+                      onClick={() => setEditId(r.id)}
+                    >
+                      <Pencil className="h-3.5 w-3.5" /> Editar
+                    </Button>
+                  </div>
                 </td>
               </tr>
             ))}
@@ -242,6 +257,15 @@ function Page() {
         id={detailId}
         open={detailId !== null}
         onClose={() => setDetailId(null)}
+        onEdit={(id) => setEditId(id)}
+      />
+
+      <RegistrationEditDialog
+        id={editId}
+        open={editId !== null}
+        onOpenChange={(o) => {
+          if (!o) setEditId(null);
+        }}
       />
     </div>
   );
@@ -251,10 +275,12 @@ function RegistrationDetailDialog({
   id,
   open,
   onClose,
+  onEdit,
 }: {
   id: string | null;
   open: boolean;
   onClose: () => void;
+  onEdit?: (id: string) => void;
 }) {
   const fetchDetail = useServerFn(getRegistrationDetail);
   const { data, isLoading } = useQuery({
@@ -271,14 +297,29 @@ function RegistrationDetailDialog({
       }}
     >
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-xl font-extrabold uppercase tracking-tight">
-            {data?.registration.full_name ?? "Detalhes da inscrição"}
-          </DialogTitle>
-          {data && (
-            <DialogDescription className="font-mono text-xs">
-              Protocolo {data.registration.protocol}
-            </DialogDescription>
+        <DialogHeader className="flex flex-row items-start justify-between gap-4">
+          <div>
+            <DialogTitle className="text-xl font-extrabold uppercase tracking-tight text-[#c20505]">
+              {data?.registration.full_name ?? "Detalhes da inscrição"}
+            </DialogTitle>
+            {data && (
+              <DialogDescription className="font-mono text-xs">
+                Protocolo {data.registration.protocol}
+              </DialogDescription>
+            )}
+          </div>
+          {data && onEdit && (
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => {
+                onClose();
+                onEdit(data.registration.id);
+              }}
+              className="gap-1.5 border-[#c20505] text-[#c20505] hover:bg-[#c20505] hover:text-white font-bold"
+            >
+              <Pencil className="h-3.5 w-3.5" /> Editar Inscrição
+            </Button>
           )}
         </DialogHeader>
 
