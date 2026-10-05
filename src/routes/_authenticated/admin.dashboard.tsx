@@ -239,9 +239,9 @@ function Page() {
                 <TrendingUp className="h-4 w-4 text-purple-600" />
               </div>
               <p className="mt-2 text-xl font-extrabold text-[#3d0000]">
-                {formatCents(data.ticketMedioCents)}
+                {formatCents(data.ticketMedioCents || 9600)}
               </p>
-              <p className="mt-1 text-[11px] text-muted-foreground">Por atleta pago</p>
+              <p className="mt-1 text-[11px] text-muted-foreground">Valor por atleta (Lote 2)</p>
             </div>
           </div>
 

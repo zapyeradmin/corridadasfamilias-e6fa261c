@@ -228,4 +228,9 @@ sudo tail -f /var/log/nginx/error.log
    - Integrar Evolution API ou Z-API para envio automático do WhatsApp de boas-vindas com o QR Code de confirmação.
 
 ---
-*Documento gerado e homologado em 04 de Setembro de 2026.*
+*Documento gerado e homologado em 04 de Setembro de 2026. Atualizado em 05 de Outubro de 2026 com o Lote 2 (atualizado).*
+
+### 9. Atualização Lote 2 e Módulo Dashboard (05/10/2026)
+- **Ticket Médio:** Atualizado para R$ 96,00 no Dashboard, Modal de Analytics e Módulo Financeiro, refletindo o preço vigente do Lote 2.
+- **Soma de Inscrições:** As inscrições anteriores do Lote 1 (R$ 83,60) permanecem preservadas na somatória da receita; todas as novas inscrições a partir de agora somam R$ 96,00.
+

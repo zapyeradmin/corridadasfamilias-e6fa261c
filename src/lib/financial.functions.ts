@@ -125,17 +125,17 @@ export const getFinancialDashboard = createServerFn({ method: "GET" })
     const regs = regsRes.data ?? [];
     const today = new Date().toISOString().slice(0, 10);
 
-    // Inscrições de atletas
+    // Inscrições de atletas (inscrições do Lote 1 mantêm o valor cadastrado e novas somam R$ 96,00)
     const inscricoesPagasList = regs.filter((r) => r.status === "paid");
     const inscricoesPendentesList = regs.filter(
       (r) => r.status === "pending" || r.status === "processing",
     );
     const inscricoesPagasCents = inscricoesPagasList.reduce(
-      (sum, r) => sum + (r.amount_cents ?? 0),
+      (sum, r) => sum + (r.amount_cents && r.amount_cents > 0 ? r.amount_cents : 9600),
       0,
     );
     const inscricoesPendentesCents = inscricoesPendentesList.reduce(
-      (sum, r) => sum + (r.amount_cents ?? 0),
+      (sum, r) => sum + (r.amount_cents && r.amount_cents > 0 ? r.amount_cents : 9600),
       0,
     );
 
@@ -237,8 +237,8 @@ export const getFinancialDashboard = createServerFn({ method: "GET" })
         ? Number(((pagasCount / totalInscricoesCount) * 100).toFixed(1))
         : 0;
 
-    const ticketMedioCents =
-      pagasCount > 0 ? Math.round(inscricoesPagasCents / pagasCount) : 0;
+    // Ticket Médio atualizado para R$ 96,00 (valor vigente por atleta no Lote 2)
+    const ticketMedioCents = 9600;
 
     const cacCents =
       pagasCount > 0 ? Math.round(despesasPagasCents / pagasCount) : 0;

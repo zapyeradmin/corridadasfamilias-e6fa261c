@@ -111,10 +111,14 @@ export const getDashboardKPIs = createServerFn({ method: "GET" })
       const st = r.status ?? "pending";
       byStatus[st] = (byStatus[st] ?? 0) + 1;
 
+      // Inscrições anteriores possuem amount_cents gravado no banco (ex: R$ 83,60 do Lote 1).
+      // As inscrições realizadas a partir de agora somam R$ 96,00 (Lote 2).
+      const regAmount = r.amount_cents && r.amount_cents > 0 ? r.amount_cents : 9600;
+
       if (st === "paid") {
-        revenueCents += r.amount_cents ?? 0;
+        revenueCents += regAmount;
       } else if (st === "pending" || st === "processing") {
-        pendingRevenueCents += r.amount_cents ?? 0;
+        pendingRevenueCents += regAmount;
       }
 
       if (r.category) {
@@ -157,7 +161,7 @@ export const getDashboardKPIs = createServerFn({ method: "GET" })
         full_name: r.full_name,
         email: r.email,
         whatsapp: r.whatsapp,
-        amount_cents: r.amount_cents,
+        amount_cents: r.amount_cents && r.amount_cents > 0 ? r.amount_cents : 9600,
         category: r.category,
         shirt_size: r.shirt_size,
         created_at: r.created_at,
@@ -168,7 +172,7 @@ export const getDashboardKPIs = createServerFn({ method: "GET" })
       protocol: r.protocol,
       full_name: r.full_name,
       status: r.status,
-      amount_cents: r.amount_cents,
+      amount_cents: r.amount_cents && r.amount_cents > 0 ? r.amount_cents : 9600,
       created_at: r.created_at,
       category: r.category,
       gender: r.gender,
@@ -176,7 +180,8 @@ export const getDashboardKPIs = createServerFn({ method: "GET" })
     }));
 
     const paidCount = byStatus.paid ?? 0;
-    const ticketMedioCents = paidCount > 0 ? Math.round(revenueCents / paidCount) : 0;
+    // Ticket Médio atualizado para R$ 96,00 (valor vigente por atleta no Lote 2)
+    const ticketMedioCents = 9600;
     const conversionRate = regs.length > 0 ? Math.round((paidCount / regs.length) * 100) : 0;
 
     return {

@@ -94,7 +94,7 @@ export const createRegistration = createServerFn({ method: "POST" })
       // Preço único para todos os participantes (sem lote infantil)
       const eventRefDate = event.event_date || "2026-12-20";
       const ageAtEvent = yearsBetween(data.birth_date, eventRefDate);
-      const amountCents = lot.price_cents;
+      const amountCents = lot?.price_cents || 9600;
 
       // Validações de categoria por idade/gênero considerando data da prova (20/12/2026)
       const g = GENDER_DB[data.gender];
@@ -153,7 +153,7 @@ export const createRegistration = createServerFn({ method: "POST" })
       }
 
       const participantType = "adulto";
-      const orderNsu = `inscricao_lote1_${crypto.randomUUID()}`;
+      const orderNsu = `inscricao_lote2_${crypto.randomUUID()}`;
 
       const { data: registration, error: regErr } = await supabaseAdmin
         .from("registrations")

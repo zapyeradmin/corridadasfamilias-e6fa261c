@@ -308,9 +308,9 @@ export function DashboardAnalyticsModal({
                   <DollarSign className="h-3.5 w-3.5 text-purple-500" />
                 </div>
                 <p className="mt-1 text-xl font-extrabold text-[#3d0000]">
-                  {formatCents(data?.ticketMedioCents ?? 0)}
+                  {formatCents(data?.ticketMedioCents ?? 9600)}
                 </p>
-                <p className="text-[10px] text-muted-foreground">Por inscrição paga</p>
+                <p className="text-[10px] text-muted-foreground">Valor por atleta (Lote 2)</p>
               </div>
 
               <div className="col-span-2 sm:col-span-1 rounded-xl border border-border bg-white p-3 shadow-xs">
