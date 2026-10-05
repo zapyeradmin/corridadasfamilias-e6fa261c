@@ -145,7 +145,7 @@ export function HomeHero() {
             <Countdown className="mt-6" />
             <div className="mt-5 rounded-2xl border border-white/20 bg-white/10 p-3.5 text-center backdrop-blur">
               <p className="text-xs font-black uppercase tracking-wider text-white">
-                Lote 1 (Promocional) · R$ 83,60
+                Lote 2 (atualizado) · R$ 96,00
               </p>
               <p className="mt-1 text-[11px] leading-tight text-white/90">
                 🎁 <strong>Brinde exclusivo:</strong> primeiros 335 inscritos confirmados recebem Coqueteleira + Chaveiro!

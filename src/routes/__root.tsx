@@ -108,7 +108,7 @@ const structuredData = {
       "offers": {
         "@type": "Offer",
         "url": "https://corridascorremais.com.br/inscricao",
-        "price": "83.60",
+        "price": "96.00",
         "priceCurrency": "BRL",
         "availability": "https://schema.org/InStock",
         "validFrom": "2026-09-01T00:00:00-03:00",

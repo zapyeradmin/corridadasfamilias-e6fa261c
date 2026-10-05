@@ -35,9 +35,9 @@ Este documento consolida todas as implementações, decisões de arquitetura, co
 
 ### A. Página de Regulamento (`/regulamento`)
 - Atualizada a seção **"Dos Pagamentos e Lotes"** com o cronograma completo dos lotes:
-  - **Lote 1 (Promocional Único):** R$ 80,00 (Vigente, com camisa oficial e brindes inclusos).
-  - **Lote 2:** R$ 96,00 (Data a ser definida).
-  - **Lote 3:** R$ 105,60 (Data a ser definida).
+  - **Lote 1 (Promocional Único):** R$ 83,60 (Encerrado).
+  - **Lote 2 (atualizado):** R$ 96,00 (Vigente e Ativo).
+  - **Lote 3:** R$ 105,60 (Data a ser definida pela Organização).
 - Preservadas as regras de premiação por categoria, percurso, entrega de kits e suporte aos atletas.
 
 ### B. Formulário de Inscrição (`/inscricao`)
@@ -45,7 +45,7 @@ Este documento consolida todas as implementações, decisões de arquitetura, co
   1. **Dados Pessoais:** Nome completo, CPF (com máscara e validação matemática de dígitos verificadores), E-mail, WhatsApp (com máscara e validação), Data de Nascimento, Sexo e Categoria.
   2. **Kit & Emergência:** Tamanho da camisa (`pp`, `p`, `m`, `g`, `gg`, `xgg`), Nome e Telefone do Contato de Emergência, Observações Médicas (opcional).
   3. **Revisão & Termos:** Aceite do regulamento e política de privacidade LGPD.
-- Cálculo e exibição do valor com base no lote ativo.
+- Cálculo e exibição do valor com base no lote ativo (**Lote 2 atualizado - R$ 96,00**).
 - Redirecionamento com sucesso e acionamento de e-mail de confirmação.
 
 ### C. Painel Administrativo (`/admin`)
@@ -60,7 +60,7 @@ Este documento consolida todas as implementações, decisões de arquitetura, co
 
 ### A. InfinitePay (Pagamentos Pix e Cartão)
 - **Handle:** `edna-maria-4gu`
-- **Link de Checkout Oficial:** `https://checkout.infinitepay.io/edna-maria-4gu/N21HTRtmjN`
+- **Link de Checkout Oficial (Lote 2 atualizado):** `https://checkout.infinitepay.io/edna-maria-4gu/wY2Pf6fcqj`
 - **Webhook Endpoint:** `https://corridascorremais.com.br/api/webhooks/infinitepay`
 - **Tratamento:** Sistema preparado para validação de assinatura quando a chave `INFINITEPAY_WEBHOOK_SECRET` for fornecida pela InfinitePay. Em caso de ausência da chave, o endpoint opera com segurança e log para auditoria.
 

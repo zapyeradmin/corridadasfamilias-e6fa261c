@@ -53,7 +53,7 @@ export const getCheckoutUrlForRegistration = createServerFn({ method: "POST" })
           items: [
             {
               quantity: 1,
-              price: reg.amount_cents || 8360,
+              price: reg.amount_cents || 9600,
               description: "Inscrição 2ª Corrida Natalina | Corre +",
             },
           ],
@@ -92,7 +92,7 @@ export const getCheckoutUrlForRegistration = createServerFn({ method: "POST" })
       const baseUrl =
         (await readSettingString(SETTING_ADULTO)) ||
         (await readSettingString("checkout_adulto")) ||
-        "https://checkout.infinitepay.io/edna-maria-4gu/N21HTRtmjN";
+        "https://checkout.infinitepay.io/edna-maria-4gu/wY2Pf6fcqj";
 
       if (baseUrl) {
         try {

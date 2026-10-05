@@ -19,13 +19,13 @@ import { isValidCpf, maskCpf, maskPhone, normalizeCpf, formatBRL } from "@/lib/c
 export const Route = createFileRoute("/inscricao")({
   head: () => ({
     meta: [
-      { title: "Inscrição — 2ª Corrida Natalina | Corre +" },
+      { title: "Inscrição — Lote 2 (atualizado) — 2ª Corrida Natalina | Corre +" },
       {
         name: "description",
         content:
-          "Garanta sua vaga na 2ª Corrida Natalina | Corre +. Inscrição online em lote promocional único com brindes exclusivos.",
+          "Garanta sua vaga na 2ª Corrida Natalina | Corre +. Inscrição online no Lote 2 (atualizado) por R$ 96,00 com camiseta oficial, chip de cronometragem e medalha finisher.",
       },
-      { property: "og:title", content: "Inscrição — 2ª Corrida Natalina | Corre +" },
+      { property: "og:title", content: "Inscrição — Lote 2 (atualizado) — 2ª Corrida Natalina | Corre +" },
     ],
   }),
   component: Page,
@@ -130,8 +130,8 @@ function resolvePrice(
   _birth: string | undefined,
   _eventDate: string | undefined,
   lot: { price_cents: number; child_price_cents?: number | null } | null | undefined,
-): number | undefined {
-  if (!lot) return undefined;
+): number {
+  if (!lot) return 9600;
   return lot.price_cents;
 }
 
@@ -221,6 +221,26 @@ function Page() {
             className="rounded-3xl border border-border bg-white p-6 shadow-soft md:p-10"
           >
             <Stepper current={step} />
+
+            {/* Aviso oficial Lote 2 (atualizado) */}
+            <div className="mb-8 mt-2 flex items-center justify-between gap-3 rounded-2xl border border-amber-300/80 bg-gradient-to-r from-amber-50 to-orange-50 p-4 text-amber-950 shadow-sm">
+              <div className="flex items-center gap-3">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#c20505] text-xs font-black uppercase text-white shadow-sm">
+                  L2
+                </span>
+                <div>
+                  <p className="text-xs font-black uppercase tracking-wider text-[#c20505]">
+                    Inscrições Abertas · Lote 2 (atualizado)
+                  </p>
+                  <p className="text-xs text-amber-950/85">
+                    Valor único de <strong>R$ 96,00</strong>. Camisa oficial, chip de cronometragem, número de peito, medalha finisher e suporte completo.
+                  </p>
+                </div>
+              </div>
+              <span className="hidden shrink-0 rounded-full bg-[#c20505] px-4 py-1.5 text-xs font-black text-white shadow-sm sm:inline-flex">
+                R$ 96,00
+              </span>
+            </div>
 
             {step === 0 && <StepPersonal form={form} />}
             {step === 1 && <StepKit form={form} />}

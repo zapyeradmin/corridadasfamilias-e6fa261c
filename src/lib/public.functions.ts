@@ -110,7 +110,7 @@ function pickCheckout(
       const url = typeof v.checkout_url === "string" ? v.checkout_url : "";
       return {
         nome_produto: String(v.nome_produto ?? fallbackName),
-        lote: String(v.lote ?? "Lote 1") as CheckoutConfig["lote"],
+        lote: String(v.lote ?? "Lote 2") as CheckoutConfig["lote"],
         valor_cents: Number(v.valor_cents ?? fallbackValor) || fallbackValor,
         checkout_url: url,
         status: url ? "ativo" : "pendente_configuracao",
@@ -121,7 +121,7 @@ function pickCheckout(
   const legacyUrl = typeof value === "string" ? value : "";
   return {
     nome_produto: fallbackName,
-    lote: "Lote 1",
+    lote: "Lote 2",
     valor_cents: fallbackValor,
     checkout_url: legacyUrl,
     status: legacyUrl ? "ativo" : "pendente_configuracao",
@@ -144,11 +144,11 @@ export const getCheckoutConfig = createServerFn({ method: "GET" }).handler(async
   const adultoRow = findRow("checkout_adulto") ?? findRow("infinitepay_checkout_adulto_url");
   const criancaRow = findRow("checkout_crianca") ?? findRow("infinitepay_checkout_crianca_url");
   const adulto: CheckoutConfig = {
-    ...pickCheckout(adultoRow?.value, "Inscrição (Lote 1 Promocional)", 8360),
+    ...pickCheckout(adultoRow?.value, "Inscrição Lote 2 (atualizado)", 9600),
     updated_at: adultoRow?.updated_at ?? null,
   };
   const crianca: CheckoutConfig = {
-    ...pickCheckout(criancaRow?.value, "Inscrição (Lote 1 Promocional)", 8360),
+    ...pickCheckout(criancaRow?.value, "Inscrição Lote 2 (atualizado)", 9600),
     updated_at: criancaRow?.updated_at ?? null,
   };
   return { adulto, crianca };

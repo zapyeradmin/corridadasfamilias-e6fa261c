@@ -53,7 +53,7 @@ export function TabPagamento() {
           </p>
         </header>
         <div className="max-w-2xl">
-          <CheckoutCard title="Checkout Oficial (Lote 1 Promocional)" tipo="adulto" initial={data?.adulto} />
+          <CheckoutCard title="Checkout Oficial (Lote 2 atualizado)" tipo="adulto" initial={data?.adulto} />
         </div>
       </section>
     </div>
@@ -99,7 +99,7 @@ function CheckoutCard({
   const save = useServerFn(updateCheckoutConfig);
   const qc = useQueryClient();
   const [nome, setNome] = useState("");
-  const [lote, setLote] = useState<"Lote 1" | "Lote 2" | "Lote 3">("Lote 1");
+  const [lote, setLote] = useState<"Lote 1" | "Lote 2" | "Lote 3">("Lote 2");
   const [valorBR, setValorBR] = useState("0,00");
   const [url, setUrl] = useState("");
 
@@ -174,7 +174,7 @@ function CheckoutCard({
               className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
               value={valorBR}
               onChange={(e) => setValorBR(e.target.value.replace(/[^\d,]/g, ""))}
-              placeholder="83,60"
+              placeholder="96,00"
               inputMode="decimal"
             />
           </Field>

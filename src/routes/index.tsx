@@ -76,7 +76,7 @@ export const Route = createFileRoute("/")({
       },
       {
         name: "twitter:description",
-        content: `Corrida de 6km em ${SITE.city} no dia ${SITE.eventDateLabel}. Garanta sua vaga com lote promocional e brindes exclusivos.`,
+        content: `Corrida de 6km em ${SITE.city} no dia ${SITE.eventDateLabel}. Garanta sua vaga no Lote 2 (atualizado) com kit oficial e medalha finisher.`,
       },
       {
         name: "twitter:image",
