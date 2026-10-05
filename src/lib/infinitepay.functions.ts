@@ -11,8 +11,17 @@ async function readSettingString(key: string): Promise<string> {
     .select("value")
     .eq("key", key)
     .maybeSingle();
-  const v = (data?.value ?? "") as unknown;
-  return typeof v === "string" ? v.trim() : "";
+  const v = data?.value as unknown;
+  if (typeof v === "string") return v.trim();
+  if (
+    v &&
+    typeof v === "object" &&
+    "checkout_url" in v &&
+    typeof (v as { checkout_url?: unknown }).checkout_url === "string"
+  ) {
+    return ((v as { checkout_url: string }).checkout_url || "").trim();
+  }
+  return "";
 }
 
 export const getCheckoutUrlForRegistration = createServerFn({ method: "POST" })
@@ -60,11 +69,18 @@ export const getCheckoutUrlForRegistration = createServerFn({ method: "POST" })
         };
         if (reg.full_name || reg.email) {
           const customer: Record<string, string> = {};
-          if (reg.full_name) customer.name = reg.full_name;
-          if (reg.email) customer.email = reg.email;
+          if (reg.full_name) customer.name = reg.full_name.trim();
+          if (reg.email) customer.email = reg.email.trim().toLowerCase();
           if (reg.whatsapp) {
-            const cleanPhone = reg.whatsapp.replace(/\D/g, "");
-            if (cleanPhone) customer.phone_number = `+${cleanPhone}`;
+            const digits = reg.whatsapp.replace(/\D/g, "");
+            // Formato E.164 (+55DDDNUMERO) exigido pela InfinitePay
+            const withCountry =
+              digits.startsWith("55") && digits.length >= 12
+                ? digits
+                : `55${digits}`;
+            if (withCountry.length === 12 || withCountry.length === 13) {
+              customer.phone_number = `+${withCountry}`;
+            }
           }
           body.customer = customer;
         }
@@ -81,6 +97,9 @@ export const getCheckoutUrlForRegistration = createServerFn({ method: "POST" })
           if (json.url) {
             checkoutUrl = json.url;
           }
+        } else {
+          const errText = await res.text().catch(() => "");
+          console.warn("[InfinitePay API Error]", res.status, errText);
         }
       } catch (err) {
         console.warn("Falha ao gerar link dinâmico InfinitePay, usando fallback:", err);
@@ -94,22 +113,10 @@ export const getCheckoutUrlForRegistration = createServerFn({ method: "POST" })
         (await readSettingString("checkout_adulto")) ||
         "https://checkout.infinitepay.io/edna-maria-4gu/wY2Pf6fcqj";
 
-      if (baseUrl) {
-        try {
-          const url = new URL(baseUrl);
-          if (reg.order_nsu) url.searchParams.set("order_nsu", reg.order_nsu);
-          url.searchParams.set("redirect_url", `${publicSiteUrl}/pagamento?protocol=${reg.protocol}`);
-          url.searchParams.set("success_url", `${publicSiteUrl}/sucesso?protocol=${reg.protocol}`);
-
-          if (reg.full_name) url.searchParams.set("customer_name", reg.full_name);
-          if (reg.email) url.searchParams.set("customer_email", reg.email);
-          if (reg.whatsapp)
-            url.searchParams.set("customer_cellphone", reg.whatsapp.replace(/\D/g, ""));
-          checkoutUrl = url.toString();
-        } catch {
-          checkoutUrl = baseUrl;
-        }
-      }
+      // Links com slug específico da InfinitePay (ex: /edna-maria-4gu/wY2Pf6fcqj)
+      // não aceitam parâmetros de busca via query string. Devem ser usados limpos
+      // para evitar a tela de erro "Algo deu errado".
+      checkoutUrl = baseUrl || "https://checkout.infinitepay.io/edna-maria-4gu/wY2Pf6fcqj";
     }
 
     return {

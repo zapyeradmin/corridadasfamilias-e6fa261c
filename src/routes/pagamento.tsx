@@ -40,7 +40,7 @@ function Page() {
   // Tenta inferir o protocolo a partir do order_nsu se não veio direto
   const protocol =
     search.protocol ||
-    (search.order_nsu && /^inscricao_(adulto|crianca|lote1)_/.test(search.order_nsu) ? "" : "");
+    (search.order_nsu && /^inscricao_(adulto|crianca|lote1|lote2)_/.test(search.order_nsu) ? "" : "");
 
   useEffect(() => {
     cancelled.current = false;
